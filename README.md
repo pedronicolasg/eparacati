@@ -34,5 +34,8 @@ Com esta plataforma, esperamos:
 ---
 
 <div align="center">
-Feito com dedicação e inovação pela turma de <strong>INFORMÁTICA (2024-2026)</strong>
+Feito com dedicação e inovação pela turma de <strong>INFORMÁTICA (2024-2026)</strong><br><br>
+  <a href = "https://github.com/pedronicolasg/eparacati/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=pedronicolasg/eparacati"/>
+</a>
 </div>
