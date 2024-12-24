@@ -12,8 +12,9 @@
 <body>
   <?php include 'includes/header.php'; ?>
 
-  <main class="flex flex-col items-center justify-center min-h-screen">
+  <main class="flex flex-col items-center min-h-screen">
     <h1 class="text-4xl font-bold">Home</h1>
+    <?php include 'includes/carousel.php'; ?>
   </main>
 
   <?php include 'includes/footer.php'; ?>
