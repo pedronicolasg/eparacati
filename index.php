@@ -11,7 +11,7 @@
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <?php include 'includes/header.php'; ?>
+  <?php include 'includes/navbar.php'; ?>
   <?php include 'includes/carousel.php'; ?>
 
   <main class="flex flex-col items-center min-h-screen">
