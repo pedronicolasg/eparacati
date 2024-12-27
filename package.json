@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "dev": "tailwind build -i assets/css/tailwind.css -o assets/css/style.css --watch"
+  },
   "dependencies": {},
   "devDependencies": {
     "autoprefixer": "^10.4.20",

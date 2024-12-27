@@ -7,16 +7,19 @@
   <title>EP Aracati</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="shortcut icon" href="assets/images/logo.svg" type="image/x-icon">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 </head>
 
-<body>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <?php include 'includes/header.php'; ?>
+  <?php include 'includes/carousel.php'; ?>
 
   <main class="flex flex-col items-center min-h-screen">
-    <h1 class="text-4xl font-bold">Home</h1>
-    <?php include 'includes/carousel.php'; ?>
+    <h1 class="text-4xl font-bold">Olá, <?php //$_SESSION['name']
+                                        ?>Nícolas!</h1>
   </main>
 
+  <?php include 'includes/apps.php'; ?>
   <?php include 'includes/footer.php'; ?>
 </body>
 
