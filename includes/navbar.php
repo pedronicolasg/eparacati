@@ -11,22 +11,22 @@
         id="user-menu-button"
         aria-expanded="false">
         <span class="sr-only">Menu do usuário</span>
-        <img class="w-8 h-8 rounded-full" src="https://avatars.githubusercontent.com/u/53797066" alt="Foto do usuário">
+        <img class="w-8 h-8 rounded-full" src="<?php echo $_SESSION['profile_photo']; ?>" alt="Foto do usuário">
       </button>
       <!-- Dropdown menu -->
       <div
         class="z-50 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-full right-0 mt-2"
         id="user-dropdown">
         <div class="px-4 py-3">
-          <span class="block text-sm text-gray-900 dark:text-white">USERNAME</span>
-          <span class="block text-sm text-gray-500 truncate dark:text-gray-400">USEREMAIL</span>
+          <span class="block text-sm text-gray-900 dark:text-white"><?php echo $_SESSION['name']; ?></span>
+          <span class="block text-sm text-green-500 truncate dark:text-green-400"><?php echo $_SESSION['email']; ?></span>
         </div>
         <ul class="py-2">
           <li>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Meu perfil</a>
+            <a href="perfil.php" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Meu perfil</a>
           </li>
           <li>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sair</a>
+            <a href="methods/logout.php" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sair</a>
           </li>
         </ul>
       </div>

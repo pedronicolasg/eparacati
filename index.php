@@ -1,3 +1,8 @@
+<?php
+require_once './methods/verify.php';
+require_once './methods/crypt.php';
+verification("./auth/login.php");
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -15,8 +20,7 @@
   <?php include 'includes/carousel.php'; ?>
 
   <main class="flex flex-col items-center min-h-screen">
-    <h1 class="text-4xl font-bold">Olá, <?php //$_SESSION['name']
-                                        ?>Nícolas!</h1>
+    <h1 class="text-4xl font-bold">Olá, <?php echo $_SESSION['name'] ?>!</h1>
   </main>
 
   <?php include 'includes/apps.php'; ?>

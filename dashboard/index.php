@@ -1,3 +1,8 @@
+<?php
+require_once '../methods/verify.php';
+
+verification("../auth/login.php", ["gestao", "professor"]);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -10,22 +15,22 @@
   <link rel="shortcut icon" href="../assets/images/altlogo.svg" type="image/x-icon">
 </head>
 
-<body>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <?php include 'includes/navbar.php'; ?>
   <div class="min-h-full">
-    <?php include 'includes/navbar.php'; ?>
 
     <header class="bg-white shadow">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Dashboard (<?php echo $_SESSION['role'] ?>)</h1>
       </div>
     </header>
 
     <main>
-      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      </div>
+      <?php include 'includes/' . $_SESSION['role'] . '.ui.php' ?>
     </main>
 
   </div>
+  <?php include 'includes/footer.php'; ?>
 </body>
 
 </html>

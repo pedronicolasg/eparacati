@@ -28,7 +28,7 @@
           class="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-white placeholder-opacity-70">
       </div>
       <div class="mb-6">
-        <label for="password" class="block text-sm font-medium text-white mb-2">Password</label>
+        <label for="password" class="block text-sm font-medium text-white mb-2">Senha</label>
         <input type="password" id="password" name="password" required
           class="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-white placeholder-opacity-70">
       </div>
