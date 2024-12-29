@@ -1,10 +1,13 @@
 <?php
-require_once '../methods/verify.php';
+require_once '../methods/usermanager.php';
+require_once '../methods/UI.php';
 
-verification("../auth/login.php", ["gestao", "professor"]);
+$userManager = new UserManager($conn);
+$theme = $userManager->getTheme($_SESSION['id']);
+UserManager::verifySession("../auth/login.php", ["gestao", "professor"]);
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
 
 <head>
   <meta charset="UTF-8">
@@ -16,12 +19,12 @@ verification("../auth/login.php", ["gestao", "professor"]);
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <?php include 'includes/navbar.php'; ?>
+  <?php UI::renderNavbar('../', 'Dashboard', 'blue', 'altlogo.svg') ?>
   <div class="min-h-full">
 
-    <header class="bg-white shadow">
+    <header class="bg-white shadow dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Dashboard (<?php echo $_SESSION['role'] ?>)</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard (<?php echo $_SESSION['role'] ?>)</h1>
       </div>
     </header>
 
@@ -30,7 +33,7 @@ verification("../auth/login.php", ["gestao", "professor"]);
     </main>
 
   </div>
-  <?php include 'includes/footer.php'; ?>
+  <?php UI::renderFooter('../',); ?>
 </body>
 
 </html>

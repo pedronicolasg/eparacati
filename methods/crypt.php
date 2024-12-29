@@ -2,7 +2,7 @@
 
 class Crypt
 {
-  public static function HIDE($tx)
+  public static function hide($tx)
   {
     if (!empty($tx)) {
       $tx = base64_encode(base64_encode(base64_encode($tx)));
@@ -10,16 +10,16 @@ class Crypt
     return $tx;
   }
 
-  public static function SHOW($tx)
+  public static function show($tx)
   {
     if (!empty($tx)) {
       $tx = base64_decode(base64_decode(base64_decode(base64_decode(base64_encode($tx)))));
     }
     return $tx;
   }
-  public static function passwcrypt($senha)
+  public static function passw($senha)
   {
-    $senha = Crypt::HIDE($senha);
+    $senha = Crypt::hide($senha);
     return md5($senha);
   }
 }

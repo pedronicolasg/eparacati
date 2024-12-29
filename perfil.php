@@ -1,9 +1,14 @@
 <?php
-require_once 'methods/verify.php';
 require_once 'methods/conn.php';
+require_once 'methods/ui.php';
+require_once 'methods/usermanager.php';
+UserManager::verifySession("./auth/login.php");
+
+$userManager = new UserManager($conn);
+$theme = $userManager->getTheme($_SESSION['id']);
+
 require_once 'methods/crypt.php';
-verification("./auth/login.php");
-$id = isset($_GET['id']) ? Crypt::SHOW($_GET['id']) : null;
+$id = isset($_GET['id']) ? Crypt::show($_GET['id']) : null;
 $userId = isset($id) ? intval($id) : $_SESSION['id'];
 $isCurrentUser = $userId === $_SESSION['id'];
 
@@ -21,7 +26,7 @@ try {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
 
 <head>
   <meta charset="UTF-8">
@@ -29,10 +34,11 @@ try {
   <title>EP Aracati | Perfil de </title>
   <link rel="stylesheet" href="assets/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="assets/images/logo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <?php include 'includes/navbar.php'; ?>
+  <?php UI::renderNavbar('./',) ?>
 
   <!-- Seção de Perfil -->
   <div class="container mx-auto p-4">
@@ -102,7 +108,7 @@ try {
     </div>
   </div>
 
-  <?php include 'includes/footer.php'; ?>
+  <?php UI::renderFooter('./'); ?>
 </body>
 
 </html>
