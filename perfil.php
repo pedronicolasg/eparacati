@@ -40,10 +40,8 @@ try {
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <?php UI::renderNavbar('./',) ?>
 
-  <!-- Seção de Perfil -->
   <div class="container mx-auto p-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Informações do Usuário -->
       <div class="p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div class="flex items-center">
           <img src="<?php echo htmlspecialchars($user['profile_photo'] ?: 'https://placehold.co/100'); ?>"
@@ -66,7 +64,6 @@ try {
         </div>
       </div>
 
-      <!-- Seção de Posts -->
       <div class="p-4 rounded-lg md:col-span-2 shadow-md bg-white dark:bg-gray-800">
         <h2 class="text-xl font-bold">Posts do usuário</h2>
         <div class="mt-4 text-center">
@@ -74,11 +71,10 @@ try {
         </div>
       </div>
 
-      <!-- Painel de Edição (Apenas para o próprio usuário) -->
-      <?php if ($isCurrentUser): ?>
+      <?php if ($_SESSION['role'] === 'gestao'): ?>
         <div class="md:col-span-3 p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
           <h2 class="text-xl font-bold">Painel de Edição</h2>
-          <form class="mt-4" action="update_profile.php" method="POST" enctype="multipart/form-data">
+          <form class="mt-4" action="methods/handlers/editUser.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -93,11 +89,6 @@ try {
                   value="<?php echo htmlspecialchars($user['email']); ?>"
                   class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
               </div>
-            </div>
-            <div class="mt-4">
-              <label for="profilePhoto" class="block text-gray-700 dark:text-gray-300">Foto de Perfil</label>
-              <input type="file" id="profilePhoto" name="profile_photo"
-                class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
             </div>
             <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
               Salvar Alterações

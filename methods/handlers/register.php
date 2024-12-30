@@ -1,7 +1,7 @@
 <?php
 require_once('../conn.php');
 require_once('../usermanager.php');
-
+UserManager::verifySession('../login.php', ['gestao']);
 $userManager = new UserManager($conn);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

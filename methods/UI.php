@@ -1,7 +1,5 @@
 <?php
 
-
-
 class UI
 {
   public static function renderNavbar($basePath, $activePage = 'Home', $color = 'green', $logo = 'logo.svg')
@@ -47,7 +45,7 @@ class UI
               <li>
                 <form action="<?php echo $methodsPath ?>/handlers/theme.php" method="POST">
                   <button type="submit" class="block w-full px-4 py-2 text-sm text-gray-700 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                    Alternar para Tema <?php echo $_SESSION['website_theme'] === 'light' ? 'Escuro' : 'Claro'; ?>
+                    Alternar tema
                   </button>
                 </form>
               </li>
@@ -63,7 +61,7 @@ class UI
             <?php foreach ($links as $name => $url): ?>
               <li>
                 <a href="<?php echo $url; ?>"
-                  class="block py-2 px-3 <?php echo $name === $activePage ? 'text-green-600 bg-' . $color . '-700 rounded md:bg-transparent md:text-' . $color . '-700 md:dark:text-' . $color . '-500' : 'text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-' . $color . '-700 dark:text-white md:dark:hover:text-' . $color . '-500 dark:hover:bg-gray-700 dark:hover:text-white'; ?>">
+                  class="block py-2 px-3 <?php echo $name === $activePage ? 'text-' . $color . '-600 bg-' . $color . '-700 rounded md:bg-transparent md:text-' . $color . '-700 md:dark:text-' . $color . '-500' : 'text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-' . $color . '-700 dark:text-white md:dark:hover:text-' . $color . '-500 dark:hover:bg-gray-700 dark:hover:text-white'; ?>">
                   <?php echo $name; ?>
                 </a>
               </li>
@@ -153,7 +151,6 @@ class UI
   }
   public static function renderFooter($basePath)
   {
-    $assetsPath = "{$basePath}assets";
   ?>
     <footer class="bg-white dark:bg-gray-900">
       <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">

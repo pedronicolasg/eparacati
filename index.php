@@ -1,6 +1,7 @@
 <?php
 require_once 'methods/UI.php';
 require_once 'methods/usermanager.php';
+
 UserManager::verifySession("./login.php");
 $userManager = new UserManager($conn);
 $theme = $userManager->getTheme($_SESSION['id']);

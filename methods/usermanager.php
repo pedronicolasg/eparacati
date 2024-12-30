@@ -2,8 +2,8 @@
 require_once 'conn.php';
 require_once 'crypt.php';
 require_once 'utils.php';
-session_start();
 
+session_start();
 class UserManager
 {
   private $conn;
@@ -40,9 +40,10 @@ class UserManager
       exit;
     }
   }
-
   public function register($name, $role, $email, $password, $class_id)
   {
+    $utils = new Utils($this->conn);
+    $id = $utils->generateUniqueId(8, 'users', 'id');
     $created_at = date('d-m-Y H:i:s');
     $formatted_name = preg_replace('/[^a-zA-Z]/', '', str_replace(' ', '', $name));
     $profile_photo = "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
@@ -58,10 +59,10 @@ class UserManager
     if ($stmt->fetchColumn()) {
       Utils::alertAndRedirect('Email já cadastrado!', './aluno.php');
     } else {
-      $sql = 'INSERT INTO users (name, email, password, role, class_id, profile_photo, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)';
+      $sql = 'INSERT INTO users (id, name, email, password, role, class_id, profile_photo, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
       $stmt = $this->conn->prepare($sql);
-      $data = [$name, Utils::sanitizeInput($email), Crypt::passw($password), $role, $class_id, $profile_photo, $created_at];
+      $data = [$id, $name, Utils::sanitizeInput($email), Crypt::passw($password), $role, $class_id, $profile_photo, $created_at];
 
       if ($stmt->execute($data)) {
         Utils::alertAndRedirect('Usuário cadastrado com sucesso!', './usuarios.php');
@@ -76,7 +77,7 @@ class UserManager
     $email = Utils::sanitizeInput($email);
     $password = Crypt::passw($password);
 
-    $sql = "SELECT id, name, email, password, role, class_id, profile_photo, website_theme, created_at, updated_at FROM users WHERE email=:email AND password=:password";
+    $sql = "SELECT id, name, email, password, role, class_id, profile_photo FROM users WHERE email=:email AND password=:password";
     $stmt = $this->conn->prepare($sql);
     $stmt->execute(['email' => $email, 'password' => $password]);
     $user = $stmt->fetch();
@@ -89,9 +90,6 @@ class UserManager
       $_SESSION['role'] = $user['role'];
       $_SESSION['class_id'] = $user['class_id'];
       $_SESSION['profile_photo'] = $user['profile_photo'];
-      $_SESSION['website_theme'] = $user['website_theme'];
-      $_SESSION['created_at'] = $user['created_at'];
-      $_SESSION['updated_at'] = $user['updated_at'];
 
       $local = '../../index.php';
       header('Location: ' . $local);
@@ -100,10 +98,37 @@ class UserManager
     }
   }
 
+  public function editUser($id, $name, $email, $password, $role, $class_id)
+  {
+    $updated_at = date('d-m-Y H:i:s');
+    $profile_photo = "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=random&color=fff";
+
+    $sql = "UPDATE users SET name = :name, email = :email, password = :password, role = :role, class_id = :class_id, profile_photo = :profile_photo, updated_at = :updated_at WHERE id = :id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':password', $password);
+    $stmt->bindParam(':role', $role);
+    $stmt->bindParam(':class_id', $class_id, PDO::PARAM_INT);
+    $stmt->bindParam(':profile_photo', $profile_photo);
+    $stmt->bindParam(':updated_at', $updated_at);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    return $stmt->execute();
+  }
+
+
   public static function logout($redirectPath)
   {
     session_destroy();
     header('Location: ' . $redirectPath);
     exit;
+  }
+
+  public function deleteUser($id)
+  {
+    $sql = "DELETE FROM users WHERE id = :id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    return $stmt->execute();
   }
 }
