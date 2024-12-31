@@ -1,6 +1,6 @@
 <?php
 require_once '../conn.php';
-require_once '../UserManager.php';
+require_once '../usermanager.php';
 
 session_start();
 
