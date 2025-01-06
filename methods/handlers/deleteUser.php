@@ -1,7 +1,7 @@
 <?php
 require_once '../conn.php';
 require_once '../usermanager.php';
-require_once '../crypt.php';
+require_once '../utils.php';
 
 UserManager::verifySession('../login.php', ['gestao']);
 $userManager = new UserManager($conn);

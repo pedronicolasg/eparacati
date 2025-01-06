@@ -21,10 +21,22 @@ class Utils
     return $input;
   }
 
+  public static function redirect($location)
+  {
+    echo "<meta charset='UTF-8' />
+    <script type='text/javascript'>
+      location.href='$location';
+    </script>";
+    exit;
+  }
+
   public static function alertAndRedirect($message, $location)
   {
-    echo "<meta charset='UTF-8' />";
-    echo "<script type='text/javascript'>alert('$message'); location.href='$location';</script>";
+    echo "<meta charset='UTF-8' />
+    <script type='text/javascript'>
+      alert('$message');
+      location.href='$location';
+    </script>";
     exit;
   }
 
@@ -47,5 +59,48 @@ class Utils
     } while ($exists);
 
     return $randomId;
+  }
+
+  public static function hide($tx)
+  {
+    if (!empty($tx)) {
+      $tx = base64_encode(base64_encode(base64_encode($tx)));
+    }
+    return $tx;
+  }
+
+  public static function show($tx)
+  {
+    if (!empty($tx)) {
+      $tx = base64_decode(base64_decode(base64_decode(base64_decode(base64_encode($tx)))));
+    }
+    return $tx;
+  }
+  public static function passw($senha)
+  {
+    $senha = Utils::hide($senha);
+    return md5($senha);
+  }
+
+  public static function getIp()
+  {
+    $headers = [
+      'HTTP_CLIENT_IP',
+      'HTTP_X_FORWARDED_FOR',
+      'HTTP_X_FORWARDED',
+      'HTTP_FORWARDED_FOR',
+      'HTTP_FORWARDED',
+      'REMOTE_ADDR'
+    ];
+
+    foreach ($headers as $header) {
+      if (!empty($_SERVER[$header])) {
+        // Se tiver múltiplos IPs, pega o primeiro
+        $ips = explode(',', $_SERVER[$header]);
+        return trim($ips[0]);
+      }
+    }
+
+    return '0.0.0.0';
   }
 }

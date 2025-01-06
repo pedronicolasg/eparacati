@@ -149,6 +149,53 @@ class UI
     </section>
   <?php
   }
+
+  public static function renderUserEditionPanel($user)
+  {
+  ?>
+    <div class="md:col-span-3 p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
+      <h2 class="text-xl font-bold">Painel de Edição</h2>
+      <form class="mt-4" action="methods/handlers/editUser.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" name="id" value="<?php echo $user['id']; ?>">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="name" class="block text-gray-700 dark:text-gray-300">Nome</label>
+            <input type="text" id="name" name="name"
+              value="<?php echo htmlspecialchars($user['name']); ?>"
+              class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
+          </div>
+          <div>
+            <label for="email" class="block text-gray-700 dark:text-gray-300">Email</label>
+            <input type="email" id="email" name="email"
+              value="<?php echo htmlspecialchars($user['email']); ?>"
+              class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
+          </div>
+          <div>
+            <label for="password" class="block text-gray-700 dark:text-gray-300">Senha</label>
+            <input type="password" id="password" name="password"
+              value=""
+              class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
+          </div>
+          <div>
+            <label for="role" class="block text-gray-700 dark:text-gray-300">Cargo</label>
+            <select type="role" id="role" name="role" class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+              <option value="aluno" <?php echo ($user['role'] === 'aluno') ? 'selected' : ''; ?>>Aluno(a)</option>
+              <option value="gremio" <?php echo ($user['role'] === 'gremio') ? 'selected' : ''; ?>>Grêmio</option>
+              <option value="professor" <?php echo ($user['role'] === 'professor') ? 'selected' : ''; ?>>Professor(a)</option>
+              <option value="gestao" <?php echo ($user['role'] === 'gestao') ? 'selected' : ''; ?>>Gestão</option>
+            </select>
+
+          </div>
+        </div>
+
+        <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
+          Salvar Alterações
+        </button>
+      </form>
+    </div>
+  <?php
+  }
+
   public static function renderFooter($basePath)
   {
   ?>

@@ -7,8 +7,8 @@ UserManager::verifySession("./auth/login.php");
 $userManager = new UserManager($conn);
 $theme = $userManager->getTheme($_SESSION['id']);
 
-require_once 'methods/crypt.php';
-$id = isset($_GET['id']) ? Crypt::show($_GET['id']) : null;
+require_once 'methods/utils.php';
+$id = isset($_GET['id']) ? Utils::show($_GET['id']) : null;
 $userId = isset($id) ? intval($id) : $_SESSION['id'];
 $isCurrentUser = $userId === $_SESSION['id'];
 
@@ -31,7 +31,7 @@ try {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EP Aracati | Perfil de </title>
+  <title>EP Aracati | Perfil de <?php echo htmlspecialchars($user['name']); ?></title>
   <link rel="stylesheet" href="assets/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="assets/images/logo.svg" type="image/x-icon">
@@ -44,7 +44,7 @@ try {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div class="flex items-center">
-          <img src="<?php echo htmlspecialchars($user['profile_photo'] ?: 'https://placehold.co/100'); ?>"
+          <img src="<?php echo htmlspecialchars($user['profile_photo']); ?>"
             alt="Foto do usuário" class="rounded-full w-24 h-24" />
           <div class="ml-4">
             <h2 class="text-2xl font-bold"><?php echo htmlspecialchars($user['name']); ?></h2>
@@ -71,31 +71,9 @@ try {
         </div>
       </div>
 
-      <?php if ($_SESSION['role'] === 'gestao'): ?>
-        <div class="md:col-span-3 p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
-          <h2 class="text-xl font-bold">Painel de Edição</h2>
-          <form class="mt-4" action="methods/handlers/editUser.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="name" class="block text-gray-700 dark:text-gray-300">Nome</label>
-                <input type="text" id="name" name="name"
-                  value="<?php echo htmlspecialchars($user['name']); ?>"
-                  class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
-              </div>
-              <div>
-                <label for="email" class="block text-gray-700 dark:text-gray-300">Email</label>
-                <input type="email" id="email" name="email"
-                  value="<?php echo htmlspecialchars($user['email']); ?>"
-                  class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
-              </div>
-            </div>
-            <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
-              Salvar Alterações
-            </button>
-          </form>
-        </div>
-      <?php endif; ?>
+      <?php if ($_SESSION['role'] === 'gestao') {
+        UI::renderUserEditionPanel($user);
+      } ?>
     </div>
   </div>
 

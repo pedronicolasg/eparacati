@@ -10,7 +10,7 @@ class Logger
     $this->conn = $conn;
   }
 
-  public function logAction($userId, $userName, $action, $targetTable, $targetId = null, $message = '', $ipAddress = null)
+  public function action($userId, $userName, $action, $targetTable, $targetId = null, $message = '', $ipAddress = null)
   {
     try {
       $sql = "INSERT INTO logs (user_id, user_name, action, target_table, target_id, message, ip_address) 

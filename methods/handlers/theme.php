@@ -1,16 +1,11 @@
 <?php
 require_once '../conn.php';
 require_once '../usermanager.php';
-
-session_start();
-
-if (!isset($_SESSION['id'])) {
-  header("Location: login.php");
-  exit();
-}
+require_once '../utils.php';
 
 $userManager = new UserManager($conn);
+UserManager::verifySession('login.php');
 $userManager->toggleTheme($_SESSION['id']);
 
-header("Location: " . $_SERVER['HTTP_REFERER']);
+Utils::redirect($_SERVER['HTTP_REFERER']);
 exit();

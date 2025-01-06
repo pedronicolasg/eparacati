@@ -1,7 +1,7 @@
 <?php
 require_once '../../methods/usermanager.php';
 require_once '../../methods/conn.php';
-require_once '../../methods/crypt.php';
+require_once '../../methods/utils.php';
 require_once '../../methods/UI.php';
 $userManager = new UserManager($conn);
 $theme = $userManager->getTheme($_SESSION['id']);
@@ -158,7 +158,7 @@ UserManager::verifySession("../auth/login.php", ["gestao", "professor"]);
                   <img class="w-10 h-10 rounded-full" src="' . htmlspecialchars($row['profile_photo']) . '" alt="Foto do usuário">
                   <div>
                     <div class="font-medium text-gray-900 dark:text-white">
-                      <a href="../../perfil.php?id=' . htmlspecialchars(Crypt::hide($row['id'])) . '">
+                      <a href="../../perfil.php?id=' . htmlspecialchars(Utils::hide($row['id'])) . '">
                         ' . htmlspecialchars($row['name']) . '
                       </a>
                     </div>
