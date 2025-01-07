@@ -1,7 +1,6 @@
 <?php
-require_once('../conn.php');
-require_once('../usermanager.php');
-$userManager = new UserManager($conn);
+$basepath = '../../';
+require_once '../bootstrap.php';
 
 $email = $_POST['email'];
 $password = $_POST['password'];

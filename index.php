@@ -1,10 +1,5 @@
 <?php
-require_once 'methods/UI.php';
-require_once 'methods/usermanager.php';
-
-UserManager::verifySession("./login.php");
-$userManager = new UserManager($conn);
-$theme = $userManager->getTheme($_SESSION['id']);
+require_once 'methods/bootstrap.php';
 
 ?>
 <!DOCTYPE html>
@@ -21,7 +16,7 @@ $theme = $userManager->getTheme($_SESSION['id']);
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <?php
-  UI::renderNavbar('./', 'Home', 'green');
+  UI::renderNavbar($currentUser, './', 'Home', 'green');
 
   $carouselItems = [
     ["image" => "assets/images/carousel1.png", "title" => "Slide 1"],
@@ -32,11 +27,11 @@ $theme = $userManager->getTheme($_SESSION['id']);
   ?>
 
   <main class="flex flex-col items-center min-h-screen">
-    <h1 class="text-4xl font-bold">Olá, <?php echo $_SESSION['name'] ?>!</h1>
+    <h1 class="text-4xl font-bold">Olá, <?php echo $currentUser['name'] ?>!</h1>
   </main>
 
   <?php
-  UI::renderApps($_SESSION['role']);
+  UI::renderApps($currentUser['role']);
   UI::renderFooter('./');
   ?>
 </body>

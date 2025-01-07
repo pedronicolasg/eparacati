@@ -1,13 +1,6 @@
 <?php
-require_once 'methods/conn.php';
-require_once 'methods/ui.php';
-require_once 'methods/usermanager.php';
-UserManager::verifySession("./auth/login.php");
+require_once 'methods/bootstrap.php';
 
-$userManager = new UserManager($conn);
-$theme = $userManager->getTheme($_SESSION['id']);
-
-require_once 'methods/utils.php';
 $id = isset($_GET['id']) ? Utils::show($_GET['id']) : null;
 $userId = isset($id) ? intval($id) : $_SESSION['id'];
 $isCurrentUser = $userId === $_SESSION['id'];
@@ -38,7 +31,7 @@ try {
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <?php UI::renderNavbar('./',) ?>
+  <?php UI::renderNavbar($currentUser,'./',) ?>
 
   <div class="container mx-auto p-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -71,7 +64,7 @@ try {
         </div>
       </div>
 
-      <?php if ($_SESSION['role'] === 'gestao') {
+      <?php if ($currentUser['role'] === 'gestao') {
         UI::renderUserEditionPanel($user);
       } ?>
     </div>

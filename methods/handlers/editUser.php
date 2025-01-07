@@ -1,10 +1,7 @@
 <?php
-require_once '../conn.php';
-require_once '../utils.php';
-require_once '../usermanager.php';
-$userManager = new UserManager($conn);
-
-UserManager::verifySession('../login.php', ['gestao']);
+$basepath = '../../';
+$requiredRoles = ['gestao'];
+require_once '../bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $id = $_POST['id'];

@@ -2,8 +2,6 @@
 require_once 'conn.php';
 require_once 'utils.php';
 require_once 'logger.php';
-
-session_start();
 class UserManager
 {
   private $conn;
@@ -15,17 +13,14 @@ class UserManager
     $this->logger = new Logger($conn);
   }
 
-  public static function verifySession($conn, $redirectPath, $allowedRoles = null)
+  public function verifySession($redirectPath, $allowedRoles = null)
   {
-    session_start();
-
     if (!isset($_SESSION['id'])) {
       Utils::redirect($redirectPath);
       exit;
     }
 
-    $userManager = new UserManager($conn);
-    $userInfo = $userManager->getUserInfo($_SESSION['id']);
+    $userInfo = $this->getUserInfo($_SESSION['id']);
 
     if (empty($userInfo)) {
       Utils::redirect($redirectPath);
@@ -40,50 +35,32 @@ class UserManager
     return $userInfo;
   }
 
-
-  public function getTheme($userId)
-  {
-    $stmt = $this->conn->prepare("SELECT website_theme FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
-    return $stmt->fetchColumn();
-  }
-
-
-
-
-
   public function getUserInfo($identifier, $type = 'id')
   {
     $sql = '';
     $params = [];
 
     if ($type === 'id') {
-      $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at 
-                  FROM users 
-                  WHERE id = :id";
+      $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
+                      FROM users WHERE id = :id";
       $params = ['id' => $identifier];
     } elseif ($type === 'email') {
-      $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at 
-                  FROM users 
-                  WHERE email = :email";
+      $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
+                      FROM users WHERE email = :email";
       $params = ['email' => $identifier];
     }
 
     $stmt = $this->conn->prepare($sql);
     $stmt->execute($params);
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    return $user ?: [];
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
   }
-
-
-
-
 
   public function toggleTheme($userId)
   {
-    $currentTheme = $this->getTheme($userId);
+    $userInfo = $this->getUserInfo($userId, 'id');
+
+    $currentTheme = $userInfo['website_theme'];
     $newTheme = ($currentTheme === 'light') ? 'dark' : 'light';
 
     $stmt = $this->conn->prepare("UPDATE users SET website_theme = ? WHERE id = ?");
@@ -136,13 +113,6 @@ class UserManager
       if ($user['password'] === $password) {
         session_start();
         $_SESSION['id'] = $user['id'];
-        /*
-        $_SESSION['name'] = $user['name'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['class_id'] = $user['class_id'];
-        $_SESSION['profile_photo'] = $user['profile_photo'];
-        */
 
         $path = '../../index.php';
         Utils::redirect($path);

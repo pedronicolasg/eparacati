@@ -1,10 +1,7 @@
 <?php
-require_once '../methods/usermanager.php';
-require_once '../methods/UI.php';
-
-$userManager = new UserManager($conn);
-$theme = $userManager->getTheme($_SESSION['id']);
-UserManager::verifySession("../auth/login.php", ["gestao", "professor"]);
+$requiredRoles = ['lider', 'professor', 'gestao'];
+$basepath = '../';
+require_once '../methods/bootstrap.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
@@ -19,17 +16,17 @@ UserManager::verifySession("../auth/login.php", ["gestao", "professor"]);
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <?php UI::renderNavbar('../', 'Dashboard', 'blue', 'altlogo.svg') ?>
+  <?php UI::renderNavbar($currentUser, '../', 'Dashboard', 'blue', 'altlogo.svg') ?>
   <div class="min-h-full">
 
     <header class="bg-white shadow dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard (<?php echo $_SESSION['role'] ?>)</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard (<?php echo $currentUser['role'] ?>)</h1>
       </div>
     </header>
 
     <main>
-      <?php include 'includes/' . $_SESSION['role'] . '.ui.php' ?>
+      <?php include 'includes/' . $currentUser['role'] . '.ui.php' ?>
     </main>
 
   </div>

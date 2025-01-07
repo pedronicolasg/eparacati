@@ -1,12 +1,7 @@
 <?php
-require_once '../../methods/usermanager.php';
-require_once '../../methods/conn.php';
-require_once '../../methods/utils.php';
-require_once '../../methods/UI.php';
-$userManager = new UserManager($conn);
-$theme = $userManager->getTheme($_SESSION['id']);
-
-UserManager::verifySession("../auth/login.php", ["gestao", "professor"]);
+$requiredRoles = ['lider', 'professor', 'gestao'];
+$basepath = '../../';
+require_once '../../methods/bootstrap.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
@@ -22,12 +17,12 @@ UserManager::verifySession("../auth/login.php", ["gestao", "professor"]);
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <div class="min-h-full">
-    <?php UI::renderNavbar('../../', 'Dashboard', 'blue', 'altlogo.svg'); ?>
+    <?php UI::renderNavbar($currentUser, '../../', 'Dashboard', 'blue', 'altlogo.svg'); ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
-          (<?php echo $_SESSION['role'] ?>)</h1>
+          (<?php echo $currentUser['role'] ?>)</h1>
 
         <!-- Breadcrumb -->
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">

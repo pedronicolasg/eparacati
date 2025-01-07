@@ -1,10 +1,6 @@
 <?php
-require_once '../conn.php';
-require_once '../usermanager.php';
-require_once '../utils.php';
-
-$userManager = new UserManager($conn);
-UserManager::verifySession('login.php');
+$basepath = '../../';
+require_once '../bootstrap.php';
 $userManager->toggleTheme($_SESSION['id']);
 
 Utils::redirect($_SERVER['HTTP_REFERER']);

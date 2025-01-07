@@ -2,7 +2,7 @@
 
 class UI
 {
-  public static function renderNavbar($basePath, $activePage = 'Home', $color = 'green', $logo = 'logo.svg')
+  public static function renderNavbar($currentUser, $basePath, $activePage = 'Home', $color = 'green', $logo = 'logo.svg')
   {
     // Links do menu
     $links = [
@@ -29,14 +29,14 @@ class UI
             id="user-menu-button"
             aria-expanded="false">
             <span class="sr-only">Menu do usuário</span>
-            <img class="w-8 h-8 rounded-full" src="<?php echo $_SESSION['profile_photo']; ?>" alt="Foto do usuário">
+            <img class="w-8 h-8 rounded-full" src="<?php echo $currentUser['profile_photo']; ?>" alt="Foto do usuário">
           </button>
           <div
             class="z-50 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-full right-0 mt-2"
             id="user-dropdown">
             <div class="px-4 py-3">
-              <span class="block text-sm text-gray-900 dark:text-white"><?php echo $_SESSION['name']; ?></span>
-              <span class="block text-sm text-<?php echo $color ?>-600 truncate dark:text-<?php $color ?>-400"><?php echo $_SESSION['email']; ?></span>
+              <span class="block text-sm text-gray-900 dark:text-white"><?php echo $currentUser['name']; ?></span>
+              <span class="block text-sm text-<?php echo $color ?>-600 truncate dark:text-<?php $color ?>-400"><?php echo $currentUser['email']; ?></span>
             </div>
             <ul class="py-2">
               <li>
