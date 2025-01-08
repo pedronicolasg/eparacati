@@ -1,7 +1,7 @@
 <?php
-$requiredRoles = ['lider', 'professor', 'gestao'];
-$basepath = '../../';
-require_once '../../methods/bootstrap.php';
+$requiredRoles = ["lider", "professor", "gestao"];
+$basepath = "../../";
+require_once "../../methods/bootstrap.php";
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
@@ -17,12 +17,18 @@ require_once '../../methods/bootstrap.php';
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <div class="min-h-full">
-    <?php UI::renderNavbar($currentUser, '../../', 'Dashboard', 'blue', 'altlogo.svg'); ?>
+    <?php UI::renderNavbar(
+        $currentUser,
+        "../../",
+        "Dashboard",
+        "blue",
+        "altlogo.svg"
+    ); ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
-          (<?php echo $currentUser['role'] ?>)</h1>
+          (<?php echo $currentUser["role"]; ?>)</h1>
 
         <!-- Breadcrumb -->
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
@@ -84,17 +90,27 @@ require_once '../../methods/bootstrap.php';
                     </div>
                   </li>
                   <?php
-                  $roles = $conn->query("SELECT DISTINCT role FROM users")->fetchAll(PDO::FETCH_COLUMN);
+                  $roles = $conn
+                      ->query("SELECT DISTINCT role FROM users")
+                      ->fetchAll(PDO::FETCH_COLUMN);
                   foreach ($roles as $role) {
-                    $safeRole = htmlspecialchars($role, ENT_QUOTES, 'UTF-8');
-                    echo '
+                      $safeRole = htmlspecialchars($role, ENT_QUOTES, "UTF-8");
+                      echo '
                   <li>
                     <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                      <input id="filter-radio-' . $safeRole . '" type="radio" name="filter-radio" value="' . $safeRole . '"
+                      <input id="filter-radio-' .
+                          $safeRole .
+                          '" type="radio" name="filter-radio" value="' .
+                          $safeRole .
+                          '"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         onchange="filterUsers(this.value)">
-                      <label for="filter-radio-' . $safeRole . '"
-                        class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">' . $safeRole . '</label>
+                      <label for="filter-radio-' .
+                          $safeRole .
+                          '"
+                        class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">' .
+                          $safeRole .
+                          '</label>
                     </div>
                   </li>';
                   }
@@ -111,6 +127,9 @@ require_once '../../methods/bootstrap.php';
               <input type="text"
                 class="pl-10 pr-4 py-2 w-72 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="Pesquisar usuários">
+                    <button onclick="openModal()" id="open-modal-btn" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                      <i class="fas fa-user-plus mr-2"></i> Adicionar Usuário
+                    </button>
             </div>
 
           </div>
@@ -126,58 +145,72 @@ require_once '../../methods/bootstrap.php';
               </thead>
               <tbody>
                 <?php
-                $selectedRole = isset($_GET['role']) ? $_GET['role'] : null;
+                $selectedRole = isset($_GET["role"]) ? $_GET["role"] : null;
 
                 // Consulta SQL única com ou sem filtro
-                $sql = "SELECT u.id, u.name, u.email, u.role, u.profile_photo, u.class_id, c.name as class_name 
-          FROM users u 
+                $sql = "SELECT u.id, u.name, u.email, u.role, u.profile_photo, u.class_id, c.name as class_name
+          FROM users u
           LEFT JOIN classes c ON u.class_id = c.id";
 
                 if ($selectedRole) {
-                  $sql .= " WHERE u.role = :role";
+                    $sql .= " WHERE u.role = :role";
                 }
 
                 $stmt = $conn->prepare($sql);
 
                 if ($selectedRole) {
-                  $stmt->bindParam(':role', $selectedRole, PDO::PARAM_STR);
+                    $stmt->bindParam(":role", $selectedRole, PDO::PARAM_STR);
                 }
 
                 $stmt->execute();
 
                 if ($stmt->rowCount() > 0) {
-                  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
-                  <img class="w-10 h-10 rounded-full" src="' . htmlspecialchars($row['profile_photo']) . '" alt="Foto do usuário">
+                  <img class="w-10 h-10 rounded-full" src="' .
+                            htmlspecialchars($row["profile_photo"]) .
+                            '" alt="Foto do usuário">
                   <div>
                     <div class="font-medium text-gray-900 dark:text-white">
-                      <a href="../../perfil.php?id=' . htmlspecialchars(Utils::hide($row['id'])) . '">
-                        ' . htmlspecialchars($row['name']) . '
+                      <a href="../../perfil.php?id=' .
+                            htmlspecialchars(Utils::hide($row["id"])) .
+                            '">
+                        ' .
+                            htmlspecialchars($row["name"]) .
+                            '
                       </a>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                      ' . htmlspecialchars($row['email']) . '
+                      ' .
+                            htmlspecialchars($row["email"]) .
+                            '
                     </div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                ' . htmlspecialchars($row['role']) . '
+                ' .
+                            htmlspecialchars($row["role"]) .
+                            '
               </td>
               <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                ' . htmlspecialchars($row['class_name']) . '
+                ' .
+                            htmlspecialchars($row["class_name"]) .
+                            '
               </td>
               <td class="px-6 py-4">
-                <a href="../../methods/handlers/deleteUser.php?id=' . htmlspecialchars($row['id']) . '" class="text-red-600 hover:underline dark:text-red-500">
+                <a href="../../methods/handlers/deleteUser.php?id=' .
+                            htmlspecialchars($row["id"]) .
+                            '" class="text-red-600 hover:underline dark:text-red-500">
                   Deletar
                 </a>
               </td>
             </tr>';
-                  }
+                    }
                 } else {
-                  echo '<tr>
+                    echo '<tr>
             <td colspan="4" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td>
           </tr>';
                 }
@@ -192,6 +225,8 @@ require_once '../../methods/bootstrap.php';
     </main>
   </div>
 
+    <?php include_once "includes/userAddModal.php"; ?>
+  <script src="../../assets/js/modal.js"></script>
   <script>
     function filterRole(role) {
       const url = new URL(window.location.href);

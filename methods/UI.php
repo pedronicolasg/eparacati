@@ -101,6 +101,7 @@ class UI
     public static function renderHeader($basePath, $carouselItems, $newsItems)
     {
         ?>
+
     <style>
       .carousel-slide {
         transition: transform 0.3s ease-in-out;
