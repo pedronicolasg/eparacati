@@ -58,10 +58,10 @@ require_once "../../methods/bootstrap.php";
     <main>
       <div class="max-w-7xl mx-auto px-4" style="margin-top: 15px;">
         <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-          <div class="p-4 flex items-center justify-between">
+          <div class="p-4 flex items-center justify-between gap-4">
             <div class="relative inline-block text-left">
               <button id="dropdownRadioButton" onclick="toggleDropdown()"
-                class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                class="h-10 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
                 type="button">
                 <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -119,20 +119,30 @@ require_once "../../methods/bootstrap.php";
               </div>
             </div>
 
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search w-4 h-4 text-gray-400">
-                </i>
-              </div>
-              <input type="text"
-                class="pl-10 pr-4 py-2 w-72 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                placeholder="Pesquisar usuários">
-                    <button onclick="openModal()" id="open-modal-btn" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                      <i class="fas fa-user-plus mr-2"></i> Adicionar Usuário
-                    </button>
-            </div>
+            <div class="flex items-center gap-4">
+              <div class="flex gap-2">
+                <button onclick="openUserAddModal()" id="useradd-open-modal-btn"
+                  class="h-10 px-3 inline-flex items-center justify-center border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <i class="fas fa-user-plus"></i>
+                </button>
 
+                <button onclick="openUserBulkAddModal()" id="bulkuseradd-open-modal-btn"
+                  class="h-10 px-3 inline-flex items-center justify-center border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <i class="far fa-file-excel"></i>
+                </button>
+              </div>
+
+              <div class="relative w-72">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-search w-4 h-4 text-gray-400"></i>
+                </div>
+                <input type="text"
+                  class="h-10 w-full pl-10 pr-4 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="Pesquisar usuários">
+              </div>
+            </div>
           </div>
+
           <div class="max-w-7xl mx-auto overflow-x-auto">
             <table class="w-full text-sm text-left">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -147,10 +157,9 @@ require_once "../../methods/bootstrap.php";
                 <?php
                 $selectedRole = isset($_GET["role"]) ? $_GET["role"] : null;
 
-                // Consulta SQL única com ou sem filtro
                 $sql = "SELECT u.id, u.name, u.email, u.role, u.profile_photo, u.class_id, c.name as class_name
-          FROM users u
-          LEFT JOIN classes c ON u.class_id = c.id";
+                        FROM users u
+                        LEFT JOIN classes c ON u.class_id = c.id";
 
                 if ($selectedRole) {
                     $sql .= " WHERE u.role = :role";
@@ -167,66 +176,69 @@ require_once "../../methods/bootstrap.php";
                 if ($stmt->rowCount() > 0) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <img class="w-10 h-10 rounded-full" src="' .
+                          <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                              <img class="w-10 h-10 rounded-full" src="' .
                             htmlspecialchars($row["profile_photo"]) .
                             '" alt="Foto do usuário">
-                  <div>
-                    <div class="font-medium text-gray-900 dark:text-white">
-                      <a href="../../perfil.php?id=' .
+                              <div>
+                                <div class="font-medium text-gray-900 dark:text-white">
+                                  <a href="../../perfil.php?id=' .
                             htmlspecialchars(Utils::hide($row["id"])) .
                             '">
-                        ' .
+                                    ' .
                             htmlspecialchars($row["name"]) .
                             '
-                      </a>
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                      ' .
+                                  </a>
+                                </div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                  ' .
                             htmlspecialchars($row["email"]) .
                             '
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                ' .
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                            ' .
                             htmlspecialchars($row["role"]) .
                             '
-              </td>
-              <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                ' .
+                          </td>
+                          <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                            ' .
                             htmlspecialchars($row["class_name"]) .
                             '
-              </td>
-              <td class="px-6 py-4">
-                <a href="../../methods/handlers/deleteUser.php?id=' .
+                          </td>
+                          <td class="px-6 py-4">
+                            <a href="../../methods/handlers/deleteUser.php?id=' .
                             htmlspecialchars($row["id"]) .
                             '" class="text-red-600 hover:underline dark:text-red-500">
-                  Deletar
-                </a>
-              </td>
-            </tr>';
+                              Deletar
+                            </a>
+                          </td>
+                        </tr>';
                     }
                 } else {
                     echo '<tr>
-            <td colspan="4" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td>
-          </tr>';
+                      <td colspan="4" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td>
+                    </tr>';
                 }
                 ?>
               </tbody>
-
             </table>
           </div>
         </div>
       </div>
-
     </main>
   </div>
 
-    <?php include_once "includes/userAddModal.php"; ?>
-  <script src="../../assets/js/modal.js"></script>
+
+  <?php include_once "includes/userAddModal.php"; ?>
+  <?php include_once "includes/userBulkAddModal.php"; ?>
+
+  <script src="../../assets/js/userAddModalController.js"></script>
+  <script src="../../assets/js/userBulkAddModalController.js"></script>
+
   <script>
     function filterRole(role) {
       const url = new URL(window.location.href);

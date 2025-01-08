@@ -72,7 +72,7 @@ class UserManager
         $stmt->execute([$newTheme, $userId]);
     }
 
-    public function register($name, $role, $email, $password, $class_id)
+    public function register($name, $email, $password, $role, $class_id)
     {
         $utils = new Utils($this->conn);
         $id = $utils->generateUniqueId(8, "users", "id");
@@ -84,10 +84,10 @@ class UserManager
         );
         $profile_photo = "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
 
-        if (empty($name) || empty($email) || empty($password)) {
+        if (empty($name) || empty($email) || empty($password || empty($role))) {
             Utils::alertAndRedirect(
                 "Preencha todos os campos!",
-                "../pages/register.page.php"
+                "../../dashboard/pages/usuarios.php"
             );
         }
 
@@ -96,7 +96,10 @@ class UserManager
         $stmt->execute([$email]);
 
         if ($stmt->fetchColumn()) {
-            Utils::alertAndRedirect("Email já cadastrado!", "./aluno.php");
+            Utils::alertAndRedirect(
+                "Email já cadastrado!",
+                "../../dashboard/pages/usuarios.php"
+            );
         } else {
             $sql = 'INSERT INTO users (id, name, email, password, role, class_id, profile_photo, created_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
@@ -115,12 +118,12 @@ class UserManager
             if ($stmt->execute($data)) {
                 Utils::alertAndRedirect(
                     "Usuário cadastrado com sucesso!",
-                    "./usuarios.php"
+                    "../../dashboard/pages/usuarios.php"
                 );
             } else {
                 Utils::alertAndRedirect(
                     "Erro ao cadastrar o usuário, tente novamente.",
-                    "./usuarios.php"
+                    "../../dashboard/pages/usuarios.php"
                 );
             }
         }
@@ -209,33 +212,7 @@ class UserManager
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
 
-        // Finaliza a sessão do usuário pelo ID
-        $this->terminateSessionById($id);
-
         return Utils::redirect("../../perfil.php?id=" . Utils::hide($id));
-    }
-
-    private function terminateSessionById($userId)
-    {
-        $sessionPath = ini_get("session.save_path"); // Caminho onde as sessões são armazenadas
-        $sessionFiles = scandir($sessionPath);
-
-        foreach ($sessionFiles as $sessionFile) {
-            if (strpos($sessionFile, "sess_") === 0) {
-                $sessionData = file_get_contents(
-                    $sessionPath . DIRECTORY_SEPARATOR . $sessionFile
-                );
-                if (
-                    str_contains(
-                        $sessionData,
-                        "\"id\";s:" . strlen($userId) . ":\"$userId\";"
-                    )
-                ) {
-                    unlink($sessionPath . DIRECTORY_SEPARATOR . $sessionFile); // Exclui a sessão
-                    break;
-                }
-            }
-        }
     }
 
     public static function logout($redirectPath)
