@@ -9,7 +9,6 @@ class UI
         $color = "green",
         $logo = "logo.svg"
     ) {
-        // Links do menu
         $links = [
             "Home" => "{$basePath}index.php",
             "Conexão Acadêmica" => "{$basePath}#",
