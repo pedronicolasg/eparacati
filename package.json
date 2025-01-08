@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "tailwind build -i assets/css/tailwind.css -o assets/css/style.css --watch"
+    "dev": "tailwind build -i assets/css/tailwind.css -o assets/css/style.css --watch",
+    "build": "tailwind build -i assets/css/tailwind.css -o assets/css/style.css"
   },
   "dependencies": {},
   "devDependencies": {

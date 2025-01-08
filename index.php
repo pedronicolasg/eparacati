@@ -1,7 +1,5 @@
 <?php
-require_once 'methods/bootstrap.php';
-
-?>
+require_once "methods/bootstrap.php"; ?>
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
 
@@ -16,23 +14,40 @@ require_once 'methods/bootstrap.php';
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <?php
-  UI::renderNavbar($currentUser, './', 'Home', 'green');
+  UI::renderNavbar($currentUser, "./", "Home", "green");
 
   $carouselItems = [
-    ["image" => "assets/images/carousel1.png", "title" => "Slide 1"],
-    ["image" => "assets/images/carousel2.png", "title" => "Slide 2"],
+      [
+          "image" => "https://placehold.co/800x400.png",
+          "text" => "Slide 1",
+      ],
+      ["image" => "https://placehold.co/800x400.png", "text" => "Slide 2"],
+      ["image" => "https://placehold.co/800x400.png", "text" => "Slide 3"],
   ];
 
-  UI::renderCarousel('./', $carouselItems);
+  $newsItems = [
+      [
+          "category" => "CATEGORIA DO ITEM",
+          "title" =>
+              "CONTEÚDO DO ITEM, EX: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      ],
+      [
+          "category" => "CATEGORIA DO ITEM",
+          "title" =>
+              "CONTEÚDO DO ITEM, EX: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      ],
+  ];
+
+  UI::renderHeader("./", $carouselItems, $newsItems);
   ?>
 
   <main class="flex flex-col items-center min-h-screen">
-    <h1 class="text-4xl font-bold">Olá, <?php echo $currentUser['name'] ?>!</h1>
+
   </main>
 
   <?php
-  UI::renderApps($currentUser['role']);
-  UI::renderFooter('./');
+  UI::renderApps($currentUser["role"]);
+  UI::renderFooter("./");
   ?>
 </body>
 

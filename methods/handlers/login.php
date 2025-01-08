@@ -1,4 +1,5 @@
 <?php
+$allowUnauthenticatedAccess = true;
 $basepath = '../../';
 require_once '../bootstrap.php';
 

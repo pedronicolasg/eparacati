@@ -9,7 +9,9 @@ require_once $basepath . 'methods/UI.php';
 
 $userManager = new UserManager($conn);
 
-$requiredRoles = $requiredRoles ?? ['aluno', 'lider', 'professor', 'gestao'];
-$currentUser = $userManager->verifySession($basepath . 'login.php', $requiredRoles);
+if (!isset($allowUnauthenticatedAccess) || !$allowUnauthenticatedAccess) {
+  $requiredRoles = $requiredRoles ?? ['aluno', 'lider', 'professor', 'gestao'];
+  $currentUser = $userManager->verifySession($basepath . 'login.php', $requiredRoles);
 
-$theme = $currentUser['website_theme'];
+  $theme = $currentUser['website_theme'];
+}
