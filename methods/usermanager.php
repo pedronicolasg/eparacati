@@ -2,14 +2,17 @@
 require_once "conn.php";
 require_once "utils.php";
 require_once "logger.php";
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 class UserManager
 {
-    private $conn;
-    private $logger;
+    private $conn, $utils, $logger;
 
     public function __construct($conn)
     {
         $this->conn = $conn;
+        $this->utils = new Utils($conn);
         $this->logger = new Logger($conn);
     }
 
@@ -74,8 +77,7 @@ class UserManager
 
     public function register($name, $email, $password, $role, $class_id)
     {
-        $utils = new Utils($this->conn);
-        $id = $utils->generateUniqueId(8, "users", "id");
+        $id = $this->utils->generateUniqueId(8, "users", "id");
         $created_at = date("d-m-Y H:i:s");
         $formatted_name = preg_replace(
             "/[^a-zA-Z]/",
@@ -85,7 +87,7 @@ class UserManager
         $profile_photo = "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
 
         if (empty($name) || empty($email) || empty($password || empty($role))) {
-            Utils::alertAndRedirect(
+            Utils::alert(
                 "Preencha todos os campos!",
                 "../../dashboard/pages/usuarios.php"
             );
@@ -96,7 +98,7 @@ class UserManager
         $stmt->execute([$email]);
 
         if ($stmt->fetchColumn()) {
-            Utils::alertAndRedirect(
+            Utils::alert(
                 "Email já cadastrado!",
                 "../../dashboard/pages/usuarios.php"
             );
@@ -116,16 +118,67 @@ class UserManager
             ];
 
             if ($stmt->execute($data)) {
-                Utils::alertAndRedirect(
+                Utils::alert(
                     "Usuário cadastrado com sucesso!",
                     "../../dashboard/pages/usuarios.php"
                 );
             } else {
-                Utils::alertAndRedirect(
+                Utils::alert(
                     "Erro ao cadastrar o usuário, tente novamente.",
                     "../../dashboard/pages/usuarios.php"
                 );
             }
+        }
+    }
+
+    public function bulkAddUsers($filePath)
+    {
+        try {
+            $spreadsheet = IOFactory::load($filePath);
+            $worksheet = $spreadsheet->getActiveSheet();
+            $rows = $worksheet->toArray();
+            array_shift($rows);
+
+            $results = ['success' => 0, 'errors' => []];
+
+            $stmt = $this->conn->prepare("
+                INSERT INTO users (id, name, email, password, role, class_id, profile_photo, created_at) 
+                VALUES (:id, :name, :email, :password, :role, :class_id, :profile_photo, :created_at)
+            ");
+
+            foreach ($rows as $index => $row) {
+                try {
+                    if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3])) {
+                        Utils::alert("Campos obrigatórios faltando");
+                    }
+
+                    $formatted_name = preg_replace(
+                        "/[^a-zA-Z]/",
+                        "",
+                        str_replace(" ", "", $row[0])
+                    );
+                    $profile_photo = "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
+
+                    $stmt->execute([
+                        ':id' => $this->utils->generateUniqueId(8, 'users'),
+                        ':name' => $row[0],
+                        ':email' => $row[1],
+                        ':password' => Utils::passw($row[2]),
+                        ':role' => $row[3],
+                        ':class_id' => !empty($row[4]) ? $row[4] : null,
+                        ':profile_photo' => $profile_photo,
+                        ':created_at' => date("d-m-Y H:i:s")
+                    ]);
+
+                    $results['success']++;
+                } catch (Exception $e) {
+                    $results['errors'][] = "Linha " . ($index + 2) . ": " . $e->getMessage();
+                }
+            }
+
+            return $results;
+        } catch (Exception $e) {
+           Utils::alert("Erro ao processar arquivo: " . $e->getMessage());
         }
     }
 
@@ -142,7 +195,6 @@ class UserManager
 
         if ($user) {
             if ($user["password"] === $password) {
-                session_start();
                 $_SESSION["id"] = $user["id"];
 
                 $path = "../../index.php";
@@ -150,12 +202,12 @@ class UserManager
             } else {
                 $msg = "Senha incorreta!";
                 $path = "../../login.php";
-                Utils::alertAndRedirect($msg, $path);
+                Utils::alert($msg, $path);
             }
         } else {
             $msg = "Email não cadastrado!";
             $path = "../../login.php";
-            Utils::alertAndRedirect($msg, $path);
+            Utils::alert($msg, $path);
         }
     }
 

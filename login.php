@@ -18,7 +18,8 @@
   </style>
 </head>
 
-<body class="h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://sinalnews.com.br/wp-content/uploads/2021/12/WhatsApp-Image-2021-12-08-at-22.22.04.jpeg');">
+<body class="h-screen flex items-center justify-center bg-cover bg-center"
+  style="background-image: url('assets/images/loginbackground.jpg');">
   <div class="glassmorphism p-8 rounded-lg shadow-lg w-96">
     <h2 class="text-2xl font-bold mb-6 text-center text-white">Login</h2>
     <form action="methods/handlers/login.php" method="POST">

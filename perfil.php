@@ -31,14 +31,14 @@ try {
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <?php UI::renderNavbar($currentUser,'./',) ?>
+  <?php UI::renderNavbar($currentUser, './',) ?>
 
   <div class="container mx-auto p-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div class="flex items-center">
-          <img src="<?php echo htmlspecialchars($user['profile_photo']); ?>"
-            alt="Foto do usuário" class="rounded-full w-24 h-24" />
+          <img src="<?php echo htmlspecialchars($user['profile_photo']); ?>" alt="Foto do usuário"
+            class="rounded-full w-24 h-24" />
           <div class="ml-4">
             <h2 class="text-2xl font-bold"><?php echo htmlspecialchars($user['name']); ?></h2>
             <p class="text-gray-500 dark:text-gray-400">

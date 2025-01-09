@@ -30,13 +30,17 @@ class Utils
     exit;
   }
 
-  public static function alertAndRedirect($message, $location)
+  public static function alert($message, $location = null)
   {
-    echo "<meta charset='UTF-8' />
+?>
+    <meta charset='UTF-8' />
     <script type='text/javascript'>
-      alert('$message');
-      location.href='$location';
-    </script>";
+      alert('<?= $message ?>');
+      <?php if (isset($location)) { ?>
+        location.href = '<?= $location ?>';
+      <?php } ?>
+    </script>
+<?php
     exit;
   }
 

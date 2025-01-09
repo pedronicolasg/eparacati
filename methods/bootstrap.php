@@ -6,6 +6,7 @@ require_once $basepath . 'methods/conn.php';
 require_once $basepath . 'methods/usermanager.php';
 require_once $basepath . 'methods/utils.php';
 require_once $basepath . 'methods/UI.php';
+require_once $basepath . "vendor/autoload.php";
 
 $userManager = new UserManager($conn);
 
