@@ -149,7 +149,7 @@ class UserManager
             foreach ($rows as $index => $row) {
                 try {
                     if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3])) {
-                        Utils::alert("Campos obrigatórios faltando");
+                        Utils::alert("Campos obrigatórios faltando", '../../dashboard/pages/usuarios.php');
                     }
 
                     $formatted_name = preg_replace(

@@ -2,13 +2,8 @@
 
 class UI
 {
-  public static function renderNavbar(
-    $currentUser,
-    $basePath,
-    $activePage = "Home",
-    $color = "green",
-    $logo = "logo.svg"
-  ) {
+  public static function renderNavbar($currentUser, $basePath, $activePage = "Home", $color = "green", $logo = "logo.svg")
+  {
     $links = [
       "Home" => "{$basePath}index.php",
       "Conexão Acadêmica" => "{$basePath}#",
@@ -67,21 +62,22 @@ class UI
             class="flex flex-wrap justify-center md:flex-nowrap font-medium p-4 md:p-0 border border-none rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-none">
             <?php foreach ($links as $name => $url): ?>
               <li>
-                <a href="<?php echo $url; ?>" class="block py-2 px-3 <?php echo $name === $activePage
-                                                                        ? "text-" .
-                                                                        $color .
-                                                                        "-600 bg-" .
-                                                                        $color .
-                                                                        "-700 rounded md:bg-transparent md:text-" .
-                                                                        $color .
-                                                                        "-700 md:dark:text-" .
-                                                                        $color .
-                                                                        "-500"
-                                                                        : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-" .
-                                                                        $color .
-                                                                        "-700 dark:text-white md:dark:hover:text-" .
-                                                                        $color .
-                                                                        "-500 dark:hover:bg-gray-700 dark:hover:text-white"; ?>">
+                <a href="<?php echo $url; ?>"
+                  class="block py-2 px-3 <?php echo $name === $activePage
+                                            ? "text-" .
+                                            $color .
+                                            "-600 bg-" .
+                                            $color .
+                                            "-700 rounded md:bg-transparent md:text-" .
+                                            $color .
+                                            "-700 md:dark:text-" .
+                                            $color .
+                                            "-500"
+                                            : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-" .
+                                            $color .
+                                            "-700 dark:text-white md:dark:hover:text-" .
+                                            $color .
+                                            "-500 dark:hover:bg-gray-700 dark:hover:text-white"; ?>">
                   <?php echo $name; ?>
                 </a>
               </li>

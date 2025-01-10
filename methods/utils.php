@@ -44,6 +44,19 @@ class Utils
     exit;
   }
 
+  public static function formatRoleName($role){
+    $roleMap = [
+      'aluno' => 'Aluno',
+      'professor' => 'Professor',
+      'gremio' => 'Grêmio',
+      'gestao' => 'Gestão',
+      'pdt' => 'PDT',
+      'funcionario' => 'Funcionário',
+  ];
+
+  return $roleMap[$role] ?? ucfirst($role);
+  }
+
   public function generateUniqueId(int $digits, string $tableName, string $columnName = 'id'): int
   {
     if ($digits <= 0) {

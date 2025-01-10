@@ -13,13 +13,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.classList.add(savedTheme);
-
-function toggleTheme() {
-  const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  document.documentElement.classList.replace(currentTheme, newTheme);
-  localStorage.setItem('theme', newTheme);
-}

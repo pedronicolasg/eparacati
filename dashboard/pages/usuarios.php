@@ -28,7 +28,7 @@ require_once "../../methods/bootstrap.php";
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
-          (<?php echo $currentUser["role"]; ?>)</h1>
+          (<?php echo Utils::formatRoleName($currentUser["role"]); ?>)</h1>
 
         <!-- Breadcrumb -->
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
@@ -154,7 +154,7 @@ require_once "../../methods/bootstrap.php";
                       $safeRole .
                       '"
                         class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">' .
-                      $safeRole .
+                      Utils::formatRoleName($safeRole) .
                       '</label>
                     </div>
                   </li>';
@@ -177,6 +177,7 @@ require_once "../../methods/bootstrap.php";
                 </button>
               </div>
 
+                <!-- SEARCH BAR -->
               <div class="relative w-72">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <i class="fas fa-search w-4 h-4 text-gray-400"></i>
@@ -252,7 +253,7 @@ require_once "../../methods/bootstrap.php";
                           </td>
                           <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
                             ' .
-                      htmlspecialchars($row["role"]) .
+                      htmlspecialchars(Utils::formatRoleName($row["role"])) .
                       '
                           </td>
                           <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
@@ -288,31 +289,8 @@ require_once "../../methods/bootstrap.php";
 
   <script src="../../assets/js/userAddModalController.js"></script>
   <script src="../../assets/js/userBulkAddModalController.js"></script>
-
-  <script>
-    function filterRole(role) {
-      const url = new URL(window.location.href);
-
-      if (role) {
-        url.searchParams.set('role', role);
-      } else {
-        url.searchParams.delete('role');
-      }
-
-      window.location.href = url.toString();
-    }
-
-    function toggleDropdown() {
-      const dropdown = document.getElementById("dropdownRadio");
-      dropdown.classList.toggle("hidden");
-    }
-
-    function filterUsers(role) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('role', role);
-      window.location.href = url;
-    }
-  </script>
+  <script src="../../assets/js/filterDropdown.js"></script>
+  <script src="../../assets/js/searchbar.js"></script>
 </body>
 
 </html>

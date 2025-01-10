@@ -43,7 +43,7 @@ try {
             <h2 class="text-2xl font-bold"><?php echo htmlspecialchars($user['name']); ?></h2>
             <p class="text-gray-500 dark:text-gray-400">
               <?php
-              echo htmlspecialchars($user['role']);
+              echo htmlspecialchars(Utils::formatRoleName($user['role']));
               if (!empty($user['class_id'])) {
                 echo " | Turma: " . htmlspecialchars($user['class_id']);
               }
