@@ -1,4 +1,4 @@
 <?php
-$requiredRoles = ['lider', 'professor', 'gestao'];
+$requiredRoles = ['gestao'];
 $basepath = '../../';
 require_once '../../methods/bootstrap.php';

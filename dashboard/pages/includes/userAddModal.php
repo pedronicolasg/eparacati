@@ -15,7 +15,7 @@
             </button>
         </div>
 
-        <form action="../../methods/handlers/register.php" method="POST" class="p-4 md:p-5">
+        <form action="../../methods/handlers/user/register.php" method="POST" class="p-4 md:p-5">
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
@@ -37,26 +37,47 @@
                 </div>
                 <div class="col-span-2 sm:col-span-1">
                     <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cargo</label>
-                    <select type="role" id="role" name="role"
+                    <select type="role" id="role" name="role" onchange="toggleClassSelector()"
                         class="bg-gray-50 border border-gray-300 text-sm rounded-lg w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white">
-                        <option value="aluno" selected>Aluno</option>
+                        <option value="" select>Selecione</option>
+                        <option value="aluno">Aluno</option>
                         <option value="professor">Professor</option>
                         <option value="gestao">Gestão</option>
                     </select>
                 </div>
-                <div class="col-span-2 sm:col-span-1">
+                <div class="col-span-2 sm:col-span-1" id="class-selector" style="display: none;">
                     <label for="class" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Turma</label>
-                    <select id="class"
+                    <select id="class" name="class"
                         class="bg-gray-50 border border-gray-300 text-sm rounded-lg w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white">
-                        <option selected>Selecione</option>
-                        <!--Adicionar dps a lógica de listar as turmas e de ignorar se o usuário = !aluno-->
+                        <option value="" selected>Selecionar</option>
+                        <?php
+                        // global $classManager;
+                        $classes = $classManager->getAllClasses();
+
+                        foreach ($classes as $class): ?>
+                            <option value="<?php echo $class['id']; ?>"> <?php echo $class['name']; ?> </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
+
             </div>
-            <button type="submit"
-                class="w-full text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-4 py-2.5 text-sm font-medium text-center">
+            <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-4 py-2.5 text-sm font-medium text-center">
                 <i class="fas fa-user-plus mr-2"></i> Cadastrar
             </button>
         </form>
     </div>
 </div>
+
+<script>
+    function toggleClassSelector() {
+        var roleSelector = document.getElementById('role');
+        var classSelector = document.getElementById('class-selector');
+        var classSelect = document.getElementById('class');
+        if (roleSelector.value === 'aluno') {
+            classSelector.style.display = 'block';
+        } else {
+            classSelector.style.display = 'none';
+            classSelect.selectedIndex = 0;
+        }
+    }
+</script>

@@ -1,18 +1,18 @@
 <?php
-$basepath = "../../";
+$basepath = "../../../";
 $requiredRoles = ["gestao"];
-require_once '../bootstrap.php';
-$usersPagePath = '../../dashboard/pages/usuarios.php';
+require_once "../../bootstrap.php";
+$classesPagePath = '../../../dashboard/pages/turmas.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   $_SESSION['upload_error'] = "Método inválido";
-  Utils::redirect($usersPagePath);
+  Utils::redirect($classesPagePath);
   exit;
 }
 
 try {
   if (!isset($_FILES['excel_file'])) {
-    Utils::alert("Nenhum arquivo enviado", $usersPagePath);
+    Utils::alert("Nenhum arquivo enviado", $classesPagePath);
   }
 
   $allowedTypes = [
@@ -21,15 +21,15 @@ try {
   ];
 
   if (!in_array($_FILES['excel_file']['type'], $allowedTypes)) {
-    Utils::alert("Tipo de arquivo inválido. Use .xlsx ou .xls", $usersPagePath);
+    Utils::alert("Tipo de arquivo inválido. Use .xlsx ou .xls", $classesPagePath);
   }
 
-  $result = $userManager->bulkAddUsers($_FILES['excel_file']['tmp_name']);
+  $result = $classManager->bulkCreateClass($_FILES['excel_file']['tmp_name']);
 
   $_SESSION['upload_success'] = $result['success'];
   $_SESSION['upload_errors'] = $result['errors'];
 
-  Utils::redirect($usersPagePath);
+  Utils::redirect($classesPagePath);
 } catch (Exception $e) {
-  Utils::alert($_SESSION['upload_error'] = $e->getMessage(), $usersPagePath);
+  Utils::alert($_SESSION['upload_error'] = $e->getMessage(), $classesPagePath);
 }

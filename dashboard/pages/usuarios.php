@@ -1,5 +1,5 @@
 <?php
-$requiredRoles = ["lider", "professor", "gestao"];
+$requiredRoles = ["gestao"];
 $basepath = "../../";
 require_once "../../methods/bootstrap.php";
 ?>
@@ -56,53 +56,65 @@ require_once "../../methods/bootstrap.php";
     </header>
 
     <main>
-      <div class="max-w-7xl mx-auto px-4" style="margin-top: 15px;">
+      <div class="max-w-7xl mx-auto px-4 mt-5">
         <?php if (isset($_SESSION['upload_success']) && $_SESSION['upload_success'] > 0): ?>
-          <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
-            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 1 1 1 1v4h1a1 1 0 1 1 0 2Z" />
+          <div
+            class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
+            role="alert">
+            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 1 1 1 1v4h1a1 1 0 1 1 0 2Z" />
             </svg>
             <span class="sr-only">Sucesso</span>
             <div>
-              <span class="font-medium">Sucesso!</span> <?= htmlspecialchars($_SESSION['upload_success'], ENT_QUOTES, 'UTF-8') ?> usuários cadastrados com sucesso!
+              <span class="font-medium">Sucesso!</span>
+              <?= htmlspecialchars($_SESSION['upload_success'], ENT_QUOTES, 'UTF-8') ?> usuários cadastrados com sucesso!
             </div>
           </div>
-          <?php endif; ?>
-          <?php if (!empty($_SESSION['upload_errors'])): ?>
-            <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              </svg>
-              <span class="sr-only">Erro</span>
-              <div>
-                <span class="font-medium">Erro ao cadastrar usuários:</span>
-                <ul class="mt-1.5 list-disc list-inside">
-                  <?php foreach ($_SESSION['upload_errors'] as $error): ?>
-                    <li><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></li>
-                  <?php endforeach; ?>
-                </ul>
-              </div>
-            </div>
-          <?php endif; ?>
-
-          <?php
-          unset($_SESSION['upload_success'], $_SESSION['upload_errors']);
-          ?>
-
-        <?php if (isset($_SESSION['upload_error'])): ?>
-          <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-            <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        <?php endif; ?>
+        <?php if (!empty($_SESSION['upload_errors'])): ?>
+          <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+            role="alert">
+            <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
             <span class="sr-only">Erro</span>
             <div>
-              <span class="font-medium">Erro:</span> <?= htmlspecialchars($_SESSION['upload_error'], ENT_QUOTES, 'UTF-8') ?>
+              <span class="font-medium">Erro ao cadastrar usuários:</span>
+              <ul class="mt-1.5 list-disc list-inside">
+                <?php foreach ($_SESSION['upload_errors'] as $error): ?>
+                  <li><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <?php
+        unset($_SESSION['upload_success'], $_SESSION['upload_errors']);
+        ?>
+
+        <?php if (isset($_SESSION['upload_error'])): ?>
+          <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+            role="alert">
+            <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <span class="sr-only">Erro</span>
+            <div>
+              <span class="font-medium">Erro:</span>
+              <?= htmlspecialchars($_SESSION['upload_error'], ENT_QUOTES, 'UTF-8') ?>
             </div>
           </div>
           <?php unset($_SESSION['upload_error']); ?>
         <?php endif; ?>
 
-        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden mb-5">
           <div class="p-4 flex items-center justify-between gap-4">
             <div class="relative inline-block text-left">
               <button id="dropdownRadioButton" onclick="toggleDropdown()"
@@ -140,24 +152,18 @@ require_once "../../methods/bootstrap.php";
                     ->fetchAll(PDO::FETCH_COLUMN);
                   foreach ($roles as $role) {
                     $safeRole = htmlspecialchars($role, ENT_QUOTES, "UTF-8");
-                    echo '
-                  <li>
-                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                      <input id="filter-radio-' .
-                      $safeRole .
-                      '" type="radio" name="filter-radio" value="' .
-                      $safeRole .
-                      '"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onchange="filterUsers(this.value)">
-                      <label for="filter-radio-' .
-                      $safeRole .
-                      '"
-                        class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">' .
-                      Utils::formatRoleName($safeRole) .
-                      '</label>
-                    </div>
-                  </li>';
+                  ?>
+                    <li>
+                      <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <input id="filter-radio-<?= $safeRole ?>" type="radio" name="filter-radio"
+                          value="<?= $safeRole ?>"
+                          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          onchange="filterUsers(this.value)">
+                        <label for="filter-radio-<?= $safeRole ?>"
+                          class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= Utils::formatRoleName($safeRole) ?></label>
+                      </div>
+                    </li>
+                  <?php
                   }
                   ?>
                 </ul>
@@ -177,7 +183,6 @@ require_once "../../methods/bootstrap.php";
                 </button>
               </div>
 
-                <!-- SEARCH BAR -->
               <div class="relative w-72">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <i class="fas fa-search w-4 h-4 text-gray-400"></i>
@@ -205,8 +210,8 @@ require_once "../../methods/bootstrap.php";
                 $selectedRole = isset($_GET["role"]) ? $_GET["role"] : null;
 
                 $sql = "SELECT u.id, u.name, u.email, u.role, u.profile_photo, u.class_id, c.name as class_name
-                        FROM users u
-                        LEFT JOIN classes c ON u.class_id = c.id";
+                    FROM users u
+                    LEFT JOIN classes c ON u.class_id = c.id";
 
                 if ($selectedRole) {
                   $sql .= " WHERE u.role = :role";
@@ -222,58 +227,52 @@ require_once "../../methods/bootstrap.php";
 
                 if ($stmt->rowCount() > 0) {
                   while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    echo '<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                          <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full" src="' .
-                      htmlspecialchars($row["profile_photo"]) .
-                      '" alt="Foto do usuário">
-                              <div>
-                                <div class="font-medium text-gray-900 dark:text-white">
-                                  <a href="../../perfil.php?id=' .
-                      htmlspecialchars(Utils::hide($row["id"])) .
-                      '">
-                                    ' .
-                      htmlspecialchars($row["name"]) .
-                      '
-                                  </a>
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
-                                  ' .
-                      htmlspecialchars($row["email"]) .
-                      '
-                                </div>
-                              </div>
+                ?>
+                    <tr
+                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <img class="w-10 h-10 rounded-full" src="<?= htmlspecialchars($row["profile_photo"]) ?>"
+                            alt="Foto do usuário">
+                          <div>
+                            <div class="font-medium text-gray-900 dark:text-white">
+                              <a href="../../perfil.php?id=<?= htmlspecialchars(Utils::hide($row["id"])) ?>">
+                                <?= htmlspecialchars($row["name"]) ?>
+                              </a>
                             </div>
-                          </td>
-                          <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                            ' .
-                      htmlspecialchars($row["id"]) .
-                      '
-                          </td>
-                          <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                            ' .
-                      htmlspecialchars(Utils::formatRoleName($row["role"])) .
-                      '
-                          </td>
-                          <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                            ' .
-                      htmlspecialchars($row["class_name"]) .
-                      '
-                          </td>
-                          <td class="px-6 py-4">
-                            <a href="../../methods/handlers/deleteUser.php?id=' .
-                      htmlspecialchars($row["id"]) .
-                      '" class="text-red-600 hover:underline dark:text-red-500">
-                              Deletar
-                            </a>
-                          </td>
-                        </tr>';
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                              <?= htmlspecialchars($row["email"]) ?>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                        <?= htmlspecialchars($row["id"]) ?>
+                      </td>
+                      <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                        <?= htmlspecialchars(Utils::formatRoleName($row["role"], true)) ?>
+                      </td>
+                      <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                        <a href="<?= htmlspecialchars('turmas.php?id=' . Utils::hide($row['class_id'])); ?>"
+                          class="text-green-600 hover:underline dark:text-green-500">
+                          <?= htmlspecialchars($row["class_name"]) ?>
+                        </a>
+                      </td>
+                      <td class="px-6 py-4">
+                        <a href="../../perfil.php?id=<?= htmlspecialchars(Utils::hide($row["id"])) ?>&editPanel"
+                          class="font-bold text-blue-600 hover:underline dark:text-blue-500">
+                          Editar
+                        </a>
+                      </td>
+                    </tr>
+                  <?php
                   }
                 } else {
-                  echo '<tr>
-                      <td colspan="4" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td>
-                    </tr>';
+                  ?>
+                  <tr>
+                    <td colspan="5" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td>
+                  </tr>
+                <?php
                 }
                 ?>
               </tbody>
@@ -289,8 +288,8 @@ require_once "../../methods/bootstrap.php";
 
   <script src="../../assets/js/userAddModalController.js"></script>
   <script src="../../assets/js/userBulkAddModalController.js"></script>
-  <script src="../../assets/js/filterDropdown.js"></script>
-  <script src="../../assets/js/searchbar.js"></script>
+  <script src="../../assets/js/userSearchBarController.js"></script>
+  <script src="../../assets/js/userFilterDropdown.js"></script>
 </body>
 
 </html>

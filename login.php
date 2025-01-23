@@ -1,3 +1,12 @@
+<?php
+require_once 'methods/utils.php';
+@session_start();
+
+if (isset($_SESSION['id'])) {
+  Utils::redirect('index.php');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -22,7 +31,7 @@
   style="background-image: url('assets/images/loginbackground.jpg');">
   <div class="glassmorphism p-8 rounded-lg shadow-lg w-96">
     <h2 class="text-2xl font-bold mb-6 text-center text-white">Login</h2>
-    <form action="methods/handlers/login.php" method="POST">
+    <form action="methods/handlers/user/login.php" method="POST">
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-white mb-2">Email</label>
         <input type="email" id="email" name="email" required

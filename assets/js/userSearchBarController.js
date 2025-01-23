@@ -2,23 +2,21 @@ function searchTable() {
   const searchInput = document.querySelector('input[placeholder="Pesquisar usuários"]');
   const tableRows = document.querySelectorAll('table tbody tr');
 
-  searchInput.addEventListener('input', function () {
-    const searchTerm = this.value.toLowerCase().trim();
+  const getTextContent = (row, selector) => row.querySelector(selector)?.textContent.toLowerCase().trim() || '';
 
+  const filterRows = (searchTerm) => {
     tableRows.forEach(row => {
-      const name = row.querySelector('td:first-child .font-medium')?.textContent.toLowerCase().trim() || '';
-      const id = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase().trim() || '';
-      const email = row.querySelector('td:first-child .text-gray-500')?.textContent.toLowerCase().trim() || '';
-      const className = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase().trim() || '';
+      const name = getTextContent(row, 'td:first-child .font-medium');
+      const id = getTextContent(row, 'td:nth-child(2)');
+      const email = getTextContent(row, 'td:first-child .text-gray-500');
+      const className = getTextContent(row, 'td:nth-child(4)');
 
-      const matches = name.includes(searchTerm) ||
-        id.includes(searchTerm) ||
-        email.includes(searchTerm) ||
-        className.includes(searchTerm);
-
+      const matches = [name, id, email, className].some(text => text.includes(searchTerm));
       row.style.display = matches ? '' : 'none';
     });
+  };
 
+  const handleNoResults = (searchTerm) => {
     const visibleRows = [...tableRows].filter(row => row.style.display !== 'none');
     const noResultsRow = document.querySelector('tr.no-results');
 
@@ -37,6 +35,12 @@ function searchTable() {
     } else if (noResultsRow) {
       noResultsRow.remove();
     }
+  };
+
+  searchInput.addEventListener('input', function () {
+    const searchTerm = this.value.toLowerCase().trim();
+    filterRows(searchTerm);
+    handleNoResults(searchTerm);
   });
 }
 

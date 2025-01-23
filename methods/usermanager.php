@@ -1,22 +1,21 @@
 <?php
 require_once "conn.php";
 require_once "utils.php";
-require_once "logger.php";
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UserManager
 {
-    private $conn, $utils, $logger;
+    private $conn;
+    private $utils;
 
     public function __construct($conn)
     {
         $this->conn = $conn;
         $this->utils = new Utils($conn);
-        $this->logger = new Logger($conn);
     }
 
-    public function verifySession($redirectPath, $allowedRoles = null)
+    public function verifySession($redirectPath, $allowedRoles = null, $allowedUsers = null)
     {
         if (!isset($_SESSION["id"])) {
             Utils::redirect($redirectPath);
@@ -25,15 +24,7 @@ class UserManager
 
         $userInfo = $this->getUserInfo($_SESSION["id"]);
 
-        if (empty($userInfo)) {
-            Utils::redirect($redirectPath);
-            exit();
-        }
-
-        if (
-            $allowedRoles !== null &&
-            !in_array($userInfo["role"], $allowedRoles)
-        ) {
+        if (empty($userInfo) || $allowedRoles !== null && !in_array($userInfo["role"], $allowedRoles)) {
             Utils::redirect($redirectPath);
             exit();
         }
@@ -41,18 +32,27 @@ class UserManager
         return $userInfo;
     }
 
-    public function getUserInfo($identifier, $type = "id")
+    public function getUserInfo($identifier, $type = "id", $fields = [])
     {
+        $defaultFields = ["id"];
+        $allowedFields = ["id", "name", "email", "role", "class_id", "profile_photo", "bio", "website_theme", "created_at", "updated_at"];
+
+        if (empty($fields)) {
+            $fields = $allowedFields;
+        } else {
+            $fields = array_intersect($fields, $allowedFields);
+            $fields = array_unique(array_merge($defaultFields, $fields));
+        }
+
+        $sqlFields = implode(", ", $fields);
         $sql = "";
         $params = [];
 
         if ($type === "id") {
-            $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
-                      FROM users WHERE id = :id";
+            $sql = "SELECT $sqlFields FROM users WHERE id = :id";
             $params = ["id" => $identifier];
         } elseif ($type === "email") {
-            $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
-                      FROM users WHERE email = :email";
+            $sql = "SELECT $sqlFields FROM users WHERE email = :email";
             $params = ["email" => $identifier];
         }
 
@@ -62,34 +62,25 @@ class UserManager
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
 
-    public function toggleTheme($userId)
+    public function getUsersByRole($role)
     {
-        $userInfo = $this->getUserInfo($userId, "id");
-
-        $currentTheme = $userInfo["website_theme"];
-        $newTheme = $currentTheme === "light" ? "dark" : "light";
-
-        $stmt = $this->conn->prepare(
-            "UPDATE users SET website_theme = ? WHERE id = ?"
-        );
-        $stmt->execute([$newTheme, $userId]);
+        $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
+                FROM users WHERE role = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$role]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function register($name, $email, $password, $role, $class_id)
+    public function register($name, $email, $password, $role, $class_id, $alerts = true)
     {
         $id = $this->utils->generateUniqueId(8, "users", "id");
         $created_at = date("d-m-Y H:i:s");
-        $formatted_name = preg_replace(
-            "/[^a-zA-Z]/",
-            "",
-            str_replace(" ", "", $name)
-        );
-        $profile_photo = "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
+        $profile_photo = Utils::generateDefaultPFP($name);
 
-        if (empty($name) || empty($email) || empty($password || empty($role))) {
+        if (empty($name) || empty($email) || empty($password || empty($role)) && $alerts) {
             Utils::alert(
                 "Preencha todos os campos!",
-                "../../dashboard/pages/usuarios.php"
+                "../../../dashboard/pages/usuarios.php"
             );
         }
 
@@ -98,13 +89,15 @@ class UserManager
         $stmt->execute([$email]);
 
         if ($stmt->fetchColumn()) {
-            Utils::alert(
-                "Email já cadastrado!",
-                "../../dashboard/pages/usuarios.php"
-            );
+            if ($alerts) {
+                Utils::alert(
+                    "Email já cadastrado!",
+                    "../../../dashboard/pages/usuarios.php"
+                );
+            }
         } else {
-            $sql = 'INSERT INTO users (id, name, email, password, role, class_id, profile_photo, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            $sql = 'INSERT INTO users (id, name, email, password, role, class_id, profile_photo, website_theme, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt = $this->conn->prepare($sql);
             $data = [
                 $id,
@@ -114,20 +107,10 @@ class UserManager
                 $role,
                 $class_id,
                 $profile_photo,
+                'light',
                 $created_at,
             ];
-
-            if ($stmt->execute($data)) {
-                Utils::alert(
-                    "Usuário cadastrado com sucesso!",
-                    "../../dashboard/pages/usuarios.php"
-                );
-            } else {
-                Utils::alert(
-                    "Erro ao cadastrar o usuário, tente novamente.",
-                    "../../dashboard/pages/usuarios.php"
-                );
-            }
+            $stmt->execute($data);
         }
     }
 
@@ -141,35 +124,14 @@ class UserManager
 
             $results = ['success' => 0, 'errors' => []];
 
-            $stmt = $this->conn->prepare("
-                INSERT INTO users (id, name, email, password, role, class_id, profile_photo, created_at) 
-                VALUES (:id, :name, :email, :password, :role, :class_id, :profile_photo, :created_at)
-            ");
-
             foreach ($rows as $index => $row) {
                 try {
                     if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3])) {
-                        Utils::alert("Campos obrigatórios faltando", '../../dashboard/pages/usuarios.php');
+                        $results['errors'][] = "Linha " . ($index + 2) . ": Campos obrigatórios faltando";
+                        continue;
                     }
 
-                    $formatted_name = preg_replace(
-                        "/[^a-zA-Z]/",
-                        "",
-                        str_replace(" ", "", $row[0])
-                    );
-                    $profile_photo = "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
-
-                    $stmt->execute([
-                        ':id' => $this->utils->generateUniqueId(8, 'users'),
-                        ':name' => $row[0],
-                        ':email' => $row[1],
-                        ':password' => Utils::passw($row[2]),
-                        ':role' => $row[3],
-                        ':class_id' => !empty($row[4]) ? $row[4] : null,
-                        ':profile_photo' => $profile_photo,
-                        ':created_at' => date("d-m-Y H:i:s")
-                    ]);
-
+                    $this->register($row[0], $row[1], $row[2], $row[3], !empty($row[4]) ? $row[4] : null, false);
                     $results['success']++;
                 } catch (Exception $e) {
                     $results['errors'][] = "Linha " . ($index + 2) . ": " . $e->getMessage();
@@ -178,7 +140,7 @@ class UserManager
 
             return $results;
         } catch (Exception $e) {
-           Utils::alert("Erro ao processar arquivo: " . $e->getMessage());
+            Utils::alert("Erro ao processar arquivo: " . $e->getMessage());
         }
     }
 
@@ -187,8 +149,7 @@ class UserManager
         $email = Utils::sanitizeInput($email);
         $password = Utils::passw($password);
 
-        $sql =
-            "SELECT id, name, email, password, role, class_id, profile_photo FROM users WHERE email = :email";
+        $sql = "SELECT id, email, password FROM users WHERE email = :email";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(["email" => $email]);
         $user = $stmt->fetch();
@@ -197,58 +158,34 @@ class UserManager
             if ($user["password"] === $password) {
                 $_SESSION["id"] = $user["id"];
 
-                $path = "../../index.php";
+                $path = "../../../index.php";
                 Utils::redirect($path);
             } else {
                 $msg = "Senha incorreta!";
-                $path = "../../login.php";
+                $path = "../../../login.php";
                 Utils::alert($msg, $path);
             }
         } else {
             $msg = "Email não cadastrado!";
-            $path = "../../login.php";
+            $path = "../../../login.php";
             Utils::alert($msg, $path);
         }
     }
 
-    public function editUser($id, $name, $email, $password, $role, $class_id)
+    public function editUser($id, $data)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = :id");
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $currentUser = $stmt->fetch(PDO::FETCH_ASSOC);
+        $currentUser = $this->getUserInfo($id);
 
         $updateFields = [];
         $params = [];
 
-        if ($name !== null && $name !== $currentUser["name"]) {
-            $updateFields[] = "name = :name";
-            $params[":name"] = $name;
-            /*$params[':profile_photo'] = "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=random&color=fff";
-             $updateFields[] = "profile_photo = :profile_photo";*/
+        foreach ($data as $field => $value) {
+            if ($value !== null && $value !== $currentUser[$field]) {
+                $updateFields[] = "$field = :$field";
+                $params[":$field"] = $value;
+            }
         }
 
-        if ($email !== null && $email !== $currentUser["email"]) {
-            $updateFields[] = "email = :email";
-            $params[":email"] = $email;
-        }
-
-        if ($password !== null && $password !== "") {
-            $updateFields[] = "password = :password";
-            $params[":password"] = $password;
-        }
-
-        if ($role !== null && $role !== $currentUser["role"]) {
-            $updateFields[] = "role = :role";
-            $params[":role"] = $role;
-        }
-
-        if ($class_id !== null && $class_id !== $currentUser["class_id"]) {
-            $updateFields[] = "class_id = :class_id";
-            $params[":class_id"] = $class_id;
-        }
-
-        // Só atualiza se mudou algo
         if (empty($updateFields)) {
             return true;
         }
@@ -257,14 +194,38 @@ class UserManager
         $params[":updated_at"] = date("d-m-Y H:i:s");
         $params[":id"] = $id;
 
-        $sql =
-            "UPDATE users SET " .
-            implode(", ", $updateFields) .
-            " WHERE id = :id";
+        $sql = "UPDATE users SET " . implode(", ", $updateFields) . " WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
+    }
 
-        return Utils::redirect("../../perfil.php?id=" . Utils::hide($id));
+    public function updateUserTheme($userId)
+    {
+        $userInfo = $this->getUserInfo($userId, "id", ["website_theme"]);
+
+        $currentTheme = $userInfo["website_theme"];
+        $newTheme = $currentTheme === "light" ? "dark" : "light";
+
+        $stmt = $this->conn->prepare(
+            "UPDATE users SET website_theme = ? WHERE id = ?"
+        );
+        $stmt->execute([$newTheme, $userId]);
+    }
+
+    public function updateUserRole($userId, $role)
+    {
+        if ($userId) {
+            $stmt = $this->conn->prepare('UPDATE users SET role = ? WHERE id = ?');
+            $stmt->execute([$role, $userId]);
+        }
+    }
+
+    public function updateUserClass($userId, $classId)
+    {
+        if ($userId) {
+            $stmt = $this->conn->prepare('UPDATE users SET class_id = ? WHERE id = ?');
+            $stmt->execute([$classId, $userId]);
+        }
     }
 
     public static function logout($redirectPath)
@@ -278,9 +239,7 @@ class UserManager
 
     public function deleteUser($id)
     {
-        $sql = "DELETE FROM users WHERE id = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$id]);
     }
 }

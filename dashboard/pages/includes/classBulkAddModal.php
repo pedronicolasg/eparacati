@@ -1,11 +1,11 @@
-<div id="userBulkAddModal" tabindex="-1" aria-hidden="true"
+<div id="classBulkAddModal" tabindex="-1" aria-hidden="true"
     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300 ease-in-out opacity-0">
     <div class="relative w-full max-w-md max-h-full bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Cadastrar vários usuários
+                Cadastrar várias Turmas
             </h3>
-            <button onclick="closeUserBulkAddModal()" id="bulkuseradd-close-modal-btn" type="button"
+            <button onclick="closeclassBulkAddModal()" id="bulkclassadd-close-modal-btn" type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white">
                 <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" aria-hidden="true">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -16,11 +16,11 @@
         </div>
 
 
-        <form action="../../methods/handlers/user/bulkregister.php" method="POST" enctype="multipart/form-data"
+        <form action="../../methods/handlers/class/bulkCreate.php" method="POST" enctype="multipart/form-data"
             class="p-4 md:p-5">
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="col-span-2">
-                    <a href="../../assets/docs/Modelo_Cadastro_Usuários.xlsx" type="button"
+                    <a href="../../assets/docs/Modelo_Cadastro_Turmas.xlsx" type="button"
                         class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-blue-600 dark:border-blue-600 dark:hover:text-white dark:hover:bg-blue-700">
                         <svg class="w-3 h-3 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 20 20">

@@ -23,38 +23,57 @@ class Utils
 
   public static function redirect($location)
   {
-    echo "<meta charset='UTF-8' />
-    <script type='text/javascript'>
-      location.href='$location';
-    </script>";
-    exit;
+    self::outputScript("location.href='$location';");
   }
 
   public static function alert($message, $location = null)
   {
-?>
-    <meta charset='UTF-8' />
+    $script = "alert('$message');";
+    if ($location !== null) {
+      $script .= "location.href='$location';";
+    }
+    self::outputScript($script);
+  }
+
+  private static function outputScript($script)
+  {
+    echo "<meta charset='UTF-8' />
     <script type='text/javascript'>
-      alert('<?= $message ?>');
-      <?php if (isset($location)) { ?>
-        location.href = '<?= $location ?>';
-      <?php } ?>
-    </script>
-<?php
+      $script
+    </script>";
     exit;
   }
 
-  public static function formatRoleName($role){
+  public static function generateDefaultPFP($userName)
+  {
+    $formatted_name = preg_replace(
+      "/[^a-zA-Z]/",
+      "",
+      str_replace(" ", "", $userName)
+    );
+    return "https://ui-avatars.com/api/?name=$formatted_name&background=random&color=fff";
+  }
+
+  public static function formatRoleName($role, $forUser = false)
+  {
     $roleMap = [
       'aluno' => 'Aluno',
-      'professor' => 'Professor',
+      'lider' => 'Líder',
+      'vice_lider' => 'Vice-Líder',
       'gremio' => 'Grêmio',
-      'gestao' => 'Gestão',
+      'professor' => 'Professor',
       'pdt' => 'PDT',
       'funcionario' => 'Funcionário',
-  ];
+      'gestao' => 'Gestão',
+    ];
 
-  return $roleMap[$role] ?? ucfirst($role);
+    if ($forUser) {
+      array_walk($roleMap, function (&$role) {
+        $role = str_replace(['Aluno', 'Professor', 'Funcionário', 'Gestão'], ['Aluno(a)', 'Professor(a)', 'Funcionário(a)', 'Gestor(a)'], $role);
+      });
+    }
+
+    return $roleMap[$role] ?? ucfirst($role);
   }
 
   public function generateUniqueId(int $digits, string $tableName, string $columnName = 'id'): int
@@ -63,8 +82,8 @@ class Utils
       throw new InvalidArgumentException('The number of digits must be greater than 0.');
     }
 
-    $min = (int) str_pad('1', $digits, '0'); // Valor mínimo (ex: 1 para 8 dígitos seria 10000000)
-    $max = (int) str_pad('9', $digits, '9'); // Valor máximo (ex: 8 dígitos seria 99999999)
+    $min = (int) str_pad('1', $digits, '0');
+    $max = (int) str_pad('9', $digits, '9');
 
     do {
       $randomId = random_int($min, $max);
