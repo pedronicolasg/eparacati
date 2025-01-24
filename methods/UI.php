@@ -287,7 +287,7 @@ class UI
                   class="block w-full text-sm text-gray-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-green-700 hover:file:bg-gray-300 dark:file:bg-gray-700 dark:file:text-green-500 dark:hover:file:bg-gray-600 file:w-auto file:cursor-pointer">
               </div>
               <button type="button"
-                onclick="document.getElementById('profile_photo').value = ''; document.getElementById('output').src = '<?php echo Utils::generateDefaultPFP($user['name']) ?>';"
+                onclick="if(confirm('Tem certeza que deseja deletar a foto de perfil?')) { window.location.href='methods/handlers/user/deletePFP.php?id=<?php echo Utils::hide($user['id']); ?>'; }"
                 class="w-9 h-9 bg-red-600 text-white rounded-lg p-2 hover:bg-red-700 transition-all">
                 <i class="fas fa-times text-white"></i>
               </button>

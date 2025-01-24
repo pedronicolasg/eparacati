@@ -1,6 +1,7 @@
 <?php
 require_once "conn.php";
 require_once "utils.php";
+require_once "fileUploader.php";
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -8,14 +9,16 @@ class UserManager
 {
     private $conn;
     private $utils;
+    private $fileUploader;
 
     public function __construct($conn)
     {
         $this->conn = $conn;
         $this->utils = new Utils($conn);
+        $this->fileUploader = new FileUploader($conn);
     }
 
-    public function verifySession($redirectPath, $allowedRoles = null, $allowedUsers = null)
+    public function verifySession($redirectPath, $allowedRoles = null)
     {
         if (!isset($_SESSION["id"])) {
             Utils::redirect($redirectPath);
@@ -73,7 +76,7 @@ class UserManager
 
     public function register($name, $email, $password, $role, $class_id, $alerts = true)
     {
-        $id = $this->utils->generateUniqueId(8, "users", "id");
+        $id = uniqid();
         $created_at = date("d-m-Y H:i:s");
         $profile_photo = Utils::generateDefaultPFP($name);
 
@@ -180,7 +183,16 @@ class UserManager
         $params = [];
 
         foreach ($data as $field => $value) {
-            if ($value !== null && $value !== $currentUser[$field]) {
+            if ($field === 'profile_photo' && $value !== null) {
+                $profilePhotoPath = $this->updateUserProfilePhoto($value, $id);
+                if ($profilePhotoPath) {
+                    $updateFields[] = "profile_photo = :profile_photo";
+                    $params[":profile_photo"] = $profilePhotoPath;
+                } else {
+                    $updateFields[] = "profile_photo = :profile_photo";
+                    $params[":profile_photo"] = Utils::generateDefaultPFP($currentUser['name']);
+                }
+            } elseif ($value !== null && $value !== $currentUser[$field]) {
                 $updateFields[] = "$field = :$field";
                 $params[":$field"] = $value;
             }
@@ -225,6 +237,42 @@ class UserManager
         if ($userId) {
             $stmt = $this->conn->prepare('UPDATE users SET class_id = ? WHERE id = ?');
             $stmt->execute([$classId, $userId]);
+        }
+    }
+
+    private function updateUserProfilePhoto($imageFile, $userId)
+    {
+        $uploadPath = '../../../assets/images/profile_photos/';
+
+        $pfpPath = $this->fileUploader->uploadImage(
+            $imageFile,
+            $uploadPath,
+            256,
+            256,
+            95,
+            $userId
+        );
+
+        if (isset($pfpPath)) {
+            return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/eparacati/' . ltrim($pfpPath, './');
+        }
+    }
+
+    public function deleteUserProfilePhoto($userId)
+    {
+        $userInfo = $this->getUserInfo($userId, "id", ["name", "profile_photo"]);
+
+        if (!empty($userInfo["profile_photo"])) {
+            $profilePhotoPath = '../../../assets/images/profile_photos/' . $userId . '.webp';
+
+            if (file_exists($profilePhotoPath)) {
+                unlink($profilePhotoPath);
+            }
+
+            $defaultPFP = Utils::generateDefaultPFP($userInfo["name"]);
+
+            $stmt = $this->conn->prepare("UPDATE users SET profile_photo = ? WHERE id = ?");
+            $stmt->execute([$defaultPFP, $userId]);
         }
     }
 

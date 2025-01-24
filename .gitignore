@@ -1,4 +1,11 @@
+##### Specific project files
+# Secrets
 config.php
+
+# Uploads
+assets/images/profile_photos
+
+# Tests
 tests.php
 
 ##### Windows

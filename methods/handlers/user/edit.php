@@ -22,7 +22,7 @@ function validateRole($role)
 
 $id = $_POST['id'];
 $bio = $_POST['bio'];
-//$profile_photo = $_FILES['profile_photo'];
+$profile_photo = $_FILES['profile_photo'];
 
 if ($_POST['id'] == $_SESSION['id']) {
   $isCurrentUser = true;
@@ -30,9 +30,11 @@ if ($_POST['id'] == $_SESSION['id']) {
 
 if ($self && $isCurrentUser) {
   $data = [
-    'bio' => $bio,
-    //'profile_photo' => $profile_photo
+    'bio' => $bio
   ];
+  if ($profile_photo && !empty($profile_photo['tmp_name'])) {
+    $data['profile_photo'] = $profile_photo;
+  }
   editUser($id, $data);
 } elseif ($currentUser['role'] == 'gestao') {
   $name = $_POST['name'];
@@ -49,9 +51,11 @@ if ($self && $isCurrentUser) {
     'password' => $password,
     'role' => $role,
     'class_id' => $class_id,
-    //'profile_photo' => $profile_photo,
     'bio' => $bio
   ];
+  if ($profile_photo && !empty($profile_photo['tmp_name'])) {
+    $data['profile_photo'] = $profile_photo;
+  }
   editUser($id, $data);
 } else {
   Utils::alert("Você não possui permissão para editar esse usuário!", '../../../index.php');

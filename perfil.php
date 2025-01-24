@@ -49,7 +49,6 @@ if ($editPanel) {
           <p class="text-gray-600 dark:text-gray-400">
             <?php echo htmlspecialchars($user['bio']) ?>
           </p>
-
         </div>
       </div>
     </div>
@@ -68,7 +67,6 @@ if ($editPanel) {
                 <?php echo htmlspecialchars(Utils::formatRoleName($user['role'], true)) ?>
               </span>
             </li>
-
             <?php if (isset($user['class_id']) && $user['class_id'] != 0) { ?>
               <li class="flex justify-between">
                 <span>
