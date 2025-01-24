@@ -323,13 +323,13 @@ class UI
                 ?>
                 <?php if (!in_array($user["role"], $roles)): ?>
                   <option value="<?php echo $user["role"]; ?>" selected>
-                    <?php echo Utils::formatRoleName($user['role']) ?>
+                    <?php echo Utils::formatRoleName($user['role'], true) ?>
                   </option>
                 <?php endif; ?>
                 <?php foreach ($roles as $role): ?>
                   <option value="<?php echo $role; ?>"
                     <?php echo $user["role"] === $role ? "selected" : ""; ?>>
-                    <?php echo Utils::formatRoleName($role); ?>
+                    <?php echo Utils::formatRoleName($role, true); ?>
                   </option>
                 <?php endforeach; ?>
               </select>

@@ -76,7 +76,7 @@ class UserManager
 
     public function register($name, $email, $password, $role, $class_id, $alerts = true)
     {
-        $id = uniqid();
+        $id = $this->utils->generateUniqueId(8, "users");
         $created_at = date("d-m-Y H:i:s");
         $profile_photo = Utils::generateDefaultPFP($name);
 
