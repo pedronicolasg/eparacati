@@ -1,4 +1,5 @@
 # 🌐 Plataforma Digital para a EP Aracati
+Este projeto está licenciado sob a [Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International License](http://creativecommons.org/licenses/by-nc-nd/4.0/).
 
 ## 📝 Sobre o Projeto
 
