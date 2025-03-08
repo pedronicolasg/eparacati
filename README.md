@@ -1,5 +1,5 @@
 # 🌐 Plataforma Digital para a EP Aracati
-Este projeto está licenciado sob a [Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International License](https://github.com/pedronicolasg/eparacati/blob/main/LICENSE).
+Este projeto está licenciado sob a [Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International License](https://github.com/cyclone-team/eparacati/blob/main/LICENSE).
 
 ## 📝 Sobre o Projeto
 
@@ -36,7 +36,7 @@ Com esta plataforma, esperamos:
 
 <div align="center">
 Feito com dedicação e inovação pela turma de <strong>INFORMÁTICA (2024-2026)</strong><br><br>
-  <a href = "https://github.com/pedronicolasg/eparacati/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=pedronicolasg/eparacati"/>
+  <a href = "https://github.com/cyclone-team/eparacati/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=cyclone-team/eparacati"/>
 </a>
 </div>
