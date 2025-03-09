@@ -18,18 +18,22 @@
           <div class="h-[4px] bg-blue-600 mt-4"></div>
         </div>
       </a>
-      <div
-        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-center p-6 rounded-lg shadow hover:shadow-lg transition">
-        <i class="fas fa-laptop text-4xl mb-4 text-gray-700 dark:text-gray-300"></i>
-        <p class="text-gray-800 dark:text-gray-200 font-bold text-lg">Equipamentos</p>
-        <div class="h-[4px] bg-blue-600 mt-4"></div>
-      </div>
-      <div
-        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-center p-6 rounded-lg shadow hover:shadow-lg transition">
-        <i class="fas fa-terminal text-4xl mb-4 text-gray-700 dark:text-gray-300"></i>
-        <p class="text-gray-800 dark:text-gray-200 font-bold text-lg">Log</p>
-        <div class="h-[4px] bg-blue-600 mt-4"></div>
-      </div>
+      <a href="pages/equipamentos.php">
+        <div
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-center p-6 rounded-lg shadow hover:shadow-lg transition">
+          <i class="fas fa-laptop text-4xl mb-4 text-gray-700 dark:text-gray-300"></i>
+          <p class="text-gray-800 dark:text-gray-200 font-bold text-lg">Equipamentos</p>
+          <div class="h-[4px] bg-blue-600 mt-4"></div>
+        </div>
+      </a>
+      <a href="pages/registros.php">
+        <div
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-center p-6 rounded-lg shadow hover:shadow-lg transition">
+          <i class="fas fa-terminal text-4xl mb-4 text-gray-700 dark:text-gray-300"></i>
+          <p class="text-gray-800 dark:text-gray-200 font-bold text-lg">Registros</p>
+          <div class="h-[4px] bg-blue-600 mt-4"></div>
+        </div>
+      </a>
     </div>
   </div>
 </section>

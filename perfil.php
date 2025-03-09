@@ -10,13 +10,11 @@ if ($userId == $_SESSION['id']) {
   $isCurrentUser = true;
 }
 
-$user = $userManager->getUserInfo($userId);
-
+$user = $userManager->getInfo($userId);
 
 if ($editPanel) {
   $requiredRoles = $isCurrentUser ? [$user['role'], 'gestao'] : ['gestao'];
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -33,7 +31,7 @@ if ($editPanel) {
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <?php UI::renderNavbar($currentUser, './',) ?>
-  
+
   <div class="container mx-auto p-4">
     <div class="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800">
       <div class="flex flex-col sm:flex-row items-center">
@@ -74,7 +72,7 @@ if ($editPanel) {
                 </span>
                 <span>
                   <?php
-                  $class = $classManager->getClass($user['class_id']);
+                  $class = $classManager->getInfo($user['class_id'], 'id', ['name']);
                   if ($currentUser['role'] == 'gestao') {
                     echo '<a href="./dashboard/pages/turmas.php?id=' . htmlspecialchars(Utils::hide($user['class_id'])) . '" class="font-medium text-green-600 dark:text-green-600">' . htmlspecialchars($class['name']) . '</a>';
                   } else {
@@ -90,7 +88,7 @@ if ($editPanel) {
                 Entrou em:
               </span>
               <span>
-                <?php echo htmlspecialchars($user['created_at']) ?>
+                <?php echo Utils::formatDate($user['created_at']); ?>
               </span>
             </li>
 
@@ -100,7 +98,7 @@ if ($editPanel) {
                   Atualizado em:
                 </span>
                 <span>
-                  <?php echo htmlspecialchars($user['updated_at']) ?>
+                  <?php echo Utils::formatDate($user['updated_at']) ?>
                 </span>
               </li>
             <?php endif; ?>

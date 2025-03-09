@@ -76,6 +76,58 @@ class Utils
     return $roleMap[$role] ?? ucfirst($role);
   }
 
+  public static function formatActionName($action)
+  {
+    $actionMap = [
+      'add' => 'Criação',
+      'delete' => 'Destruição',
+      'update' => 'Edição',
+      'login' => 'Login',
+      'logout' => 'Saída',
+      'view' => 'Visualização'
+    ];
+
+    return $actionMap[$action] ?? ucfirst($action);
+  }
+
+  public static function formatTableName($table)
+  {
+    $tableMap = [
+      'users' => 'Usuários',
+      'classes' => 'Turmas',
+      'equipments' => 'Equipamentos',
+      'attendance' => 'Frequência',
+      'logs' => 'Registros'
+    ];
+
+    return $tableMap[$table] ?? ucfirst($table);
+  }
+
+  public static function formatTypeName($type)
+  {
+    $typeMap = [
+      'notebook' => 'Notebook',
+      'extensao' => 'Extensão',
+      'projetor' => 'Projetor',
+      'sala' => 'Sala',
+      'outro' => 'Outro'
+    ];
+
+    return $typeMap[$type] ?? ucfirst($type);
+  }
+
+
+  public static function formatStatusName($status)
+  {
+    $statusMap = [
+      'disponivel' => 'Disponivel',
+      'indisponivel' => 'Indisponivel',
+      'agendado' => 'Agendado'
+    ];
+
+    return $statusMap[$status] ?? ucfirst($status);
+  }
+
   public function generateUniqueId(int $digits, string $tableName, string $columnName = 'id'): int
   {
     if ($digits <= 0) {
@@ -95,6 +147,14 @@ class Utils
     } while ($exists);
 
     return $randomId;
+  }
+  public static function formatDate($date)
+  {
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i:s', $date);
+    if ($dateTime === false) {
+      throw new InvalidArgumentException('Invalid date format.');
+    }
+    return $dateTime->format('d/m/Y - H:i');
   }
 
   public static function hide($tx)
@@ -120,23 +180,16 @@ class Utils
 
   public static function getIp()
   {
-    $headers = [
-      'HTTP_CLIENT_IP',
-      'HTTP_X_FORWARDED_FOR',
-      'HTTP_X_FORWARDED',
-      'HTTP_FORWARDED_FOR',
-      'HTTP_FORWARDED',
-      'REMOTE_ADDR'
-    ];
-
+    $headers = ['HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR'];
     foreach ($headers as $header) {
       if (!empty($_SERVER[$header])) {
-        // Se tiver múltiplos IPs, pega o primeiro
-        $ips = explode(',', $_SERVER[$header]);
-        return trim($ips[0]);
+        $ip = $_SERVER[$header];
+        if (strpos($ip, ',') !== false) {
+          $ip = trim(explode(',', $ip)[0]);
+        }
+        return $ip;
       }
     }
-
     return '0.0.0.0';
   }
 }

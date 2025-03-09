@@ -5,12 +5,12 @@ require_once "../../methods/bootstrap.php";
 
 $viewClassId = isset($_GET['id']) ? Utils::show($_GET['id']) : null;
 if (isset($viewClassId)) {
-  $viewClass = $classManager->getClass($viewClassId);
-  $currentPDT = $userManager->getUserInfo($viewClass["pdt_id"]);
-  $currentLeader = $userManager->getUserInfo($viewClass["leader_id"]);
-  $currentViceLeader = $userManager->getUserInfo($viewClass["vice_leader_id"]);
+  $viewClass = $classManager->getInfo($viewClassId);
+  $currentPDT = $userManager->getInfo($viewClass["pdt_id"]);
+  $currentLeader = $userManager->getInfo($viewClass["leader_id"]);
+  $currentViceLeader = $userManager->getInfo($viewClass["vice_leader_id"]);
 
-  $students = $classManager->getStudents($viewClassId);
+  $students = $classManager->getUsers($viewClassId, ['lider', 'vice_lider', 'aluno']);
 }
 ?>
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ if (isset($viewClassId)) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EP Aracati | Dashboard</title>
+  <title>EP Aracati | Dashboard - Turmas</title>
   <link rel="stylesheet" href="../../assets/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../assets/images/altlogo.svg" type="image/x-icon">
@@ -40,7 +40,7 @@ if (isset($viewClassId)) {
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
           (<?php echo Utils::formatRoleName($currentUser["role"]); ?>)</h1>
 
-        <!-- Breadcrumb -->
+        
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -82,174 +82,12 @@ if (isset($viewClassId)) {
       </div>
     </header>
 
-    <?php if (isset($viewClassId)) {
-    ?>
-      <main>
-        <div class="max-w-7xl mx-auto px-4 mt-5">
-          <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-            <div class="md:col-span-3 p-4 rounded-lg shadow-md bg-white dark:bg-gray-800">
-              <h2 class="text-xl font-bold">Painel de Edição</h2>
-              <form class="mt-4" action="../../methods/handlers/class/edit.php" method="POST"
-                enctype="multipart/form-data">
-                <input type="hidden" name="id" name="id" value="<?php echo $viewClass["id"]; ?>">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label for="name" class="block text-gray-700 dark:text-gray-300">Nome</label>
-                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($viewClass["name"]); ?>"
-                      class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
-                  </div>
-
-                  <div>
-                    <label for="grade" class="block text-gray-700 dark:text-gray-300">Ano</label>
-                    <select id="grade" name="grade"
-                      class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
-                      <option value="1" <?php echo $viewClass["grade"] == 1 ? "selected" : ""; ?>>1º Ano</option>
-                      <option value="2" <?php echo $viewClass["grade"] == 2 ? "selected" : ""; ?>>2º Ano</option>
-                      <option value="3" <?php echo $viewClass["grade"] == 3 ? "selected" : ""; ?>>3º Ano</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label for="pdt" class="block text-gray-700 dark:text-gray-300">Professor diretor de turma</label>
-                    <select id="pdt" name="pdt"
-                      class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
-                      <?php
-                      if (isset($currentPDT['id']))
-                        echo '<option value="' . htmlspecialchars($currentPDT["id"]) . '" selected>' . htmlspecialchars($currentPDT["name"]) . '</option>';
-                      $professors = $userManager->getUsersByRole("professor");
-                      foreach ($professors as $professor) {
-                        if ($professor["id"] != $currentPDT["id"]) {
-                          echo '<option value="' . htmlspecialchars($professor["id"]) . '">' . htmlspecialchars($professor["name"]) . '</option>';
-                        }
-                      }
-                      ?>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label for="leader_id" class="block text-gray-700 dark:text-gray-300">Líder</label>
-                    <select id="leader" name="leader"
-                      class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
-                      <?php
-                      echo '<option value="' . htmlspecialchars($currentLeader["id"]) . '" selected>' . htmlspecialchars($currentLeader["name"]) . '</option>';
-                      foreach ($students as $student) {
-                        if ($student["id"] != $currentLeader["id"]) {
-                          echo '<option value="' . htmlspecialchars($student["id"]) . '">' . htmlspecialchars($student["name"]) . '</option>';
-                        }
-                      }
-                      ?>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label for="vice_leader_id" class="block text-gray-700 dark:text-gray-300">Vice-líder</label>
-                    <select id="vice_leader" name="vice_leader"
-                      class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
-                      <?php
-
-                      echo '<option value="' . htmlspecialchars($currentViceLeader["id"]) . '" selected>' . htmlspecialchars($currentViceLeader["name"]) . '</option>';
-                      foreach ($students as $student) {
-                        if ($student["id"] != $currentViceLeader["id"]) {
-                          echo '<option value="' . htmlspecialchars($student["id"]) . '">' . htmlspecialchars($student["name"]) . '</option>';
-                        }
-                      }
-                      ?>
-                    </select>
-                  </div>
-
-                </div>
-
-                <button type="submit"
-                  class="mt-4 bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition">
-                  Salvar Alterações
-                </button>
-                <button type="button" onclick="confirmDeleteClass()"
-                  class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
-                  Deletar Turma
-                </button>
-                <button type="button" onclick="confirmDeleteClassAndUsers()"
-                  class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
-                  Deletar Turma e Alunos
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 mt-5 mb-5">
-          <table class="w-full text-sm text-left">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th class="px-6 py-3">Usuário</th>
-                <th class="px-6 py-3">ID</th>
-                <th class="px-6 py-3">Cargo</th>
-                <th class="px-6 py-3">Turma</th>
-                <th class="px-6 py-3">Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php
-              $sql = "SELECT u.id, u.name, u.email, u.role, u.profile_photo, u.class_id, c.name as class_name
-                  FROM users u
-                  LEFT JOIN classes c ON u.class_id = c.id
-                  WHERE u.class_id = :class_id";
-
-              $stmt = $conn->prepare($sql);
-              $stmt->bindParam(":class_id", $viewClassId, PDO::PARAM_INT);
-
-              $stmt->execute();
-
-              if ($stmt->rowCount() > 0) {
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-              ?>
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <img class="w-10 h-10 rounded-full" src="<?= htmlspecialchars($row["profile_photo"]) ?>"
-                          alt="Foto do usuário">
-                        <div>
-                          <div class="font-medium text-gray-900 dark:text-white">
-                            <a href="../../perfil.php?id=<?= htmlspecialchars(Utils::hide($row["id"])) ?>">
-                              <?= htmlspecialchars($row["name"]) ?>
-                            </a>
-                          </div>
-                          <div class="text-sm text-gray-500 dark:text-gray-400">
-                            <?= htmlspecialchars($row["email"]) ?>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                      <?= htmlspecialchars($row["id"]) ?>
-                    </td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                      <?= htmlspecialchars(Utils::formatRoleName($row["role"])) ?>
-                    </td>
-                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                      <?= htmlspecialchars($row["class_name"]) ?>
-                    </td>
-                    <td class="px-6 py-4">
-                      <a href="../../perfil.php?id=<?= htmlspecialchars(Utils::hide($row["id"])) ?>&editPanel"
-                        class="text-blue-600 hover:underline dark:text-blue-500">
-                        Editar
-                      </a>
-                    </td>
-                  </tr>
-                <?php
-                }
-              } else {
-                ?>
-                <tr>
-                  <td colspan="5" class="px-6 py-4 text-center">Nenhum usuário encontrado nessa turma.</td>
-                </tr>
-              <?php
-              }
-              ?>
-            </tbody>
-          </table>
-        </div>
-      </main>
-    <?php
+    <?php if (!empty($viewClassId)) {
+      if (empty($viewClass)) {
+        echo '<main class="max-w-7xl mx-auto px-4 mt-5 flex justify-center items-center h-full"><div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden p-4 text-center"><h2 class="text-xl font-semibold text-gray-900 dark:text-gray-200">Turma não encontrada</h2></div></main>';
+      } else {
+        include_once 'includes/view/turma.php';
+      }
     } else { ?>
       <main>
         <div class="max-w-7xl mx-auto px-4" style="margin-top: 15px;">
@@ -321,7 +159,7 @@ if (isset($viewClassId)) {
                     <path
                       d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
                   </svg>
-                  Filtrar por Série
+                  Série
                   <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -329,7 +167,7 @@ if (isset($viewClassId)) {
                   </svg>
                 </button>
 
-                <!-- Dropdown -->
+                
                 <div id="dropdownRadio"
                   class="z-50 hidden absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
                   <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
@@ -450,7 +288,7 @@ if (isset($viewClassId)) {
                           <?php echo htmlspecialchars($row["id"]); ?>
                         </td>
 
-                        <?php $pdt = $userManager->getUserInfo($row["pdt_id"]);
+                        <?php $pdt = $userManager->getInfo($row["pdt_id"]);
                         if (isset($row['pdt_id']) && $pdt['role'] == 'pdt') {
                         ?>
                           <td class="px-6 py-4">
@@ -476,7 +314,7 @@ if (isset($viewClassId)) {
                           echo '<td class="px-6 py-4 text-red-500 dark:text-red-400">Não cadastrado</td>';
                         } ?>
 
-                        <?php $leader = $userManager->getUserInfo($row["leader_id"]);
+                        <?php $leader = $userManager->getInfo($row["leader_id"]);
                         if (isset($row['leader_id']) && $leader['role'] == 'lider') {
                         ?>
                           <td class="px-6 py-4">
@@ -502,7 +340,7 @@ if (isset($viewClassId)) {
                           echo '<td class="px-6 py-4 text-red-500 dark:text-red-400">Não cadastrado</td>';
                         } ?>
 
-                        <?php $viceLeader = $userManager->getUserInfo($row["vice_leader_id"]);
+                        <?php $viceLeader = $userManager->getInfo($row["vice_leader_id"]);
                         if (isset($row['vice_leader_id']) && $viceLeader['role'] == 'vice_lider') {
                         ?>
                           <td class="px-6 py-4">
@@ -551,30 +389,23 @@ if (isset($viewClassId)) {
     <?php } ?>
   </div>
 
-  <?php if (!isset($viewClassId)) {
-    include_once "includes/classAddModal.php";
-    include_once "includes/classBulkAddModal.php";
-  ?>
-    <script src="../../assets/js/classAddModalController.js"></script>
-    <script src="../../assets/js/classBulkAddModalController.js"></script>
-    <script src="../../assets/js/classSearchBarController.js"></script>
-    <script src="../../assets/js/classFilterDropdown.js"></script>
   <?php
-  } else { ?>
-    <script>
-      function confirmDeleteClass() {
-        if (confirm('Tem certeza que deseja deletar esta turma?')) {
-          window.location.href = `../../methods/handlers/class/delete.php?id=<?php echo $viewClassId; ?>`;
-        }
-      }
+  if (!isset($viewClassId)) {
+    include_once "includes/components/classAddModal.php";
+    include_once "includes/components/classBulkAddModal.php";
+    $scripts = [
+      "../../assets/js/classAddModalController.js",
+      "../../assets/js/classBulkAddModalController.js",
+      "../../assets/js/classSearchBarController.js",
+      "../../assets/js/classFilterDropdown.js"
+    ];
+  } else {
+    $scripts = ["includes/view/js/turma.js"];
+  }
 
-      function confirmDeleteClassAndUsers() {
-        if (confirm('Tem certeza que deseja deletar esta turma e todos os alunos nela?')) {
-          window.location.href = `../../methods/handlers/class/delete.php?id=<?php echo $viewClassId; ?>&deleteStudents`;
-        }
-      }
-    </script>
-  <?php }
+  foreach ($scripts as $script) {
+    echo '<script src="' . htmlspecialchars($script) . '"></script>';
+  }
   ?>
 </body>
 

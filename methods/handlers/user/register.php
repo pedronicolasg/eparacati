@@ -11,5 +11,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $class_id = $_POST["class"];
 
     $userManager->register($name, $email, $password, $role, $class_id);
+
+    $logger->action(
+        $currentUser['id'],
+        'create',
+        'users',
+        $result,
+        "Usuário '$name' registrado",
+        Utils::getIp()
+    );
+
     Utils::redirect('../../../dashboard/pages/usuarios.php');
 }

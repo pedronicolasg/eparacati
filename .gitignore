@@ -4,6 +4,7 @@ config.php
 
 # Uploads
 assets/images/profile_photos
+assets/images/equipment_photos
 
 # Tests
 tests.php

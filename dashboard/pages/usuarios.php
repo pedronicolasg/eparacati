@@ -9,7 +9,7 @@ require_once "../../methods/bootstrap.php";
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EP Aracati | Dashboard</title>
+  <title>EP Aracati | Dashboard - Usuários</title>
   <link rel="stylesheet" href="../../assets/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../assets/images/altlogo.svg" type="image/x-icon">
@@ -30,7 +30,7 @@ require_once "../../methods/bootstrap.php";
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
           (<?php echo Utils::formatRoleName($currentUser["role"]); ?>)</h1>
 
-        <!-- Breadcrumb -->
+        
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -125,7 +125,7 @@ require_once "../../methods/bootstrap.php";
                   <path
                     d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
                 </svg>
-                Filtrar por Cargo
+                Cargo
                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                   viewBox="0 0 10 6">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -133,7 +133,7 @@ require_once "../../methods/bootstrap.php";
                 </svg>
               </button>
 
-              <!-- Dropdown -->
+              
               <div id="dropdownRadio"
                 class="z-50 hidden absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
                 <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
@@ -283,8 +283,8 @@ require_once "../../methods/bootstrap.php";
     </main>
   </div>
 
-  <?php include_once "includes/userAddModal.php"; ?>
-  <?php include_once "includes/userBulkAddModal.php"; ?>
+  <?php include_once "includes/components/userAddModal.php"; ?>
+  <?php include_once "includes/components/userBulkAddModal.php"; ?>
 
   <script src="../../assets/js/userAddModalController.js"></script>
   <script src="../../assets/js/userBulkAddModalController.js"></script>

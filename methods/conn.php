@@ -3,7 +3,7 @@ $config = include_once 'config.php';
 
 try {
   $conn = new PDO(
-    "mysql:host={$config['db']['host']};dbname={$config['db']['dbname']}",
+    "mysql:host={$config['db']['host']}:{$config['db']['port']};dbname={$config['db']['dbname']}",
     $config['db']['username'],
     $config['db']['password']
   );

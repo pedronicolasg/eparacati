@@ -6,7 +6,6 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class FileUploader
 {
-
   public function uploadImage($file, string $uploadPath, int $maxHeight, int $maxWidth, int $quality, ?int $specificId = null): ?string
   {
     try {
@@ -28,6 +27,10 @@ class FileUploader
         ? $specificId . '.webp'
         : uniqid() . '.webp';
       $fullPath = rtrim($uploadPath, '/') . '/' . $fileName;
+
+      if (file_exists($fullPath)) {
+        unlink($fullPath);
+      }
 
       $image->save($fullPath, ['quality' => $quality]);
 

@@ -6,18 +6,23 @@ if (session_status() == PHP_SESSION_NONE) {
 $basepath = $basepath ?? './';
 
 require_once $basepath . 'methods/conn.php';
+require_once $basepath . 'methods/logger.php';
 require_once $basepath . 'methods/usermanager.php';
 require_once $basepath . 'methods/classmanager.php';
+require_once $basepath . 'methods/equipmentmanager.php';
 require_once $basepath . 'methods/utils.php';
 require_once $basepath . 'methods/UI.php';
 require_once $basepath . "vendor/autoload.php";
 
+$logger = new Logger($conn);
 $userManager = new UserManager($conn);
 $classManager = new ClassManager($conn);
-$classManager->checkClassUpgrades();
+$equipmentManager = new EquipmentManager($conn);
+$classManager->checkUpgrades();
 
 if (!function_exists('setRequiredRoles')) {
-  function setRequiredRoles($roles) {
+  function setRequiredRoles($roles)
+  {
     global $requiredRoles;
     $requiredRoles = $roles;
   }

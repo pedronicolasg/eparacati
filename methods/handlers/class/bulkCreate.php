@@ -24,10 +24,24 @@ try {
     Utils::alert("Tipo de arquivo inválido. Use .xlsx ou .xls", $classesPagePath);
   }
 
-  $result = $classManager->bulkCreateClass($_FILES['excel_file']['tmp_name']);
+  $result = $classManager->bulkCreate($_FILES['excel_file']['tmp_name']);
 
   $_SESSION['upload_success'] = $result['success'];
   $_SESSION['upload_errors'] = $result['errors'];
+
+  $createdClasses = array_map(function($name, $id) {
+    return "$name ($id)";
+  }, array_keys($result['created_classes']), $result['created_classes']);
+  $createdClassesMessage = "Foram adicionadas " . $result['success'] . " novas turmas: " . implode("\n", $createdClasses);
+
+  $logger->action(
+  $currentUser['id'],
+  'add',
+  'classes',
+  null,
+  $createdClassesMessage,
+  Utils::getIp()
+);
 
   Utils::redirect($classesPagePath);
 } catch (Exception $e) {

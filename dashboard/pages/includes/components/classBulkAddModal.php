@@ -15,7 +15,6 @@
             </button>
         </div>
 
-
         <form action="../../methods/handlers/class/bulkCreate.php" method="POST" enctype="multipart/form-data"
             class="p-4 md:p-5">
             <div class="grid gap-4 mb-4 grid-cols-2">

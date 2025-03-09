@@ -15,7 +15,7 @@ class UserManager
     {
         $this->conn = $conn;
         $this->utils = new Utils($conn);
-        $this->fileUploader = new FileUploader($conn);
+        $this->fileUploader = new FileUploader();
     }
 
     public function verifySession($redirectPath, $allowedRoles = null)
@@ -25,7 +25,7 @@ class UserManager
             exit();
         }
 
-        $userInfo = $this->getUserInfo($_SESSION["id"]);
+        $userInfo = $this->getInfo($_SESSION["id"]);
 
         if (empty($userInfo) || $allowedRoles !== null && !in_array($userInfo["role"], $allowedRoles)) {
             Utils::redirect($redirectPath);
@@ -35,7 +35,7 @@ class UserManager
         return $userInfo;
     }
 
-    public function getUserInfo($identifier, $type = "id", $fields = [])
+    public function getInfo($identifier, $type = "id", $fields = [])
     {
         $defaultFields = ["id"];
         $allowedFields = ["id", "name", "email", "role", "class_id", "profile_photo", "bio", "website_theme", "created_at", "updated_at"];
@@ -65,7 +65,7 @@ class UserManager
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
 
-    public function getUsersByRole($role)
+    public function getByRole($role)
     {
         $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
                 FROM users WHERE role = ?";
@@ -117,7 +117,7 @@ class UserManager
         }
     }
 
-    public function bulkAddUsers($filePath)
+    public function bulkAdd($filePath)
     {
         try {
             $spreadsheet = IOFactory::load($filePath);
@@ -125,7 +125,7 @@ class UserManager
             $rows = $worksheet->toArray();
             array_shift($rows);
 
-            $results = ['success' => 0, 'errors' => []];
+            $results = ['success' => 0, 'errors' => [], 'created_users' => []];
 
             foreach ($rows as $index => $row) {
                 try {
@@ -134,8 +134,11 @@ class UserManager
                         continue;
                     }
 
+                    $id = $this->utils->generateUniqueId(8, 'users');
                     $this->register($row[0], $row[1], $row[2], $row[3], !empty($row[4]) ? $row[4] : null, false);
+
                     $results['success']++;
+                    $results['created_users'][$row[0]] = $id;
                 } catch (Exception $e) {
                     $results['errors'][] = "Linha " . ($index + 2) . ": " . $e->getMessage();
                 }
@@ -175,16 +178,16 @@ class UserManager
         }
     }
 
-    public function editUser($id, $data)
+    public function edit($id, $data)
     {
-        $currentUser = $this->getUserInfo($id);
+        $currentUser = $this->getInfo($id);
 
         $updateFields = [];
         $params = [];
 
         foreach ($data as $field => $value) {
             if ($field === 'profile_photo' && $value !== null) {
-                $profilePhotoPath = $this->updateUserProfilePhoto($value, $id);
+                $profilePhotoPath = $this->updateProfilePhoto($value, $id);
                 if ($profilePhotoPath) {
                     $updateFields[] = "profile_photo = :profile_photo";
                     $params[":profile_photo"] = $profilePhotoPath;
@@ -211,9 +214,9 @@ class UserManager
         $stmt->execute($params);
     }
 
-    public function updateUserTheme($userId)
+    public function updateTheme($userId)
     {
-        $userInfo = $this->getUserInfo($userId, "id", ["website_theme"]);
+        $userInfo = $this->getInfo($userId, "id", ["website_theme"]);
 
         $currentTheme = $userInfo["website_theme"];
         $newTheme = $currentTheme === "light" ? "dark" : "light";
@@ -224,7 +227,7 @@ class UserManager
         $stmt->execute([$newTheme, $userId]);
     }
 
-    public function updateUserRole($userId, $role)
+    public function updateRole($userId, $role)
     {
         if ($userId) {
             $stmt = $this->conn->prepare('UPDATE users SET role = ? WHERE id = ?');
@@ -232,7 +235,7 @@ class UserManager
         }
     }
 
-    public function updateUserClass($userId, $classId)
+    public function updateClass($userId, $classId)
     {
         if ($userId) {
             $stmt = $this->conn->prepare('UPDATE users SET class_id = ? WHERE id = ?');
@@ -240,7 +243,7 @@ class UserManager
         }
     }
 
-    private function updateUserProfilePhoto($imageFile, $userId)
+    private function updateProfilePhoto($imageFile, $userId)
     {
         $uploadPath = '../../../assets/images/profile_photos/';
 
@@ -254,13 +257,13 @@ class UserManager
         );
 
         if (isset($pfpPath)) {
-            return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/eparacati/' . ltrim($pfpPath, './');
+            return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/eparacati/' . ltrim($pfpPath, './'); // Remover '/eparacati/' em prod.
         }
     }
 
-    public function deleteUserProfilePhoto($userId)
+    public function deleteProfilePhoto($userId)
     {
-        $userInfo = $this->getUserInfo($userId, "id", ["name", "profile_photo"]);
+        $userInfo = $this->getInfo($userId, "id", ["name", "profile_photo"]);
 
         if (!empty($userInfo["profile_photo"])) {
             $profilePhotoPath = '../../../assets/images/profile_photos/' . $userId . '.webp';
@@ -285,7 +288,7 @@ class UserManager
         exit();
     }
 
-    public function deleteUser($id)
+    public function delete($id)
     {
         $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
         return $stmt->execute([$id]);

@@ -17,7 +17,7 @@ try {
         if ($input) {
             global $classesPagePath;
             if (filter_var($input, FILTER_VALIDATE_EMAIL)) {
-                $userInfo = $userManager->getUserInfo($input, 'email');
+                $userInfo = $userManager->getInfo($input, 'email');
                 if ($userInfo && isset($userInfo['id'])) {
                     if ($userInfo['role'] !== $expectedRole) {
                         Utils::alert("Usuário de email $input não possui o cargo esperado de " . Utils::formatRoleName($expectedRole, true), $classesPagePath);
@@ -30,7 +30,7 @@ try {
                 }
             }
 
-            $userInfo = $userManager->getUserInfo($input, 'id', ['role']);
+            $userInfo = $userManager->getInfo($input, 'id', ['role']);
             if ($userInfo && $userInfo['role'] !== $expectedRole) {
                 Utils::alert("Usuário de ID $input não possui o cargo esperado de " . Utils::formatRoleName($expectedRole, true), $classesPagePath);
                 exit();
@@ -45,7 +45,17 @@ try {
     $leaderId = getUserId($leaderInput, $userManager, 'aluno');
     $viceLeaderId = getUserId($viceLeaderInput, $userManager, 'aluno');
 
-    $classManager->createClass($name, $grade, $pdtId, $leaderId, $viceLeaderId);
+    $classManager->create($name, $grade, $pdtId, $leaderId, $viceLeaderId);
+    $newClassInfo = $classManager->getInfo($name, 'name', ['name']);
+    $logger->action(
+        $currentUser['id'],
+        'add',
+        'classes',
+        null,
+        sprintf('Nova turma criada: %s (ID: %s)', $newClassInfo['name'], $newClassInfo['id']),
+        Utils::getIp()
+    );
+
     Utils::redirect($classesPagePath);
 } catch (Exception $e) {
     error_log($e->getMessage());
