@@ -10,7 +10,7 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Usuários</title>
   <link rel="stylesheet" href="../../../public/assets/css/style.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
 </head>
 

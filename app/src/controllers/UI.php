@@ -27,12 +27,15 @@ class UI
           </div>
 
           <div class="flex items-center sm:hidden">
-            <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+            <button id="mobile-menu-button" type="button"
+              class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
               <span class="sr-only">Abrir menu</span>
-              <svg id="menu-icon" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <svg id="menu-icon" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-              <svg id="close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <svg id="close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -53,34 +56,48 @@ class UI
 
           <div class="hidden sm:flex sm:items-center">
             <div class="relative">
-              <button id="user-menu-button" type="button" class="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-800" aria-expanded="false" aria-haspopup="true">
+              <button id="user-menu-button" type="button"
+                class="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-800"
+                aria-expanded="false" aria-haspopup="true">
                 <span class="sr-only">Open user menu</span>
-                <img class="h-8 w-8 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm" src="<?php echo $currentUser["profile_photo"]; ?>" alt="Foto do usuário">
+                <img class="h-8 w-8 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm"
+                  src="<?php echo $currentUser["profile_photo"]; ?>" alt="Foto do usuário">
               </button>
 
-              <div id="user-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-10">
+              <div id="user-dropdown"
+                class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-10">
                 <div class="px-4 py-3">
                   <p class="text-sm font-medium text-gray-900 dark:text-white"><?= $currentUser["name"]; ?></p>
-                  <p class="text-sm text-<?= $color ?>-600 dark:text-<?= $color ?>-400 truncate"><?= $currentUser["email"]; ?></p>
+                  <p class="text-sm text-<?= $color ?>-600 dark:text-<?= $color ?>-400 truncate">
+                    <?= $currentUser["email"]; ?></p>
                 </div>
                 <div class="py-1">
-                  <a href="<?php echo $profilePath; ?>" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors duration-150">
-                    <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <a href="<?php echo $profilePath; ?>"
+                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors duration-150">
+                    <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     Meu perfil
                   </a>
                   <form action="<?php echo $handlersPath; ?>/user/theme.php" method="POST">
-                    <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors duration-150 text-left">
-                      <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    <button type="submit"
+                      class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors duration-150 text-left">
+                      <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                       </svg>
                       Alternar tema
                     </button>
                   </form>
-                  <a href="<?php echo $handlersPath; ?>/user/logout.php" class="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:text-red-600 dark:hover:bg-gray-700 transition-colors duration-150">
-                    <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  <a href="<?php echo $handlersPath; ?>/user/logout.php"
+                    class="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:text-red-600 dark:hover:bg-gray-700 transition-colors duration-150">
+                    <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                     Sair
                   </a>
@@ -105,17 +122,24 @@ class UI
         <div class="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
           <div class="flex items-center px-4">
             <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full object-cover" src="<?php echo $currentUser["profile_photo"]; ?>" alt="Foto do usuário">
+              <img class="h-10 w-10 rounded-full object-cover" src="<?php echo $currentUser["profile_photo"]; ?>"
+                alt="Foto do usuário">
             </div>
             <div class="ml-3">
               <div class="text-base font-medium text-gray-800 dark:text-white"><?= $currentUser["name"]; ?></div>
-              <div class="text-sm font-medium text-<?= $color ?>-600 dark:text-<?= $color ?>-400"><?= $currentUser["email"]; ?></div>
+              <div class="text-sm font-medium text-<?= $color ?>-600 dark:text-<?= $color ?>-400">
+                <?= $currentUser["email"]; ?></div>
             </div>
           </div>
           <div class="mt-3 px-2 space-y-1">
-            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">Meu perfil</a>
-            <form action="<?php echo $handlersPath; ?>/user/theme.php" method="POST"><button type="submit" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">Alternar tema</button></form>
-            <a href="<?php echo $handlersPath; ?>/user/logout.php" class="block px-3 py-2 rounded-md text-base font-medium text-red-700 hover:text-primary hover:bg-gray-50 dark:text-red-600 dark:hover:bg-gray-700">Sair</a>
+            <a href="#"
+              class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">Meu
+              perfil</a>
+            <form action="<?php echo $handlersPath; ?>/user/theme.php" method="POST"><button type="submit"
+                class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">Alternar
+                tema</button></form>
+            <a href="<?php echo $handlersPath; ?>/user/logout.php"
+              class="block px-3 py-2 rounded-md text-base font-medium text-red-700 hover:text-primary hover:bg-gray-50 dark:text-red-600 dark:hover:bg-gray-700">Sair</a>
           </div>
         </div>
       </div>
@@ -263,7 +287,7 @@ class UI
 
       if ($stmt->rowCount() > 0) {
         $hasEquipments = true;
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
           $statusInfo = [
             'disponivel' => ['color' => 'green', 'text' => 'Disponível'],
             'agendado' => ['color' => 'yellow', 'text' => 'Agendado'],
@@ -271,7 +295,8 @@ class UI
           ][$row['status']];
     ?>
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
-            <img src="<?php echo !empty($row['image']) ? $row['image'] : 'https://placehold.co/900x600.png?text=' . Format::typeName($row['type']) . '&font=poppings'; ?>"
+            <img
+              src="<?php echo !empty($row['image']) ? $row['image'] : 'https://placehold.co/900x600.png?text=' . Format::typeName($row['type']) . '&font=poppings'; ?>"
               alt="Imagem de <?php echo htmlspecialchars($row['name']); ?>" class="w-full h-48 object-cover">
             <div class="p-4">
               <div class="flex items-center mb-2">
@@ -282,7 +307,7 @@ class UI
               <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($row['name']) ?></h2>
               <p class="text-sm text-gray-500 dark:text-gray-400 mb-3"><?php echo Format::typeName($row['type']); ?></p>
               <p class="text-gray-600 dark:text-gray-300 mb-4">
-                <?php echo strlen($row['description']) > 300 ? substr(htmlspecialchars($row['description']), 0, 300) . '...' : htmlspecialchars($row['description']); ?>
+                <?php echo strlen($row['description']) > 300 ? substr(htmlspecialchars($row['description']), 0, 100) . '...' : htmlspecialchars($row['description']); ?>
               </p>
               <a href="equipamentos.php?id=<?php echo Security::hide($row['id']); ?>"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline">
@@ -300,6 +325,7 @@ class UI
         <?php echo $type ? 'do tipo ' . Format::typeName($row['type']) : ''; ?> encontrado.</p>
     <?php }
   }
+
   private static function getApps()
   {
     return [
@@ -307,13 +333,13 @@ class UI
         "name" => "EPresence",
         "icon" => "fas fa-user-check",
         "roles" => ["lider", "professor", "gestao"],
-        "path" => "epresence/index.php",
+        "path" => $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . "/eparacati/app/epresence/",
       ],
       [
         "name" => "Agendaê",
         "icon" => "fas fa-laptop",
         "roles" => ["professor", "gestao"],
-        "path" => "agendae/index.php",
+        "path" => $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . "/eparacati/app/agendae/",
       ],
     ];
   }
@@ -563,44 +589,27 @@ class UI
   private function getActionHeader($logData)
   {
     $action = strtolower($logData['action']);
-
     $logId = htmlspecialchars($logData['id']);
-    $timestamp = htmlspecialchars($logData['timestamp']);
+    $timestamp = Format::date(htmlspecialchars($logData['timestamp']));
     $userName = isset($logData['user_name']) ? htmlspecialchars($logData['user_name']) : 'Sistema';
-
     $title = $this->getActionTitle($logData);
 
-    switch ($action) {
-      case 'add':
-        $template = $this->getCreateHeaderTemplate();
-        break;
-      case 'update':
-        $template = $this->getUpdateHeaderTemplate();
-        break;
-      case 'delete':
-        $template = $this->getDeleteHeaderTemplate();
-        break;
-      case 'view':
-        $template = $this->getViewHeaderTemplate();
-        break;
-      case 'login':
-        $template = $this->getLoginHeaderTemplate();
-        break;
-      case 'logout':
-        $template = $this->getLogoutHeaderTemplate();
-        break;
-      default:
-        $template = $this->getGenericHeaderTemplate();
-        break;
-    }
+    $actionConfig = [
+      'add'    => ['color' => 'green', 'icon' => 'fa-solid fa-plus', 'label' => 'CREATE'],
+      'update' => ['color' => 'blue', 'icon' => 'fa-solid fa-pen-to-square', 'label' => 'UPDATE'],
+      'delete' => ['color' => 'red', 'icon' => 'fa-solid fa-trash', 'label' => 'DELETE'],
+      'view'   => ['color' => 'amber', 'icon' => 'fa-solid fa-eye', 'label' => 'VIEW'],
+      'login'  => ['color' => 'purple', 'icon' => 'fa-solid fa-right-to-bracket', 'label' => 'LOGIN'],
+      'logout' => ['color' => 'indigo', 'icon' => 'fa-solid fa-right-from-bracket', 'label' => 'LOGOUT'],
+      'default' => ['color' => 'gray', 'icon' => 'fa-solid fa-circle-info', 'label' => 'ACTION']
+    ];
 
-    $header = str_replace(
-      ['{{LOG_ID}}', '{{TIMESTAMP}}', '{{USER_NAME}}', '{{TITLE}}'],
-      [$logId, Format::date($timestamp), $userName, $title],
-      $template
-    );
+    $config = $actionConfig[$action] ?? $actionConfig['default'];
+    $color = $config['color'];
+    $icon = $config['icon'];
+    $label = $config['label'];
 
-    return $header;
+    return $this->renderHeaderTemplate($logId, $timestamp, $userName, $title, $color, $icon, $label);
   }
 
   private function getActionTitle($logData)
@@ -608,14 +617,8 @@ class UI
     $action = strtolower($logData['action']);
     $target = '';
 
-    function getSingularTarget($tableName)
-    {
-      $singular = rtrim($tableName, 's');
-      return ucfirst($singular);
-    }
-
     if (isset($logData['target_table'])) {
-      $target = getSingularTarget(Format::tableName($logData['target_table']));
+      $target = ucfirst(rtrim(Format::tableName($logData['target_table']), 's'));
     }
 
     $targetName = '';
@@ -623,300 +626,65 @@ class UI
       $targetName = $matches[1];
     }
 
-    switch ($action) {
-      case 'add':
-        return "Novo(a) {$target} '{$targetName}' criado(a)";
-      case 'update':
-        return "{$target} '{$targetName}' atualizado(a)";
-      case 'delete':
-        return "{$target} '{$targetName}' deletado(a)";
-      case 'view':
-        return "{$target} visualizado";
-      case 'login':
-        return "Usuário logado no sistema";
-      case 'logout':
-        return "Usuário encerrou sessão no sistema";
-      default:
-        return "Ação performada: " . ucfirst($action);
-    }
+    $titleMap = [
+      'add'    => "Novo(a) {$target} '{$targetName}' criado(a)",
+      'update' => "{$target} '{$targetName}' atualizado(a)",
+      'delete' => "{$target} '{$targetName}' deletado(a)",
+      'view'   => "{$target} visualizado",
+      'login'  => "Usuário logado no sistema",
+      'logout' => "Usuário encerrou sessão no sistema",
+    ];
+
+    return $titleMap[$action] ?? "Ação performada: " . ucfirst($action);
   }
 
-  private function getCreateHeaderTemplate()
+  private function renderHeaderTemplate($logId, $timestamp, $userName, $title, $color, $icon, $label)
   {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">CREATE</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
+    return <<<HTML
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-start">
+          <div class="flex-shrink-0 mr-4">
+            <div class="h-12 w-12 rounded-full bg-{$color}-100 dark:bg-{$color}-900 flex items-center justify-center">
+              <i class="{$icon} text-{$color}-600 dark:text-{$color}-400 text-xl"></i>
+            </div>
           </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
+          <div class="flex-1">
+            <div class="flex items-center mb-2">
+              <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{$color}-100 text-{$color}-800 dark:bg-{$color}-900 dark:text-{$color}-300">{$label}</span>
+              <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{$title}</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
+                <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{$logId}</p>
+              </div>
+              <div>
+                <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
+                <p class="font-medium text-gray-800 dark:text-gray-200">{$timestamp}</p>
+              </div>
+              <div>
+                <p class="text-gray-500 dark:text-gray-400">Responsável</p>
+                <p class="font-medium text-gray-800 dark:text-gray-200">{$userName}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>';
-  }
-
-  private function getUpdateHeaderTemplate()
-  {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">UPDATE</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>';
-  }
-
-  private function getDeleteHeaderTemplate()
-  {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">DELETE</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>';
-  }
-
-  private function getViewHeaderTemplate()
-  {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">VIEW</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>';
-  }
-
-  private function getLoginHeaderTemplate()
-  {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">LOGIN</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>';
-  }
-
-  private function getLogoutHeaderTemplate()
-  {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300">LOGOUT</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>';
-  }
-
-  private function getGenericHeaderTemplate()
-  {
-    return '
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-start">
-      <div class="flex-shrink-0 mr-4">
-        <div class="h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center mb-2">
-          <span class="px-2 mr-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">ACTION</span>
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{TITLE}}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">ID do registro</p>
-            <p id="logId" class="font-medium text-gray-800 dark:text-gray-200">{{LOG_ID}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Data & Hora</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{TIMESTAMP}}</p>
-          </div>
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">Responsável</p>
-            <p class="font-medium text-gray-800 dark:text-gray-200">{{USER_NAME}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>';
+    HTML;
   }
 
   public static function renderFooter($basePath)
   {
+    $assetsPath = $basePath . "../public/assets";
   ?>
     <footer class="bg-white dark:bg-gray-900">
       <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">
             <a href="<?php echo $basePath; ?>index.php" class="flex items-center">
-              <img src="<?php echo $basePath; ?>../public/assets/images/logo.svg" class="h-8 me-3" alt="EP Aracati Logo" />
+              <img src="<?php echo $assetsPath; ?>/images/logo.svg" class="h-8 me-3" alt="EP Aracati Logo" />
               <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">EP Aracati</span>
             </a>
           </div>
@@ -953,5 +721,262 @@ class UI
       </div>
     </footer>
 <?php
+  }
+
+  public function renderEquipmentsAgendae($conn, $type = null, $time = null, $page = 1, $itemsPerPage = 9)
+  {
+    if ($time === null) {
+      $currentHour = date('H:i');
+      $timeSlots = [
+        ['07:30', '08:20', 1],
+        ['08:20', '09:30', 2],
+        ['09:30', '10:20', 3],
+        ['10:20', '11:10', 4],
+        ['11:10', '13:20', 5],
+        ['13:20', '14:10', 6],
+        ['14:10', '15:30', 7],
+        ['15:30', '16:10', 8],
+        ['16:10', '23:59', 9],
+      ];
+
+      foreach ($timeSlots as [$start, $end, $slot]) {
+        if ($currentHour >= $start && $currentHour < $end) {
+          $time = $slot;
+          break;
+        }
+      }
+
+      $time = $time ?? 1;
+    }
+
+    if (isset($_GET['page'])) {
+      $page = (int)$_GET['page'];
+      if ($page < 1) $page = 1;
+    }
+
+    $offset = ($page - 1) * $itemsPerPage;
+
+    $countSql = "SELECT COUNT(*) as total FROM equipments e";
+
+    if (!empty($type)) {
+      $countSql .= " WHERE e.type = :type";
+    }
+
+    $countStmt = $conn->prepare($countSql);
+
+    if (!empty($type)) {
+      $countStmt->bindValue(':type', $type);
+    }
+
+
+    $countStmt->execute();
+    $totalCount = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'];
+    $totalPages = ceil($totalCount / $itemsPerPage);
+
+    $sql = "SELECT e.*, b.id as booking_id, b.schedule, b.note, u.name as user_name 
+            FROM equipments e 
+            LEFT JOIN bookings b ON e.id = b.equipment_id AND b.schedule = :time
+            LEFT JOIN users u ON b.user_id = u.id";
+
+    if (!empty($type)) {
+      $sql .= " WHERE e.type = :type";
+    }
+
+    $sql .= " ORDER BY e.name ASC LIMIT :limit OFFSET :offset";
+
+    $stmt = $conn->prepare($sql);
+
+    $stmt->bindParam(':time', $time);
+
+    $stmt->bindParam(':limit', $itemsPerPage, \PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, \PDO::PARAM_INT);
+
+    if (!empty($type)) {
+      $stmt->bindValue(':type', $type);
+    }
+
+    $stmt->execute();
+    $equipments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    foreach ($equipments as $equipment) {
+      $status = $equipment['status'];
+      $statusClass = 'bg-green-500';
+      $statusText = 'Disponível';
+      $gradientClass = 'from-blue-500/5';
+      $typeClass = 'bg-blue-600';
+      $buttonClass = 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700';
+      $buttonText = '<i class="fas fa-calendar-plus mr-2"></i> Agendar';
+      $buttonDisabled = '';
+
+      if ($equipment['booking_id']) {
+        $status = 'agendado';
+        $statusClass = 'bg-yellow-500';
+        $statusText = 'Agendado';
+        $gradientClass = 'from-red-500/5';
+        $buttonClass = 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed';
+        $buttonText = '<i class="fas fa-ban mr-2"></i> Indisponível';
+        $buttonDisabled = 'disabled';
+      } elseif ($status == 'indisponivel') {
+        $statusClass = 'bg-red-500';
+        $statusText = 'Indisponível';
+        $gradientClass = 'from-red-500/5';
+        $buttonClass = 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed';
+        $buttonText = '<i class="fas fa-ban mr-2"></i> Indisponível';
+        $buttonDisabled = 'disabled';
+      }
+
+      $typeColors = [
+        'notebook' => 'bg-purple-600',
+        'sala' => 'bg-indigo-600',
+        'projetor' => 'bg-blue-600',
+        'extensao' => 'bg-green-600',
+        'microfone' => 'bg-orange-600',
+        'outro' => 'bg-gray-600',
+      ];
+
+      $typeClass = $typeColors[$equipment['type']] ?? 'bg-gray-600';
+
+      $imageSrc = $equipment['image'] ?: 'https://placehold.co/900x600.png?text=' . Format::typeName($equipment['type']) . '&font=poppings';
+      $typeName = Format::typeName($equipment['type']);
+      $description = strlen($equipment['description']) > 300 ? substr(htmlspecialchars($equipment['description']), 0, 100) . '...' : htmlspecialchars($equipment['description']);
+
+      echo <<<HTML
+        <div class="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br {$gradientClass} to-transparent"></div>
+          <div class="relative">
+            <img src="{$imageSrc}" class="w-full h-48 object-cover" alt="{$equipment['name']}">
+            <div class="absolute top-3 right-3">
+              <span class="{$statusClass} text-xs px-2 py-1 rounded-full text-white shadow-sm">{$statusText}</span>
+            </div>
+          </div>
+          <div class="relative p-5">
+            <div class="flex justify-between mb-2">
+              <span class="{$typeClass} text-xs px-2 py-1 rounded-full text-white shadow-sm">{$typeName}</span>
+            </div>
+            <h3 class="font-medium mb-1">{$equipment['name']}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{$description}</p>
+            <button {$buttonDisabled} class="w-full {$buttonClass} text-white font-medium py-2 rounded-lg shadow-sm hover:shadow-md transition-all" data-equipment-id="{$equipment['id']}">
+              {$buttonText}
+            </button>
+          </div>
+        </div>
+HTML;
+    }
+
+    if ($totalPages > 1) {
+      $this->setupPagination($page, $totalPages, $type, $time);
+    }
+  }
+
+  private function setupPagination($currentPage, $totalPages, $type, $time)
+  {
+    $typeParam = !empty($type) ? '&type=' . $type : '';
+    $timeParam = $time ? "&time={$time}" : "";
+
+    $prevPage = max(1, $currentPage - 1);
+    $nextPage = min($totalPages, $currentPage + 1);
+
+    $prevUrl = "?page={$prevPage}{$typeParam}{$timeParam}";
+    $nextUrl = "?page={$nextPage}{$typeParam}{$timeParam}";
+
+    $pagesToShow = [];
+    $pagesToShow[] = 1;
+
+    $startRange = max(2, $currentPage - 1);
+    $endRange = min($totalPages - 1, $currentPage + 1);
+
+    if ($startRange > 2) {
+      $pagesToShow[] = 'ellipsis1';
+    }
+
+    for ($i = $startRange; $i <= $endRange; $i++) {
+      $pagesToShow[] = $i;
+    }
+
+    if ($endRange < $totalPages - 1) {
+      $pagesToShow[] = 'ellipsis2';
+    }
+
+    if ($totalPages > 1) {
+      $pagesToShow[] = $totalPages;
+    }
+
+    echo <<<HTML
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paginationNav = document.querySelector('nav[aria-label="Pagination"]');
+        if (paginationNav) {
+            const prevLink = paginationNav.querySelector('a:first-child');
+            prevLink.href = "{$prevUrl}";
+            prevLink.classList.toggle('cursor-not-allowed', {$currentPage} <= 1);
+            
+            const nextLink = paginationNav.querySelector('a:last-child');
+            nextLink.href = "{$nextUrl}";
+            nextLink.classList.toggle('cursor-not-allowed', {$currentPage} >= {$totalPages});
+            
+            const pageLinks = paginationNav.querySelectorAll('a:not(:first-child):not(:last-child), span');
+            pageLinks.forEach(link => link.remove());
+            
+            const pageUrls = {
+    HTML;
+    foreach ($pagesToShow as $page) {
+      if ($page === 'ellipsis1' || $page === 'ellipsis2') {
+        continue;
+      }
+      $url = "?page={$page}{$typeParam}{$timeParam}";
+      echo "                {$page}: \"{$url}\",\n";
+    }
+
+    echo <<<HTML
+            };
+            const nextLinkElement = nextLink.parentNode;
+    HTML;
+
+    foreach ($pagesToShow as $page) {
+      if ($page === 'ellipsis1' || $page === 'ellipsis2') {
+        echo <<<HTML
+            nextLinkElement.insertBefore(
+                createElement('span', {
+                    class: 'relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300',
+                    textContent: '...'
+                }),
+                nextLink
+            );
+    HTML;
+      } else {
+        $isActive = $page == $currentPage;
+        $pageClass = $isActive
+          ? 'relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-green-500 text-sm font-medium text-white'
+          : 'relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700';
+
+        echo <<<HTML
+            nextLinkElement.insertBefore(
+                createElement('a', {
+                    href: pageUrls[{$page}],
+                    class: '{$pageClass}',
+                    textContent: '{$page}'
+                }),
+                nextLink
+            );
+    HTML;
+      }
+    }
+
+    echo <<<HTML
+            function createElement(tag, attributes) {
+                const element = document.createElement(tag);
+                for (const key in attributes) {
+                    if (key === 'textContent') {
+                        element.textContent = attributes[key];
+                    } else {
+                        element.setAttribute(key, attributes[key]);
+                    }
+                }
+                return element;
+            }
+        }
+    });
+    </script>
+HTML;
   }
 }

@@ -16,7 +16,7 @@ if (!empty($logId)) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Registros</title>
   <link rel="stylesheet" href="../../../public/assets/css/style.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
 </head>
 
@@ -35,7 +35,7 @@ if (!empty($logId)) {
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
           (<?php echo Format::roleName($currentUser["role"]); ?>)</h1>
 
-        
+
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -107,7 +107,7 @@ if (!empty($logId)) {
                   </svg>
                 </button>
 
-                
+
                 <div id="dropdownRadio"
                   class="z-50 hidden absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
                   <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"

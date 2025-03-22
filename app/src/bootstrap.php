@@ -10,10 +10,10 @@ define('VENDOR_DIR', dirname(ROOT_DIR) . DIRECTORY_SEPARATOR . 'vendor');
 set_include_path(get_include_path() . PATH_SEPARATOR . SRC_DIR);
 
 $basepath ??= dirname($_SERVER['SCRIPT_NAME']);
+
 if (!str_ends_with($basepath, '/')) {
     $basepath .= '/';
 }
-
 require_once SRC_DIR . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'conn.php';
 require_once VENDOR_DIR . DIRECTORY_SEPARATOR . 'autoload.php';
 
@@ -31,6 +31,7 @@ $logger = new Logger($conn);
 $userController = new UserController($conn);
 $classController = new ClassController($conn);
 $equipmentController = new EquipmentController($conn);
+$ui = new UI();
 $classController->checkUpgrades();
 
 if (!function_exists('setRequiredRoles')) {
@@ -44,6 +45,6 @@ if (!function_exists('setRequiredRoles')) {
 $requiredRoles ??= ['aluno', 'lider', 'professor', 'gestao'];
 
 if (!isset($allowUnauthenticatedAccess) || !$allowUnauthenticatedAccess) {
-    $currentUser = $userController->verifySession("{$basepath}login.php", $requiredRoles);
+    $currentUser = $userController->verifySession($requiredRoles);
     $theme = $currentUser['website_theme'];
 }

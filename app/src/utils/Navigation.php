@@ -19,6 +19,13 @@ class Navigation
     self::outputScript($script);
   }
 
+  public static function redirectToLogin()
+  {
+    $loginUrl = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . "/eparacati/app/login.php";
+    self::redirect($loginUrl);
+    exit();
+  }
+
   private static function outputScript($script)
   {
     echo "<meta charset='UTF-8' />

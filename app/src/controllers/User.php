@@ -20,17 +20,17 @@ class UserController
         $this->fileUploader = new FileUploader();
     }
 
-    public function verifySession($redirectPath, $allowedRoles = null)
+    public function verifySession($allowedRoles = null)
     {
         if (!isset($_SESSION["id"])) {
-            Navigation::redirect($redirectPath);
+            Navigation::redirectToLogin();
             exit();
         }
 
         $userInfo = $this->getInfo($_SESSION["id"]);
 
         if (empty($userInfo) || $allowedRoles !== null && !in_array($userInfo["role"], $allowedRoles)) {
-            Navigation::redirect($redirectPath);
+            Navigation::redirectToLogin();
             exit();
         }
 

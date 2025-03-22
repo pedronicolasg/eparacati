@@ -29,7 +29,7 @@ class Security
   public function generateUniqueId($digits, $tableName, $columnName = 'id'): int
   {
     if ($digits <= 0) {
-      throw new InvalidArgumentException('The number of digits must be greater than 0.');
+      throw new InvalidArgumentException('O número de dígitos deve ser maior que 0.');
     }
 
     $min = (int) str_pad('1', $digits, '0');

@@ -24,7 +24,7 @@ try {
     Navigation::alert("Tipo de arquivo inválido. Use .xlsx ou .xls", $_SERVER['HTTP_REFERER']);
   }
 
-  $equipmentController->bulkRegister($spreadsheet['tmp_name']);
+  $result = $equipmentController->bulkRegister($spreadsheet['tmp_name']);
 
   $_SESSION['upload_success'] = $result['success'];
   $_SESSION['upload_errors'] = $result['errors'];
@@ -43,7 +43,7 @@ try {
     Security::getIp()
   );
 
-  Navigation::redirect($equipmentsPagePath);
+  Navigation::redirect($_SERVER['HTTP_REFERER']);
 } catch (Exception $e) {
   Navigation::alert($_SESSION['upload_error'] = $e->getMessage(), $_SERVER['HTTP_REFERER']);
 }
