@@ -51,7 +51,7 @@
                         class="bg-gray-50 border border-gray-300 text-sm rounded-lg w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white">
                         <option value="" selected>Selecionar</option>
                         <?php
-                        $classes = $classController->getAllClasses();
+                        $classes = $classController->get();
 
                         foreach ($classes as $class): ?>
                             <option value="<?php echo $class['id']; ?>"> <?php echo $class['name']; ?> </option>

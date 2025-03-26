@@ -1,5 +1,5 @@
 <div class="container mx-auto px-4 py-8">
-  <form action="../../methods/handlers/equipment/edit.php"
+  <form action="../../src/handlers/equipment/edit.php"
     method="POST"
     enctype="multipart/form-data"
     class="bg-white dark:bg-gray-800 shadow-md rounded px-4 sm:px-8 pt-6 pb-8 mb-4">
@@ -112,7 +112,7 @@
           Salvar Alterações
         </button>
         <button
-          onclick="if(confirm('Tem certeza que deseja deletar o equipamento?')) { window.location.href='../../methods/handlers/equipment/delete.php?id=<?php echo $currentEquipment['id']; ?>'; }"
+          onclick="if(confirm('Tem certeza que deseja deletar o equipamento?')) { window.location.href='../../src/handlers/equipment/delete.php?id=<?php echo $currentEquipment['id']; ?>'; }"
           class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline"
           type="button" aria-label="Deletar">
           <i class="fas fa-trash-alt"></i>

@@ -1,10 +1,10 @@
 <?php
-$requiredRoles = ['vice_lider', 'lider', 'funcionario', 'professor', 'gestao'];
+$requiredRoles = ['funcionario', 'professor', 'gestao'];
 require_once dirname(__DIR__) . '/src/bootstrap.php';
 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$type = isset($_GET['type']) ? (string)$_GET['type'] : null;
-$time = isset($_GET['time']) ? (int)$_GET['time'] : null;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$type = isset($_GET['type']) ? (string) $_GET['type'] : null;
+$time = isset($_GET['time']) ? (int) $_GET['time'] : null;
 ?>
 
 <!DOCTYPE html>
@@ -13,31 +13,21 @@ $time = isset($_GET['time']) ? (int)$_GET['time'] : null;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EP Aracati | Agendaê</title>
+  <title>Agendaê</title>
   <link rel="stylesheet" href="../../public/assets/css/style.css">
   <link rel="shortcut icon" href="../../public/assets/images/logo.svg" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .book-dropdown-container {
-      position: relative;
-    }
-
-    .book-dropdown-menu {
-      z-index: 50;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-  </style>
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen">
+<body
+  class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen">
 
   <?php UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg'); ?>
 
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
       <div class="flex items-center">
-        <h1 class="text-3xl font-bold bg-gradient-to-r from-green-500 to-gray-600 bg-clip-text text-transparent">Agendaê</h1>
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-green-500 to-green-700 bg-clip-text text-transparent">Agendaê</h1>
       </div>
     </div>
     <h2 class="text-xl font-bold mb-4 flex items-center">
@@ -49,19 +39,29 @@ $time = isset($_GET['time']) ? (int)$_GET['time'] : null;
     <div class="relative bg-white dark:bg-gray-800 rounded-xl p-8 mb-8 shadow-md overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-blue-500/5"></div>
       <div class="relative flex flex-col items-center justify-center py-10">
-        <div class="w-16 h-16 rounded-full bg-gradient-to-r from-green-500/10 to-blue-500/10 border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center mb-4">
-          <i class="fas fa-plus text-2xl text-gray-500 dark:text-gray-400"></i>
-        </div>
-        <h2 class="text-xl font-semibold mb-2">Sem agendamentos</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">Comece criando um novo agendamento.</p>
+        <?php
+        $currentUserBookings = $scheduleController->get(['user_id' => $currentUser['id']]);
+        if (empty($currentUserBookings)) { ?>
+          <div
+            class="w-16 h-16 rounded-full bg-gradient-to-r from-green-500/10 to-blue-500/10 border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center mb-4">
+            <i class="fas fa-plus text-2xl text-gray-500 dark:text-gray-400"></i>
+          </div>
+          <h2 class="text-xl font-semibold mb-2">Sem agendamentos</h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">Comece criando um novo agendamento.</p>
 
-        <button onclick="toggleDropdown('booking-dropdown')" class="dropdown-toggle bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium py-2.5 px-5 rounded-lg flex items-center shadow-md hover:shadow-lg transition-all">
-          <i class="fas fa-plus mr-2"></i>
-          Agendar
-        </button>
+          <button onclick="window.location.href='./agendar.php'"
+            class="dropdown-toggle bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium py-2.5 px-5 rounded-lg flex items-center shadow-md hover:shadow-lg transition-all">
+            <i class="fas fa-plus mr-2"></i>
+            Agendar
+          </button>
+        <?php } else {
+          echo '      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
+          $ui->renderCurrentUserBookings($scheduleController, $currentUser['id']);
+          echo '</div>';
+        } ?>
       </div>
     </div>
-    
+
 
     <div>
       <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
@@ -71,13 +71,14 @@ $time = isset($_GET['time']) ? (int)$_GET['time'] : null;
         </h2>
 
         <div class="flex flex-col sm:flex-row gap-3">
-          <select class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm">
+          <select
+            class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm">
             <option value="">Todos</option>
             <?php
             $query = "SHOW COLUMNS FROM equipments LIKE 'type'";
             $result = $conn->query($query);
 
-            if ($result && $row = $result->fetch(\PDO::FETCH_ASSOC)) {
+            if ($result && $row = $result->fetch(PDO::FETCH_ASSOC)) {
               $enumValues = str_replace(["enum(", ")", "'"], "", $row['Type']);
               $values = explode(",", $enumValues);
 
@@ -88,17 +89,19 @@ $time = isset($_GET['time']) ? (int)$_GET['time'] : null;
             ?>
           </select>
 
-          <select class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm">
+          <select
+            class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm">
             <option value="">Agora</option>
-            <option value="1">1ª Aula (7:30)</option>
-            <option value="2">2ª Aula (8:20)</option>
-            <option value="3">3ª Aula (9:30)</option>
-            <option value="4">4ª Aula (10:20)</option>
-            <option value="5">5ª Aula (11:10)</option>
-            <option value="6">6ª Aula (13:20)</option>
-            <option value="7">7ª Aula (14:10)</option>
-            <option value="8">8ª Aula (15:30)</option>
-            <option value="9">9ª Aula (16:10)</option>
+            <?php foreach (ScheduleController::getTimeSlots() as $slot): ?>
+              <option value="<?php echo htmlspecialchars($slot['id']); ?>">
+              <?php echo sprintf(
+                '%s (%s - %s)',
+                htmlspecialchars($slot['name']),
+                htmlspecialchars($slot['start']),
+                htmlspecialchars($slot['end'])
+              ); ?>
+              </option>
+            <?php endforeach; ?>
           </select>
 
           <div class="relative">
@@ -117,12 +120,14 @@ $time = isset($_GET['time']) ? (int)$_GET['time'] : null;
 
       <div class="flex justify-center mt-8">
         <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-          <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+          <a href="#"
+            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
             <span class="sr-only">Anterior</span>
             <i class="fas fa-chevron-left"></i>
           </a>
 
-          <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+          <a href="#"
+            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
             <span class="sr-only">Próximo</span>
             <i class="fas fa-chevron-right"></i>
           </a>
@@ -134,26 +139,6 @@ $time = isset($_GET['time']) ? (int)$_GET['time'] : null;
   <?php UI::renderFooter('../'); ?>
 
   <script>
-    function toggleDropdown(id) {
-      const dropdown = document.getElementById(id);
-      if (dropdown.classList.contains('hidden')) {
-        dropdown.classList.remove('hidden');
-      } else {
-        dropdown.classList.add('hidden');
-      }
-    }
-
-    window.addEventListener('click', function(e) {
-      if (!e.target.matches('.dropdown-toggle') && !e.target.closest('.dropdown-toggle')) {
-        const dropdowns = document.getElementsByClassName('dropdown-menu');
-        for (let i = 0; i < dropdowns.length; i++) {
-          if (!dropdowns[i].classList.contains('hidden')) {
-            dropdowns[i].classList.add('hidden');
-          }
-        }
-      }
-    });
-
     document.addEventListener('DOMContentLoaded', function() {
       const typeSelect = document.querySelector('select:nth-of-type(1)');
       const timeSelect = document.querySelector('select:nth-of-type(2)');

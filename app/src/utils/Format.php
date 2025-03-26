@@ -34,6 +34,7 @@ class Format
       'add' => 'Criação',
       'delete' => 'Destruição',
       'update' => 'Edição',
+      'book' => 'Agendamento',
       'login' => 'Login',
       'logout' => 'Saída',
       'view' => 'Visualização'
@@ -48,6 +49,7 @@ class Format
       'users' => 'Usuários',
       'classes' => 'Turmas',
       'equipments' => 'Equipamentos',
+      'bookings' => 'Agendamentos',
       'attendance' => 'Frequência',
       'logs' => 'Registros'
     ];

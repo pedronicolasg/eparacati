@@ -20,6 +20,25 @@ class EquipmentController
     $this->fileUploader = new FileUploader();
   }
 
+  public function count($filters = [])
+  {
+    $sql = 'SELECT COUNT(*) FROM equipments';
+    $params = [];
+
+    if (!empty($filters)) {
+      $conditions = [];
+      foreach ($filters as $key => $value) {
+        $conditions[] = "$key = :$key";
+        $params[":$key"] = $value;
+      }
+      $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchColumn();
+  }
+
   public function getInfo($id, $fields = [])
   {
     $defaultFields = ['id', 'name', 'status', 'type', 'description', 'image', 'created_at'];
@@ -31,7 +50,7 @@ class EquipmentController
         if (!in_array($field, $defaultFields)) {
           Navigation::alert(
             "Campo inválido: $field",
-            "../../../dashboard/pages/equipamentos.php"
+            $_SERVER['HTTP_REFERER']
           );
         }
       }
@@ -44,6 +63,57 @@ class EquipmentController
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
 
+  public function get($fields = [], $filters = [])
+  {
+    $defaultFields = ['id', 'name', 'status', 'type', 'description', 'image', 'created_at'];
+
+    if (empty($fields)) {
+      $fields = $defaultFields;
+    } else {
+      foreach ($fields as $field) {
+        if (!in_array($field, $defaultFields)) {
+          Navigation::alert(
+            "Campo inválido: $field",
+            $_SERVER['HTTP_REFERER']
+          );
+        }
+      }
+    }
+
+    $fields = implode(", ", $fields);
+    $sql = "SELECT $fields FROM equipments";
+    $params = [];
+
+    if (!empty($filters)) {
+      $filterClauses = [];
+      foreach ($filters as $key => $value) {
+        if ($key === 'limit' || $key === 'offset') {
+          continue;
+        }
+        $filterClauses[] = "$key = :$key";
+        $params[":$key"] = $value;
+      }
+
+      if (isset($filters['limit']) && isset($filters['offset'])) {
+        $sql .= " LIMIT :limit OFFSET :offset";
+        $params[':limit'] = (int)$filters['limit'];
+        $params[':offset'] = (int)$filters['offset'];
+      }
+
+      $sql .= " WHERE " . implode(" AND ", $filterClauses);
+    }
+
+    if (isset($filters['limit']) && isset($filters['offset'])) {
+      $sql .= " LIMIT :limit OFFSET :offset";
+      $params[':limit'] = (int)$filters['limit'];
+      $params[':offset'] = (int)$filters['offset'];
+    }
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
   public function register($name, $type, $status, $description = null, $image = null, $alerts = true)
   {
     $validTypes = ['notebook', 'extensao', 'sala', 'projetor', 'outro'];
@@ -53,7 +123,7 @@ class EquipmentController
       if ($alerts) {
         Navigation::alert(
           "Tipo inválido: $type",
-          "../../../dashboard/pages/equipamentos.php"
+          $_SERVER['HTTP_REFERER']
         );
       }
       return false;
@@ -65,7 +135,7 @@ class EquipmentController
       if ($alerts) {
         Navigation::alert(
           "Status inválido: $status",
-          "../../../dashboard/pages/equipamentos.php"
+          $_SERVER['HTTP_REFERER']
         );
       }
       return false;
@@ -77,7 +147,7 @@ class EquipmentController
     if (empty($name) || empty($type) && $alerts) {
       Navigation::alert(
         "Preencha todos os campos!",
-        "../../../dashboard/pages/equipamentos.php"
+        $_SERVER['HTTP_REFERER']
       );
       return false;
     }
@@ -90,7 +160,7 @@ class EquipmentController
       if ($alerts) {
         Navigation::alert(
           "Já existe um equipamento com esse nome!",
-          "../../../dashboard/pages/equipamentos.php"
+          $_SERVER['HTTP_REFERER']
         );
       }
       return false;

@@ -4,6 +4,7 @@ $isCurrentUser = false;
 require_once __DIR__ . '/src/bootstrap.php';
 
 $id = isset($_GET['id']) ? Security::show($_GET['id']) : null;
+
 $userId = $id ? intval($id) : $_SESSION['id'];
 
 if ($userId == $_SESSION['id']) {
@@ -11,6 +12,10 @@ if ($userId == $_SESSION['id']) {
 }
 
 $user = $userController->getInfo($userId);
+
+if (empty($user)) {
+  Navigation::alert('Usuário inesxistente.', $_SERVER['HTTP_REFERER']);
+}
 
 if ($editPanel) {
   $requiredRoles = $isCurrentUser ? [$user['role'], 'gestao'] : ['gestao'];

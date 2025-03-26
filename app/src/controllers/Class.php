@@ -51,6 +51,25 @@ class ClassController
         }
     }
 
+    public function count($filters = [])
+    {
+        $sql = 'SELECT COUNT(*) FROM classes';
+        $params = [];
+
+        if (!empty($filters)) {
+            $conditions = [];
+            foreach ($filters as $key => $value) {
+                $conditions[] = "$key = :$key";
+                $params[":$key"] = $value;
+            }
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn();
+    }
+
     public function create($name, $grade, $pdtId = null, $leaderId = null, $viceLeaderId = null, $startNewTransaction = true)
     {
         try {
@@ -135,7 +154,7 @@ class ClassController
         }
     }
 
-    public function getAllClasses()
+    public function get()
     {
         $stmt = $this->conn->prepare('SELECT * FROM classes');
         $stmt->execute();

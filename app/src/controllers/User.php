@@ -37,6 +37,25 @@ class UserController
         return $userInfo;
     }
 
+    public function count($filters = [])
+    {
+        $sql = 'SELECT COUNT(*) FROM users';
+        $params = [];
+
+        if (!empty($filters)) {
+            $conditions = [];
+            foreach ($filters as $key => $value) {
+                $conditions[] = "$key = :$key";
+                $params[":$key"] = $value;
+            }
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn();
+    }
+
     public function getInfo($identifier, $type = "id", $fields = [])
     {
         $defaultFields = ["id"];

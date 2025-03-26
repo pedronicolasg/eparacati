@@ -80,7 +80,7 @@ if (!empty($editEquipmentId)) {
       if (empty($currentEquipment)) {
         echo '<main class="max-w-7xl mx-auto px-4 mt-5 flex justify-center items-center h-full"><div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden p-4 text-center"><h2 class="text-xl font-semibold text-gray-900 dark:text-gray-200">Equipamento não encontrado</h2></div></main>';
       } else {
-        include_once 'includes/view/equipamento.php';
+        include_once 'view/equipamento.php';
       }
     } else { ?>
       <main>
@@ -238,7 +238,7 @@ if (!empty($editEquipmentId)) {
 
                 <?php
                 $type = $_GET['type'] ?? null;
-                UI::renderEquipments($conn, $type);
+                UI::renderEquipments($equipmentController, $type);
                 ?>
 
               </div>

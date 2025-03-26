@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Em breve!</title>
-  <link rel="shortcut icon" href="../public/assets/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="../public/assets/css/style.css">
+  <link rel="shortcut icon" href="public/assets/images/logo.svg" type="image/x-icon">
+  <link rel="stylesheet" href="public/assets/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .glassmorphism {
@@ -18,13 +18,13 @@
   </style>
 </head>
 
-<body class="flex items-center justify-center min-h-screen bg-cover bg-center" style="background-image: url('../public/assets/images/indevbg.png');">
+<body class="flex items-center justify-center min-h-screen bg-cover bg-center" style="background-image: url('public/assets/images/indevbg.png');">
   <div class="glassmorphism bg-black bg-opacity-50 p-8 rounded-lg text-center text-white max-w-lg mx-auto">
     <h1 class="text-4xl font-bold mb-4">Ops...</h1>
     <p class="text-lg mb-8">ESSA PARTE DO SITE AINDA ESTÁ EM DESENVOLVIMENTO!</p>
     <div class="flex justify-between">
-      <a href="https://github.com/cyclone-team/eparacati" class="text-white hover:underline">&gt; SAIBA MAIS &lt;</a>
-      <a href="index.php" class="text-white hover:underline">&gt; VOLTAR &lt;</a>
+      <a href="https://github.com/cyclone-team/eparacati" class="text-white hover:underline" target="_blank" rel="noopener noreferrer">&gt; SAIBA MAIS &lt;</a>
+      <a href="<?= $_SERVER['HTTP_REFERER']; ?>" class="text-white hover:underline">&gt; VOLTAR &lt;</a>
     </div>
   </div>
 </body>

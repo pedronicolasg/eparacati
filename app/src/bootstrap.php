@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Fortaleza');
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -17,7 +18,7 @@ if (!str_ends_with($basepath, '/')) {
 require_once SRC_DIR . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'conn.php';
 require_once VENDOR_DIR . DIRECTORY_SEPARATOR . 'autoload.php';
 
-$controllers = ['User', 'Class', 'Equipment', 'UI'];
+$controllers = ['User', 'Class', 'Equipment', 'UI', 'Schedule'];
 foreach ($controllers as $controller) {
     require_once SRC_DIR . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . "$controller.php";
 }
@@ -31,8 +32,12 @@ $logger = new Logger($conn);
 $userController = new UserController($conn);
 $classController = new ClassController($conn);
 $equipmentController = new EquipmentController($conn);
+$scheduleController = new ScheduleController($conn);
 $ui = new UI();
+
+// Em prod será substituido por Cron Jobs
 $classController->checkUpgrades();
+$scheduleController->cleanPastBookings();
 
 if (!function_exists('setRequiredRoles')) {
     function setRequiredRoles($roles)

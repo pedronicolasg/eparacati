@@ -1,5 +1,4 @@
 <?php
-require_once 'bootstrap.php';
 
 class UI
 {
@@ -64,8 +63,7 @@ class UI
                   src="<?php echo $currentUser["profile_photo"]; ?>" alt="Foto do usuário">
               </button>
 
-              <div id="user-dropdown"
-                class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-10">
+              <div id="user-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-10 transition-all duration-300 ease-in-out opacity-0 scale-95 transform">
                 <div class="px-4 py-3">
                   <p class="text-sm font-medium text-gray-900 dark:text-white"><?= $currentUser["name"]; ?></p>
                   <p class="text-sm text-<?= $color ?>-600 dark:text-<?= $color ?>-400 truncate">
@@ -268,26 +266,22 @@ class UI
     <?php
   }
 
-  public static function renderEquipments($conn, $type = null)
+  public static function renderEquipments($equipmentController, $type = null)
   {
     $statuses = ['disponivel', 'agendado', 'indisponivel'];
     $hasEquipments = false;
 
     foreach ($statuses as $status) {
-      $sql = 'SELECT * FROM equipments WHERE status = :status';
+      $filters = ['status' => $status];
       if ($type) {
-        $sql .= " AND type = :type";
+        $filters['type'] = $type;
       }
-      $stmt = $conn->prepare($sql);
-      $stmt->bindParam(':status', $status);
-      if ($type) {
-        $stmt->bindParam(':type', $type);
-      }
-      $stmt->execute();
 
-      if ($stmt->rowCount() > 0) {
+      $equipments = $equipmentController->get([], $filters);
+
+      if (!empty($equipments)) {
         $hasEquipments = true;
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        foreach ($equipments as $row) {
           $statusInfo = [
             'disponivel' => ['color' => 'green', 'text' => 'Disponível'],
             'agendado' => ['color' => 'yellow', 'text' => 'Agendado'],
@@ -322,7 +316,7 @@ class UI
 
     if (!$hasEquipments) { ?>
       <p class="text-center text-gray-500 dark:text-gray-400 flex justify-center">Nenhum equipamento
-        <?php echo $type ? 'do tipo ' . Format::typeName($row['type']) : ''; ?> encontrado.</p>
+        <?php echo $type ? 'do tipo ' . Format::typeName($type) : ''; ?> encontrado.</p>
     <?php }
   }
 
@@ -363,7 +357,7 @@ class UI
           <?php foreach ($accessibleApps as $app): ?>
             <a href="<?= htmlspecialchars($app["path"]) ?>" class="block">
               <div
-                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-center p-6 rounded-lg shadow hover:shadow-lg transition">
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-center p-6 rounded-lg shadow hover:shadow-lg animate-fade-in-down hover:scale-105 transition-transform duration-300 ease-in-out">
                 <i class="<?= $app["icon"] ?> text-4xl mb-4 text-gray-700 dark:text-gray-300"></i>
                 <p class="text-gray-800 dark:text-gray-200 font-bold text-lg"><?= htmlspecialchars(
                                                                                 $app["name"]
@@ -453,7 +447,7 @@ class UI
                 class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                 <?php
                 global $classController;
-                $classes = $classController->getAllClasses();
+                $classes = $classController->get();
                 ?>
                 <option value="" <?php echo empty($user["class_id"]) ? "selected" : ""; ?>>Selecionar</option>
                 <?php foreach ($classes as $class): ?>
@@ -596,6 +590,7 @@ class UI
 
     $actionConfig = [
       'add'    => ['color' => 'green', 'icon' => 'fa-solid fa-plus', 'label' => 'CREATE'],
+      'book'   => ['color' => 'emerald', 'icon' => 'fa-solid fa-book', 'label' => 'BOOK'],
       'update' => ['color' => 'blue', 'icon' => 'fa-solid fa-pen-to-square', 'label' => 'UPDATE'],
       'delete' => ['color' => 'red', 'icon' => 'fa-solid fa-trash', 'label' => 'DELETE'],
       'view'   => ['color' => 'amber', 'icon' => 'fa-solid fa-eye', 'label' => 'VIEW'],
@@ -628,6 +623,7 @@ class UI
 
     $titleMap = [
       'add'    => "Novo(a) {$target} '{$targetName}' criado(a)",
+      'book'   => "Equipamento '{$targetName}' reservado",
       'update' => "{$target} '{$targetName}' atualizado(a)",
       'delete' => "{$target} '{$targetName}' deletado(a)",
       'view'   => "{$target} visualizado",
@@ -727,21 +723,12 @@ class UI
   {
     if ($time === null) {
       $currentHour = date('H:i');
-      $timeSlots = [
-        ['07:30', '08:20', 1],
-        ['08:20', '09:30', 2],
-        ['09:30', '10:20', 3],
-        ['10:20', '11:10', 4],
-        ['11:10', '13:20', 5],
-        ['13:20', '14:10', 6],
-        ['14:10', '15:30', 7],
-        ['15:30', '16:10', 8],
-        ['16:10', '23:59', 9],
-      ];
 
-      foreach ($timeSlots as [$start, $end, $slot]) {
-        if ($currentHour >= $start && $currentHour < $end) {
-          $time = $slot;
+      $timeSlots = ScheduleController::getTimeSlots();
+
+      foreach ($timeSlots as $slot) {
+        if ($currentHour >= $slot['start'] && $currentHour < $slot['end']) {
+          $time = $slot['id'];
           break;
         }
       }
@@ -757,26 +744,23 @@ class UI
     $offset = ($page - 1) * $itemsPerPage;
 
     $countSql = "SELECT COUNT(*) as total FROM equipments e";
-
     if (!empty($type)) {
       $countSql .= " WHERE e.type = :type";
     }
 
     $countStmt = $conn->prepare($countSql);
-
     if (!empty($type)) {
       $countStmt->bindValue(':type', $type);
     }
 
-
     $countStmt->execute();
-    $totalCount = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'];
+    $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
     $totalPages = ceil($totalCount / $itemsPerPage);
 
     $sql = "SELECT e.*, b.id as booking_id, b.schedule, b.note, u.name as user_name 
-            FROM equipments e 
-            LEFT JOIN bookings b ON e.id = b.equipment_id AND b.schedule = :time
-            LEFT JOIN users u ON b.user_id = u.id";
+              FROM equipments e 
+              LEFT JOIN bookings b ON e.id = b.equipment_id AND b.schedule = :time
+              LEFT JOIN users u ON b.user_id = u.id";
 
     if (!empty($type)) {
       $sql .= " WHERE e.type = :type";
@@ -785,25 +769,25 @@ class UI
     $sql .= " ORDER BY e.name ASC LIMIT :limit OFFSET :offset";
 
     $stmt = $conn->prepare($sql);
-
-    $stmt->bindParam(':time', $time);
-
-    $stmt->bindParam(':limit', $itemsPerPage, \PDO::PARAM_INT);
-    $stmt->bindParam(':offset', $offset, \PDO::PARAM_INT);
+    $stmt->bindParam(':time', $time, PDO::PARAM_INT);
+    $stmt->bindParam(':limit', $itemsPerPage, PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
     if (!empty($type)) {
       $stmt->bindValue(':type', $type);
     }
 
     $stmt->execute();
-    $equipments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $equipments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($equipments as $equipment) {
       $status = $equipment['status'];
       $statusClass = 'bg-green-500';
       $statusText = 'Disponível';
       $gradientClass = 'from-blue-500/5';
+      $animation = 'animate-fade-in-down hover:scale-105 transition-transform duration-300 ease-in-out';
       $typeClass = 'bg-blue-600';
+      $onClick = 'agendar.php?id=' . Security::hide($equipment['id']);
       $buttonClass = 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700';
       $buttonText = '<i class="fas fa-calendar-plus mr-2"></i> Agendar';
       $buttonDisabled = '';
@@ -813,6 +797,8 @@ class UI
         $statusClass = 'bg-yellow-500';
         $statusText = 'Agendado';
         $gradientClass = 'from-red-500/5';
+        $animation = '';
+        $onClick = '';
         $buttonClass = 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed';
         $buttonText = '<i class="fas fa-ban mr-2"></i> Indisponível';
         $buttonDisabled = 'disabled';
@@ -820,6 +806,8 @@ class UI
         $statusClass = 'bg-red-500';
         $statusText = 'Indisponível';
         $gradientClass = 'from-red-500/5';
+        $animation = '';
+        $onClick = '';
         $buttonClass = 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed';
         $buttonText = '<i class="fas fa-ban mr-2"></i> Indisponível';
         $buttonDisabled = 'disabled';
@@ -841,32 +829,139 @@ class UI
       $description = strlen($equipment['description']) > 300 ? substr(htmlspecialchars($equipment['description']), 0, 100) . '...' : htmlspecialchars($equipment['description']);
 
       echo <<<HTML
-        <div class="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all">
-          <div class="absolute inset-0 bg-gradient-to-br {$gradientClass} to-transparent"></div>
-          <div class="relative">
-            <img src="{$imageSrc}" class="w-full h-48 object-cover" alt="{$equipment['name']}">
-            <div class="absolute top-3 right-3">
-              <span class="{$statusClass} text-xs px-2 py-1 rounded-full text-white shadow-sm">{$statusText}</span>
-            </div>
-          </div>
-          <div class="relative p-5">
-            <div class="flex justify-between mb-2">
-              <span class="{$typeClass} text-xs px-2 py-1 rounded-full text-white shadow-sm">{$typeName}</span>
-            </div>
-            <h3 class="font-medium mb-1">{$equipment['name']}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{$description}</p>
-            <button {$buttonDisabled} class="w-full {$buttonClass} text-white font-medium py-2 rounded-lg shadow-sm hover:shadow-md transition-all" data-equipment-id="{$equipment['id']}">
-              {$buttonText}
-            </button>
-          </div>
-        </div>
-HTML;
+              <div class="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg {$animation}">
+                <div class="absolute inset-0 bg-gradient-to-br {$gradientClass} to-transparent"></div>
+                <div class="relative">
+                  <img src="{$imageSrc}" class="w-full h-48 object-cover" alt="{$equipment['name']}">
+                  <div class="absolute top-3 right-3">
+                    <span class="{$statusClass} text-xs px-2 py-1 rounded-full text-white shadow-sm">{$statusText}</span>
+                  </div>
+                </div>
+                <div class="relative p-5">
+                  <div class="flex justify-between mb-2">
+                    <span class="{$typeClass} text-xs px-2 py-1 rounded-full text-white shadow-sm">{$typeName}</span>
+                  </div>
+                  <h3 class="font-medium mb-1">{$equipment['name']}</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{$description}</p>
+                  <button {$buttonDisabled} onclick="window.location.href='{$onClick}'" class="w-full {$buttonClass} text-white font-medium py-2 rounded-lg shadow-sm hover:shadow-md" data-equipment-id="{$equipment['id']}">
+                    {$buttonText}
+                  </button>
+                </div>
+              </div>
+  HTML;
     }
 
     if ($totalPages > 1) {
       $this->setupPagination($page, $totalPages, $type, $time);
     }
   }
+
+
+  public function renderCurrentUserBookings($scheduleController, $userId)
+  {
+    echo <<<HTML
+        <div class="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all h-auto">
+          <a href="agendar.php" class="flex flex-col items-center justify-center h-full p-5 text-center">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-green-500/10 to-blue-500/10 border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center mb-4 animate-fade-in-down hover:scale-105 transition-transform duration-300 ease-in-out">
+              <i class="fas fa-plus text-2xl text-gray-600 dark:text-gray-400"></i>
+            </div>
+            <h3 class="font-medium mb-2 text-green-600 dark:text-green-400">Agendar</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Clique para fazer um novo agendamento</p>
+          </a>
+        </div>
+      HTML;
+
+    $filters = ['user_id' => $userId];
+    $bookings = $scheduleController->get($filters);
+    $timeSlots = array_column($scheduleController->getTimeSlots(), null, 'id');
+
+    if (empty($bookings)) {
+      echo '<div class="col-span-full text-center py-8">
+                  <div class="text-gray-500 dark:text-gray-400">
+                    <p class="text-xl">Você não possui agendamentos.</p>
+                  </div>
+                </div>';
+      return;
+    }
+
+    foreach ($bookings as $booking) {
+      $equipment = $booking['equipment_info'];
+      $class = $booking['class_info'];
+
+      $typeColors = [
+        'notebook' => 'bg-purple-600',
+        'sala' => 'bg-indigo-600',
+        'projetor' => 'bg-blue-600',
+        'extensao' => 'bg-green-600',
+        'microfone' => 'bg-orange-600',
+        'outro' => 'bg-gray-600',
+      ];
+
+      $typeClass = $typeColors[$equipment['type']] ?? 'bg-gray-600';
+      $typeName = Format::typeName($equipment['type']);
+
+      $imageSrc = $equipment['image'] ?: 'https://placehold.co/900x600.png?text=' . $typeName . '&font=poppings';
+
+      $description = strlen($equipment['description']) > 100 ? substr(htmlspecialchars($equipment['description']), 0, 60) . '...' : htmlspecialchars($equipment['description']);
+
+      $formattedDate = date('d/m/Y', strtotime($booking['date']));
+      $formattedTime = $timeSlots[$booking['schedule']]['start'] . ' - ' . $timeSlots[$booking['schedule']]['end'] ?? 'Horário não definido';
+
+      $classInfoHtml = '';
+      if (!empty($booking['class_id']) && !empty($class)) {
+        $classInfoHtml = '<div class="flex items-center text-xs text-gray-600 dark:text-gray-400 mb-1">
+                                 <i class="fas fa-graduation-cap mr-1"></i> ' . htmlspecialchars($class['name']) . '
+                               </div>';
+      }
+
+      $noteHtml = '';
+      if (!empty($booking['note'])) {
+        $shortNote = strlen($booking['note']) > 40 ? substr($booking['note'], 0, 40) . '...' : $booking['note'];
+        $noteHtml = '<div class="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                          <i class="fas fa-comment-alt mr-1"></i> ' . htmlspecialchars($shortNote) . '
+                        </div>';
+      }
+
+      echo <<<HTML
+          <div class="relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all h-auto">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent"></div>
+            <div class="relative">
+              <div class="w-full h-52 flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-700">
+                <img src="{$imageSrc}" class="" alt="{$equipment['name']}">
+              </div>
+              
+              <div class="absolute top-2 right-2">
+                <span class="bg-yellow-500 text-xs px-2 py-0.5 rounded-full text-white shadow-sm">Agendado</span>
+              </div>
+              
+              <div class="absolute top-2 left-2 animate-fade-in-down hover:scale-110 transition-transform duration-300 ease-in-out">
+                <a href="../src/handlers/schedule/cancel.php?id={$booking['id']}" 
+                   onclick="return confirm('Tem certeza que deseja cancelar este agendamento?');"
+                   class="bg-red-500 hover:bg-red-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center shadow-sm hover:shadow-md transition-all">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            </div>
+            <div class="relative p-3">
+              <div class="flex justify-between mb-1">
+                <span class="{$typeClass} text-xs px-2 py-0.5 rounded-full text-white shadow-sm">{$typeName}</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                  <i class="far fa-calendar mr-1"></i> {$formattedDate}
+                </span>
+              </div>
+              <h3 class="font-medium text-sm mb-1 truncate">{$equipment['name']}</h3>
+              <p class="text-xs text-gray-600 dark:text-gray-400 mb-1 line-clamp-1">{$description}</p>
+              <div class="flex items-center text-xs text-gray-600 dark:text-gray-400 mb-1">
+                <i class="far fa-clock mr-1"></i> {$formattedTime}
+              </div>
+              {$classInfoHtml}
+              {$noteHtml}
+            </div>
+          </div>
+          HTML;
+    }
+  }
+
 
   private function setupPagination($currentPage, $totalPages, $type, $time)
   {

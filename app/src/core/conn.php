@@ -1,5 +1,6 @@
 <?php
 $config = include_once 'config.php';
+date_default_timezone_set('America/Fortaleza');
 
 try {
   $conn = new PDO(

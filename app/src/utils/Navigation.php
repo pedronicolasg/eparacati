@@ -12,7 +12,7 @@ class Navigation
 
   public static function alert($message, $location = null)
   {
-    $script = "alert('$message');";
+    $script = 'alert("' . $message . '");';
     if ($location !== null) {
       $script .= "location.href='$location';";
     }
