@@ -2,24 +2,43 @@
 $requiredRoles = ['gestao'];
 require_once "../../bootstrap.php";
 
-$userId = intval($_GET['id']);
-
-if ($userId === $_SESSION['id']) {
-  Navigation::alert("Você não pode deletar seu próprio usuário.", "../../../dashboard/pages/usuarios.php");
-  die();
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+  Navigation::alert('Método inválido', $_SERVER['HTTP_REFERER'], 'error', 'Método Inválido');
+  exit;
 }
 
-$user = $userController->getInfo($userId, 'id', ['name']);
-$classController->handleUserDeletion($userId);
-$success = $userController->delete($userId);
+try {
+  $userId = intval($_GET['id']);
+  if ($userId === $_SESSION['id']) {
+    $_SESSION['alert'][] = [
+      'titulo' => 'Erro',
+      'mensagem' => 'Você não pode deletar seu próprio usuário',
+      'tipo' => 'error'
+    ];
+    Navigation::redirect($_SERVER['HTTP_REFERER']);
+    exit;
+  }
 
-$logger->action(
-  $currentUser['id'],
-  'delete',
-  'users',
-  $id,
-  "Equipamento '" . $user['name'] . "' excluído",
-  Security::getIp()
-);
+  $user = $userController->getInfo($userId, 'id', ['name']);
+  $classController->handleUserDeletion($userId);
+  $success = $userController->delete($userId);
 
-Navigation::redirect($_SERVER['HTTP_REFERER'], true);
+  $logger->action(
+    $currentUser['id'],
+    'delete',
+    'users',
+    $id,
+    "Usuário '" . $user['name'] . "' excluído",
+    Security::getIp()
+  );
+
+  $_SESSION['alert'][] = [
+    'titulo' => 'Sucesso',
+    'mensagem' => 'Usuário ' . $user['name'] . ' deletado com sucesso',
+    'tipo' => 'success'
+  ];
+  Navigation::redirect('../../../dashboard/pages/usuarios.php', true);
+} catch (Exception $e) {
+  Navigation::alert($e->getMessage(), $_SERVER['HTTP_REFERER']);
+  exit;
+}

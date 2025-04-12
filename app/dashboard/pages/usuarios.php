@@ -9,20 +9,17 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Usuários</title>
-  <link rel="stylesheet" href="../../../public/assets/css/style.css">
+  <link rel="stylesheet" href="../../../public/assets/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <div class="min-h-full">
-    <?php UI::renderNavbar(
-      $currentUser,
-      "../../",
-      "Dashboard",
-      "blue",
-      "altlogo.svg"
-    ); ?>
+    <?php
+    UI::renderNavbar($currentUser, "../../", "Dashboard", "blue", "altlogo.svg");
+    UI::renderPopup(true);
+    ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -56,63 +53,6 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
 
     <main>
       <div class="max-w-7xl mx-auto px-4 mt-5">
-        <?php if (isset($_SESSION['upload_success']) && $_SESSION['upload_success'] > 0): ?>
-          <div
-            class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-            role="alert">
-            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path
-                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            <span class="sr-only">Sucesso</span>
-            <div>
-              <span class="font-medium">Sucesso!</span>
-              <?= htmlspecialchars($_SESSION['upload_success'], ENT_QUOTES, 'UTF-8') ?> usuários cadastrados com sucesso!
-            </div>
-          </div>
-        <?php endif; ?>
-        <?php if (!empty($_SESSION['upload_errors'])): ?>
-          <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert">
-            <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path
-                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            <span class="sr-only">Erro</span>
-            <div>
-              <span class="font-medium">Erro ao cadastrar usuários:</span>
-              <ul class="mt-1.5 list-disc list-inside">
-                <?php foreach ($_SESSION['upload_errors'] as $error): ?>
-                  <li><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></li>
-                <?php endforeach; ?>
-              </ul>
-            </div>
-          </div>
-        <?php endif; ?>
-
-        <?php
-        unset($_SESSION['upload_success'], $_SESSION['upload_errors']);
-        ?>
-
-        <?php if (isset($_SESSION['upload_error'])): ?>
-          <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-            role="alert">
-            <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path
-                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            <span class="sr-only">Erro</span>
-            <div>
-              <span class="font-medium">Erro:</span>
-              <?= htmlspecialchars($_SESSION['upload_error'], ENT_QUOTES, 'UTF-8') ?>
-            </div>
-          </div>
-          <?php unset($_SESSION['upload_error']); ?>
-        <?php endif; ?>
-
         <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden mb-5">
           <div class="p-4 flex items-center justify-between gap-4">
             <div class="relative inline-block text-left">
@@ -193,22 +133,22 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
             </div>
           </div>
 
-          <div class="max-w-7xl mx-auto overflow-x-auto">
-            <table class="w-full text-sm text-left">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <div class="max-w-7xl mx-auto overflow-x-auto shadow-xl rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-200 dark:scrollbar-track-gray-700">
+            <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th class="px-6 py-3">Usuário</th>
-                  <th class="px-6 py-3">ID</th>
-                  <th class="px-6 py-3">Cargo</th>
-                  <th class="px-6 py-3">Turma</th>
-                  <th class="px-6 py-3">Ação</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Usuário</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cargo</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Turma</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ação</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
                 <?php
                 $selectedRole = isset($_GET["role"]) ? $_GET["role"] : null;
 
-                $sql = "SELECT u.id, u.name, u.email, u.role, u.profile_photo, u.class_id, c.name as class_name
+                $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.profile_photo, u.class_id, c.name as class_name
                     FROM users u
                     LEFT JOIN classes c ON u.class_id = c.id";
 
@@ -227,40 +167,66 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                 if ($stmt->rowCount() > 0) {
                   while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 ?>
-                    <tr
-                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                          <img class="w-10 h-10 rounded-full" src="<?= htmlspecialchars($row["profile_photo"]) ?>"
-                            alt="Foto do usuário">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-4">
+                          <img class="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700" 
+                               src="<?= htmlspecialchars($row["profile_photo"]) ?>" 
+                               alt="Foto do usuário">
                           <div>
-                            <div class="font-medium text-gray-900 dark:text-white">
+                            <div class="text-sm font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition">
                               <a href="../../perfil.php?id=<?= htmlspecialchars(Security::hide($row["id"])) ?>">
                                 <?= htmlspecialchars($row["name"]) ?>
                               </a>
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                              <?= htmlspecialchars($row["email"]) ?>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
+                              <span class="flex items-center">
+                                <i class="fas fa-envelope w-4 h-4 mr-1.5 text-gray-400 dark:text-gray-500"></i>
+                                <?= htmlspecialchars($row["email"]) ?>
+                              </span>
                             </div>
+                            <?php if (!empty($row["phone"])): ?>
+                              <div class="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2 mt-1">
+                                <span class="flex items-center">
+                                  <i class="fas fa-phone w-4 h-4 mr-1.5 text-gray-400 dark:text-gray-500"></i>
+                                  <?= Format::phoneNumber($row["phone"]) ?>
+                                </span>
+                              </div>
+                            <?php endif; ?>
                           </div>
                         </div>
                       </td>
-                      <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">
                         <?= htmlspecialchars($row["id"]) ?>
                       </td>
-                      <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                        <?= htmlspecialchars(Format::roleName($row["role"], true)) ?>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <?php
+                        $roleColors = [
+                          'aluno' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                          'lider' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                          'vice_lider' => 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
+                          'gremio' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+                          'professor' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                          'pdt' => 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+                          'funcionario' => 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
+                          'gestao' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        ];
+                        $colorClass = $roleColors[$row["role"]] ?? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+                        ?>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $colorClass ?>">
+                          <?= htmlspecialchars(Format::roleName($row["role"], true)) ?>
+                        </span>
                       </td>
-                      <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                        <a href="<?= htmlspecialchars('turmas.php?id=' . Security::hide($row['class_id'])); ?>"
-                          class="text-green-600 hover:underline dark:text-green-500">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <a href="<?= htmlspecialchars('turmas.php?id=' . Security::hide($row['class_id'])); ?>" 
+                          class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 hover:underline transition">
                           <?= htmlspecialchars($row["class_name"]) ?>
                         </a>
                       </td>
-                      <td class="px-6 py-4">
-                        <a href="../../perfil.php?id=<?= htmlspecialchars(Security::hide($row["id"])) ?>&editPanel"
-                          class="font-bold text-blue-600 hover:underline dark:text-blue-500">
-                          Editar
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <a href="../../perfil.php?id=<?= htmlspecialchars(Security::hide($row["id"])) ?>&editPanel" 
+                          class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                          <i class="fas fa-edit mr-2"></i> Editar
                         </a>
                       </td>
                     </tr>
@@ -269,7 +235,12 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                 } else {
                   ?>
                   <tr>
-                    <td colspan="5" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td>
+                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                      <div class="flex flex-col items-center justify-center py-6">
+                        <i class="fas fa-user-slash text-4xl mb-3 text-gray-400 dark:text-gray-600"></i>
+                        Nenhum usuário encontrado.
+                      </div>
+                    </td>
                   </tr>
                 <?php
                 }

@@ -8,15 +8,24 @@ class ScheduleController
 {
 
   private $conn;
-  private $equipmentController;
-  private $userController;
-  private $classController;
   public function __construct($conn)
   {
     $this->conn = $conn;
-    $this->equipmentController = new EquipmentController($conn);
-    $this->userController = new UserController($conn);
-    $this->classController = new ClassController($conn);
+  }
+
+  private function getEquipmentController()
+  {
+    return new EquipmentController($this->conn);
+  }
+
+  private function getUserController()
+  {
+    return new UserController($this->conn);
+  }
+
+  private function getClassController()
+  {
+    return new ClassController($this->conn);
   }
 
   public function count($filters = [])
@@ -81,24 +90,33 @@ class ScheduleController
     $fields = implode(", ", $fields);
     $sql = "SELECT $fields FROM bookings";
     $params = [];
+    $now = new DateTime();
+    $currentDate = $now->format('d-m-Y');
 
+    $limit = null;
     if (!empty($filters)) {
       $filterClauses = [];
       foreach ($filters as $key => $value) {
-        if ($key === 'limit' || $key === 'offset') {
-          continue;
-        }
-        $filterClauses[] = "$key = :$key";
-        $params[":$key"] = $value;
+      if ($key === 'limit') {
+        $limit = (int)$value;
+        continue;
       }
-
-      if (isset($filters['limit']) && isset($filters['offset'])) {
-        $sql .= " LIMIT :limit OFFSET :offset";
-        $params[':limit'] = (int)$filters['limit'];
-        $params[':offset'] = (int)$filters['offset'];
+      if ($key === 'offset') {
+        continue;
       }
-
+      $filterClauses[] = "$key = :$key";
+      $params[":$key"] = $value;
+      }
+      if (!empty($filterClauses)) {
       $sql .= " WHERE " . implode(" AND ", $filterClauses);
+      }
+    }
+
+    if (isset($filters['date'])) {
+      $sql .= " ORDER BY STR_TO_DATE(date, '%d-%m-%Y') DESC, schedule ASC";
+    }
+    if ($limit !== null) {
+      $sql .= " LIMIT " . $limit;
     }
 
     $stmt = $this->conn->prepare($sql);
@@ -107,17 +125,20 @@ class ScheduleController
 
     foreach ($bookings as &$booking) {
       if (isset($booking['equipment_id'])) {
-        $equipmentInfo = $this->equipmentController->getInfo($booking['equipment_id']);
+        $equipmentController = $this->getEquipmentController();
+        $equipmentInfo = $equipmentController->getInfo($booking['equipment_id']);
         $booking['equipment_info'] = $equipmentInfo;
       }
 
       if (isset($booking['user_id'])) {
-        $user = $this->userController->getInfo($booking['user_id']);
+        $userController = $this->getUserController();
+        $user = $userController->getInfo($booking['user_id']);
         $booking['user_info'] = $user;
       }
 
       if (isset($booking['class_id'])) {
-        $classInfo = $this->classController->getInfo($booking['class_id']);
+        $classController = $this->getClassController();
+        $classInfo = $classController->getInfo($booking['class_id']);
         $booking['class_info'] = $classInfo;
       }
     }
@@ -253,14 +274,28 @@ class ScheduleController
     }
   }
 
-  public function cancel($id)
+  public function cancel($filters = [])
   {
     try {
-      $stmt = $this->conn->prepare("DELETE FROM bookings WHERE id = :id");
-      $stmt->execute(['id' => $id]);
+      if (empty($filters)) {
+        Navigation::alert("Os filtros não podem estar vazios para cancelar um agendamento.", $_SERVER['HTTP_REFERER']);
+        return false;
+      }
+
+      $sql = "DELETE FROM bookings WHERE 1=1";
+      $params = [];
+
+      foreach ($filters as $key => $value) {
+        $sql .= " AND $key = :$key";
+        $params[$key] = $value;
+      }
+
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute($params);
       return $stmt->rowCount() > 0;
     } catch (Exception $e) {
       Navigation::alert("Erro ao cancelar agendamento: " . $e->getMessage(), $_SERVER['HTTP_REFERER']);
+      return false;
     }
   }
 }

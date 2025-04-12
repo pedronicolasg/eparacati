@@ -1,8 +1,6 @@
-<?php $UI = new UI(); ?>
-
 <div class="container mx-auto px-4 py-8">
   <?php
-  echo $UI->renderLogDetail($currentLog);
+  echo $ui->renderLogDetail($currentLog);
   ?>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -18,7 +16,7 @@
             <div class="mb-6">
               <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Campos afetados</h4>
               <div class="space-y-4">
-                <?php echo $UI->formatLogChangesToHtml($currentLog); ?>
+                <?php echo $ui->formatLogChangesToHtml($currentLog); ?>
               </div>
             </div>
           <?php
@@ -52,6 +50,7 @@
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               <?php
               $logs = $logger->getLogs(['target_id' => $currentLog['target_id']]);
+              $logs = array_slice($logs, 0, 10);
 
               foreach ($logs as $log) {
                 $log = array_map('htmlspecialchars', $log);
@@ -62,7 +61,7 @@
                   <?php if ($log['id'] == $currentLog['id']) { ?>
                 <tr class="bg-blue-50 dark:bg-blue-900/20">
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 dark:text-blue-400"><?= $currentLog['id'] ?></td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><?= $currentLog['timestamp'] ?></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">[ <?= $currentLog['timestamp'] ?> ]</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><?= $currentLog['user_name'] ?></td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><?= Format::actionName($currentLog['action']) ?></td>
                   <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Registro atual</td>

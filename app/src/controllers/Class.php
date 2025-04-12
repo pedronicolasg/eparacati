@@ -2,6 +2,7 @@
 require_once "core/conn.php";
 
 require_once "controllers/User.php";
+require_once "controllers/Schedule.php";
 
 require_once "utils/Security.php";
 
@@ -10,14 +11,23 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class ClassController
 {
     private $conn;
-    private $security;
-    private $userController;
-
     public function __construct($conn)
     {
         $this->conn = $conn;
-        $this->security = new Security($conn);
-        $this->userController = new UserController($conn);
+    }
+
+    private function getSecurity()
+    {
+        return new Security($this->conn);
+    }
+
+    private function getUserController()
+    {
+        return new UserController($this->conn);
+    }
+    private function getScheduleController()
+    {
+        return new ScheduleController($this->conn);
     }
 
     public function checkUpgrades()
@@ -77,26 +87,38 @@ class ClassController
                 $this->conn->beginTransaction();
             }
 
-            $id = $this->security->generateUniqueId(8, 'classes');
+            $security = $this->getSecurity();
+            $userController = $this->getUserController();
+
+            $roles = [
+                'pdt' => ['id' => $pdtId, 'role' => 'pdt', 'default_role' => 'professor'],
+                'lider' => ['id' => $leaderId, 'role' => 'lider', 'default_role' => 'aluno'],
+                'vice_lider' => ['id' => $viceLeaderId, 'role' => 'vice_lider', 'default_role' => 'aluno']
+            ];
+
+            $validUsers = [];
+            foreach ($roles as $role => $data) {
+                if ($data['id']) {
+                    $userInfo = $userController->getInfo($data['id']);
+                    if (!$userInfo) {
+                        throw new Exception("Usuário não encontrado para o cargo de " . $role);
+                    }
+                    $validUsers[$role] = $data;
+                }
+            }
+
+            $id = $security->generateUniqueId(8, 'classes');
             $created_at = date("d-m-Y H:i:s");
             $upgrades_in = date("d-m-Y", strtotime("next year January 1st"));
             $ends_in = ($grade == 3) ? $upgrades_in : null;
 
-            $roles = [
-                $pdtId => 'pdt',
-                $leaderId => 'lider',
-                $viceLeaderId => 'vice_lider'
-            ];
-
-            foreach ($roles as $userId => $role) {
-                if ($userId) {
-                    $this->userController->updateRole($userId, $role);
-                    $this->userController->updateClass($userId, $id);
-                }
-            }
-
             $stmt = $this->conn->prepare('INSERT INTO classes (id, name, grade, pdt_id, leader_id, vice_leader_id, created_at, upgrades_in, ends_in) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $stmt->execute([$id, $name, $grade, $pdtId, $leaderId, $viceLeaderId, $created_at, $upgrades_in, $ends_in]);
+
+            foreach ($validUsers as $data) {
+                $userController->updateClass($data['id'], $id);
+                $userController->updateRole($data['id'], $data['role']);
+            }
 
             if ($startNewTransaction) {
                 $this->conn->commit();
@@ -124,6 +146,7 @@ class ClassController
 
             $results = ['success' => 0, 'errors' => [], 'created_classes' => []];
 
+            $userController = $this->getUserController();
             foreach ($rows as $index => $row) {
                 try {
                     if (empty($row[0]) || empty($row[1])) {
@@ -133,10 +156,11 @@ class ClassController
 
                     $roleIds = [];
                     foreach ([2, 3, 4] as $i) {
-                        $roleIds[$i] = !empty($row[$i]) && filter_var($row[$i], FILTER_VALIDATE_EMAIL) ? $this->userController->getInfo($row[$i], 'email', ['id'])['id'] : $row[$i];
+                        $roleIds[$i] = !empty($row[$i]) && filter_var($row[$i], FILTER_VALIDATE_EMAIL) ? $userController->getInfo($row[$i], 'email', ['id'])['id'] : $row[$i];
                     }
 
-                    $id = $this->security->generateUniqueId(8, 'classes');
+                    $security = $this->getSecurity();
+                    $id = $security->generateUniqueId(8, 'classes');
                     $this->create($row[0], $row[1], $roleIds[2], $roleIds[3], $roleIds[4], false);
 
                     $results['success']++;
@@ -206,7 +230,9 @@ class ClassController
         $sql = "SELECT $sqlFields FROM users WHERE class_id = :class_id";
 
         if (!empty($roles)) {
-            $placeholders = implode(", ", array_map(function($key) { return ":role_$key"; }, array_keys($roles)));
+            $placeholders = implode(", ", array_map(function ($key) {
+                return ":role_$key";
+            }, array_keys($roles)));
             $sql .= " AND role IN ($placeholders)";
         }
 
@@ -232,12 +258,12 @@ class ClassController
                 'vice_leader_id' => ['new' => $viceLeaderId, 'default' => 'aluno', 'role' => 'vice_lider']
             ];
 
-
+            $userController = $this->getUserController();
             foreach ($roles as $roleId => $roleData) {
                 if ($currentClass[$roleId] != $roleData['new']) {
-                    $this->userController->updateRole($currentClass[$roleId], $roleData['default']);
+                    $userController->updateRole($currentClass[$roleId], $roleData['default']);
                     if ($roleData['new']) {
-                        $this->userController->updateRole($roleData['new'], $roleData['role']);
+                        $userController->updateRole($roleData['new'], $roleData['role']);
                     }
                 }
             }
@@ -321,9 +347,10 @@ class ClassController
                 'vice_leader_id' => 'aluno'
             ];
 
+            $userController = $this->getUserController();
             foreach ($roles as $roleId => $role) {
                 if ($class[$roleId]) {
-                    $this->userController->updateRole($class[$roleId], $role);
+                    $userController->updateRole($class[$roleId], $role);
                 }
             }
 
@@ -347,6 +374,9 @@ class ClassController
                 $stmt = $this->conn->prepare('UPDATE users SET class_id = NULL WHERE role = \'aluno\' AND class_id = ?');
                 $stmt->execute([$id]);
             }
+
+            $scheduleController = $this->getScheduleController();
+            $scheduleController->cancel(['class_id' => $id]);
 
             $this->conn->commit();
             return true;

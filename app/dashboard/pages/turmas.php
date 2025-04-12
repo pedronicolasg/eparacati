@@ -20,7 +20,7 @@ if (isset($viewClassId)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Turmas</title>
-  <link rel="stylesheet" href="../../../public/assets/css/style.css">
+  <link rel="stylesheet" href="../../../public/assets/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
 </head>
@@ -33,7 +33,9 @@ if (isset($viewClassId)) {
       "Dashboard",
       "blue",
       "altlogo.svg"
-    ); ?>
+    );
+    UI::renderPopup(true);
+    ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -91,63 +93,6 @@ if (isset($viewClassId)) {
     } else { ?>
       <main>
         <div class="max-w-7xl mx-auto px-4" style="margin-top: 15px;">
-          <?php if (isset($_SESSION['upload_success']) && $_SESSION['upload_success'] > 0): ?>
-            <div
-              class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-              role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 1 1 1 1v4h1a1 1 0 1 1 0 2Z" />
-              </svg>
-              <span class="sr-only">Sucesso</span>
-              <div>
-                <span class="font-medium">Sucesso!</span>
-                <?= htmlspecialchars($_SESSION['upload_success'], ENT_QUOTES, 'UTF-8') ?> turmas cadastradas com sucesso!
-              </div>
-            </div>
-          <?php endif; ?>
-          <?php if (!empty($_SESSION['upload_errors'])): ?>
-            <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-              role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              </svg>
-              <span class="sr-only">Erro</span>
-              <div>
-                <span class="font-medium">Erro ao cadastrar turmas:</span>
-                <ul class="mt-1.5 list-disc list-inside">
-                  <?php foreach ($_SESSION['upload_errors'] as $error): ?>
-                    <li><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></li>
-                  <?php endforeach; ?>
-                </ul>
-              </div>
-            </div>
-          <?php endif; ?>
-
-          <?php
-          unset($_SESSION['upload_success'], $_SESSION['upload_errors']);
-          ?>
-
-          <?php if (isset($_SESSION['upload_error'])): ?>
-            <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-              role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              </svg>
-              <span class="sr-only">Erro</span>
-              <div>
-                <span class="font-medium">Erro:</span>
-                <?= htmlspecialchars($_SESSION['upload_error'], ENT_QUOTES, 'UTF-8') ?>
-              </div>
-            </div>
-            <?php unset($_SESSION['upload_error']); ?>
-          <?php endif; ?>
-
           <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden mb-5">
             <div class="p-4 flex items-center justify-between gap-4">
               <div class="relative inline-block text-left">
@@ -234,19 +179,19 @@ if (isset($viewClassId)) {
               </div>
             </div>
 
-            <div class="max-w-7xl mx-auto overflow-x-auto">
-              <table class="w-full text-sm text-left">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <div class="max-w-7xl mx-auto overflow-x-auto shadow-xl rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-200 dark:scrollbar-track-gray-700">
+              <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th class="px-6 py-3">Turma</th>
-                    <th class="px-6 py-3">ID</th>
-                    <th class="px-6 py-3">PDT</th>
-                    <th class="px-6 py-3">Líder</th>
-                    <th class="px-6 py-3">Vice-líder</th>
-                    <th class="px-6 py-3">Ação</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Turma</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">PDT</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Líder</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Vice-líder</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ação</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
                   <?php
                   $selectedGrade = $_GET["grade"] ?? null;
 
@@ -266,14 +211,12 @@ if (isset($viewClassId)) {
 
                   if ($stmt->rowCount() > 0) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { ?>
-                      <tr
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-
+                      <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
                         <td class="px-6 py-4">
                           <div class="flex items-center gap-3">
-                            <div>
-                              <div class="font-medium text-gray-900 dark:text-white">
-                                <a href="turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"])); ?>">
+                            <div class="flex-1 min-w-0">
+                              <div class="font-medium text-gray-900 dark:text-white truncate">
+                                <a href="turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
                                   <?php echo htmlspecialchars($row["name"]); ?>
                                 </a>
                               </div>
@@ -293,15 +236,16 @@ if (isset($viewClassId)) {
                         ?>
                           <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full" src="<?php echo htmlspecialchars($pdt['profile_photo']); ?>"
+                              <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" 
+                                src="<?php echo htmlspecialchars($pdt['profile_photo']); ?>"
                                 alt="Foto do usuário">
-                              <div>
-                                <div class="font-medium text-gray-900 dark:text-white">
-                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($pdt["id"])); ?>">
+                              <div class="flex-1 min-w-0">
+                                <div class="font-medium text-gray-900 dark:text-white truncate">
+                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($pdt["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
                                     <?php echo htmlspecialchars($pdt["name"]); ?>
                                   </a>
                                 </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                   <?php echo htmlspecialchars($pdt["email"]); ?>
                                 </div>
                               </div>
@@ -311,7 +255,7 @@ if (isset($viewClassId)) {
                           if (isset($row['pdt_id']) && isset($pdt['role'])) {
                             $classController->handleUserRoleChange($row['pdt_id'], $pdt['role']);
                           }
-                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400">Não cadastrado</td>';
+                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
                         } ?>
 
                         <?php $leader = $userController->getInfo($row["leader_id"]);
@@ -319,15 +263,16 @@ if (isset($viewClassId)) {
                         ?>
                           <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full" src="<?php echo $leader['profile_photo']; ?>"
+                              <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" 
+                                src="<?php echo htmlspecialchars($leader['profile_photo']); ?>"
                                 alt="Foto do usuário">
-                              <div>
-                                <div class="font-medium text-gray-900 dark:text-white">
-                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($leader["id"])); ?>">
+                              <div class="flex-1 min-w-0">
+                                <div class="font-medium text-gray-900 dark:text-white truncate">
+                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($leader["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
                                     <?php echo htmlspecialchars($leader["name"]); ?>
                                   </a>
                                 </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                   <?php echo htmlspecialchars($leader["email"]); ?>
                                 </div>
                               </div>
@@ -337,7 +282,7 @@ if (isset($viewClassId)) {
                           if (isset($row['leader_id']) && isset($leader['role'])) {
                             $classController->handleUserRoleChange($row['leader_id'], $leader['role']);
                           }
-                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400">Não cadastrado</td>';
+                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
                         } ?>
 
                         <?php $viceLeader = $userController->getInfo($row["vice_leader_id"]);
@@ -345,15 +290,16 @@ if (isset($viewClassId)) {
                         ?>
                           <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full"
-                                src="<?php echo htmlspecialchars($viceLeader['profile_photo']); ?>" alt="Foto do usuário">
-                              <div>
-                                <div class="font-medium text-gray-900 dark:text-white">
-                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($viceLeader["id"])); ?>">
+                              <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" 
+                                src="<?php echo htmlspecialchars($viceLeader['profile_photo']); ?>"
+                                alt="Foto do usuário">
+                              <div class="flex-1 min-w-0">
+                                <div class="font-medium text-gray-900 dark:text-white truncate">
+                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($viceLeader["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
                                     <?php echo htmlspecialchars($viceLeader["name"]); ?>
                                   </a>
                                 </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
                                   <?php echo htmlspecialchars($viceLeader["email"]); ?>
                                 </div>
                               </div>
@@ -363,21 +309,19 @@ if (isset($viewClassId)) {
                           if (isset($row['vice_leader_id']) && isset($viceLeader['role'])) {
                             $classController->handleUserRoleChange($row['vice_leader_id'], $viceLeader['role']);
                           }
-                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400">Não cadastrado</td>';
+                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
                         } ?>
 
                         <td class="px-6 py-4">
                           <a href="./turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"])); ?>"
-                            class="font-bold text-blue-600 hover:underline dark:text-blue-500">
+                            class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Editar
                           </a>
                         </td>
                       </tr>
                   <?php }
                   } else {
-                    echo '<tr>
-                      <td colspan="6" class="px-6 py-4 text-center">Nenhuma turma encontrada.</td>
-                    </tr>';
+                    echo '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Nenhuma turma encontrada.</td></tr>';
                   }
                   ?>
                 </tbody>

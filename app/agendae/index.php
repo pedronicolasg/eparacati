@@ -14,7 +14,7 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê</title>
-  <link rel="stylesheet" href="../../public/assets/css/style.css">
+  <link rel="stylesheet" href="../../public/assets/css/output.css">
   <link rel="shortcut icon" href="../../public/assets/images/logo.svg" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -22,7 +22,10 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
 <body
   class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen">
 
-  <?php UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg'); ?>
+  <?php
+  UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg');
+  UI::renderPopup(true);
+  ?>
 
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
@@ -56,7 +59,7 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
           </button>
         <?php } else {
           echo '      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
-          $ui->renderCurrentUserBookings($scheduleController, $currentUser['id']);
+          $ui->renderBookings('../../', $currentUser['id'], true);
           echo '</div>';
         } ?>
       </div>
@@ -94,15 +97,20 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
             <option value="">Agora</option>
             <?php foreach (ScheduleController::getTimeSlots() as $slot): ?>
               <option value="<?php echo htmlspecialchars($slot['id']); ?>">
-              <?php echo sprintf(
-                '%s (%s - %s)',
-                htmlspecialchars($slot['name']),
-                htmlspecialchars($slot['start']),
-                htmlspecialchars($slot['end'])
-              ); ?>
+                <?php echo sprintf(
+                  '%s (%s - %s)',
+                  htmlspecialchars($slot['name']),
+                  htmlspecialchars($slot['start']),
+                  htmlspecialchars($slot['end'])
+                ); ?>
               </option>
             <?php endforeach; ?>
           </select>
+
+          <button id="toggleView" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-5 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center">
+            <i class="fas fa-exchange-alt mr-2"></i>
+            Alterar View
+          </button>
 
           <div class="relative">
             <input type="text" placeholder="Buscar equipamento..."
@@ -114,9 +122,7 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <?php $ui->renderEquipmentsAgendae($conn, $type, $time, $page) ?>
-      </div>
+      <?php $ui->renderEquipmentsAgendae($type, $currentUserPreferences['scheduleAppView'], $time, $page); ?>
 
       <div class="flex justify-center mt-8">
         <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -140,6 +146,20 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('toggleView').addEventListener('click', function() {
+        fetch('../src/handlers/user/preferences/scheduleAppView.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => response.text())
+          .then(() => {
+            location.reload();
+          })
+          .catch(error => console.error('Erro:', error));
+      });
+
       const typeSelect = document.querySelector('select:nth-of-type(1)');
       const timeSelect = document.querySelector('select:nth-of-type(2)');
       typeSelect.addEventListener('change', updateURLParameters);
@@ -188,7 +208,9 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
       }
     });
   </script>
-  <script src="../../public/assets/js/agendae/searchbar.js"></script>
+
+  <?php $viewScript = $currentUserPreferences['scheduleAppView'] === 'grid' ? 'searchBarGridView.js' : 'searchBarListView.js'; ?>
+  <script src="../../public/assets/js/agendae/<?php echo htmlspecialchars($viewScript); ?>"></script>
 </body>
 
 </html>

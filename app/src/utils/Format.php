@@ -60,11 +60,13 @@ class Format
   public static function typeName($type)
   {
     $typeMap = [
+      'caixadesom' => 'Caixa de Som',
+      'microfone' => 'Microfone',
       'notebook' => 'Notebook',
       'extensao' => 'Extensão',
       'projetor' => 'Projetor',
-      'sala' => 'Sala',
-      'outro' => 'Outro'
+      'espaco' => 'Espaço',
+      'cabo' => 'Cabo',
     ];
 
     return $typeMap[$type] ?? ucfirst($type);
@@ -73,9 +75,8 @@ class Format
   public static function statusName($status)
   {
     $statusMap = [
-      'disponivel' => 'Disponivel',
-      'indisponivel' => 'Indisponivel',
-      'agendado' => 'Agendado'
+      'disponivel' => 'Disponível',
+      'indisponivel' => 'Indisponível'
     ];
 
     return $statusMap[$status] ?? ucfirst($status);
@@ -88,5 +89,27 @@ class Format
       throw new InvalidArgumentException('Formato de data inválido.');
     }
     return $dateTime->format('d/m/Y - H:i');
+  }
+
+  public static function phoneNumber($phone)
+  {
+    $phone = preg_replace('/[^0-9]/', '', $phone);
+    $length = strlen($phone);
+
+    if ($length === 11) {
+      return sprintf('(%s) %s-%s',
+        substr($phone, 0, 2),
+        substr($phone, 2, 5),
+        substr($phone, 7)
+      );
+    } elseif ($length === 10) {
+      return sprintf('(%s) %s-%s',
+        substr($phone, 0, 2),
+        substr($phone, 2, 4),
+        substr($phone, 6)
+      );
+    }
+
+    return $phone;
   }
 }

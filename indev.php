@@ -5,17 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Em breve!</title>
   <link rel="shortcut icon" href="public/assets/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="public/assets/css/style.css">
+  <link rel="stylesheet" href="public/assets/css/output.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .glassmorphism {
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-  </style>
 </head>
 
 <body class="flex items-center justify-center min-h-screen bg-cover bg-center" style="background-image: url('public/assets/images/indevbg.png');">

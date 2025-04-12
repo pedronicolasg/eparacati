@@ -15,7 +15,7 @@ if (!empty($logId)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Registros</title>
-  <link rel="stylesheet" href="../../../public/assets/css/style.css">
+  <link rel="stylesheet" href="../../../public/assets/css/output.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
 </head>
@@ -28,7 +28,9 @@ if (!empty($logId)) {
       "Dashboard",
       "blue",
       "altlogo.svg"
-    ); ?>
+    );
+    UI::renderPopup(true);
+    ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -158,47 +160,51 @@ if (!empty($logId)) {
               </div>
             </div>
 
-            <div class="bg-white dark:bg-[#1d242c] max-w-7xl mx-auto px-4 py-8 overflow-x-auto">
-              <table class="w-full border-collapse min-w-max">
-                <thead>
-                  <tr class="text-left border-b border-gray-200 dark:border-gray-700">
-                    <th class="text-gray-500 dark:text-gray-500 pr-4 py-2">ID</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Usuário ID</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Nome do Usuário</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Ação Realizada</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Tabela Alvo</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">ID Alvo</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Descrição</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Endereço IP</th>
-                    <th class="px-4 py-2 text-blue-600 dark:text-[#3182ce]">Data e Hora</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php
-                  $action = $_GET['action'] ?? null;
-                  $logs = $logger->getLogs(['action' => $action]);
+            <div class="relative overflow-hidden bg-white dark:bg-[#1d242c] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+              <div class="overflow-x-auto">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead class="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Usuário ID</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nome do Usuário</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ação Realizada</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tabela Alvo</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID Alvo</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Descrição</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Endereço IP</th>
+                      <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Data e Hora</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white dark:bg-[#1d242c] divide-y divide-gray-200 dark:divide-gray-700">
+                    <?php
+                    $action = $_GET['action'] ?? null;
+                    $logs = $logger->getLogs(['action' => $action]);
 
-                  foreach ($logs as $log) {
-                    $log = array_map('htmlspecialchars', $log);
-                    $log['user_name'] = strlen($log['user_name']) > 11 ? substr($log['user_name'], 0, 11) . '...' : $log['user_name'];
-                    $log['message'] = strlen($log['message']) > 30 ? substr($log['message'], 0, 30) . '...' : $log['message'];
-                  ?>
-                    <tr class="hover:bg-gray-100 dark:hover:bg-[#2a323c] border-b border-gray-200 dark:border-gray-700/50">
-                    <tr class="hover:bg-gray-100 dark:hover:bg-[#2a323c] border-b border-gray-200 dark:border-gray-700/50 cursor-pointer" onclick="window.location.href='./registros.php?id=<?= Security::hide($log['id']) ?>'">
-                      <td class="text-gray-500 dark:text-gray-500 pr-4 py-2 text-right"><?= $log['id'] ?></td>
-                      <td class="px-4 py-2"><?= $log['user_id'] ?></td>
-                      <td class="px-4 py-2"><?= $log['user_name'] ?></td>
-                      <td class="px-4 py-2"><?= Format::actionName($log['action']) ?></td>
-                      <td class="px-4 py-2"><?= Format::tableName($log['target_table']) ?></td>
-                      <td class="px-4 py-2"><?= $log['target_id'] ?></td>
-                      <td class="px-4 py-2"><?= $log['message'] ?></td>
-                      <td class="px-4 py-2"><?= $log['ip_address'] ?></td>
-                      <td class="px-4 py-2">[ <?= $log['timestamp'] ?> ]</td>
-                    </tr>
-                    </tr>
-                  <?php } ?>
-                </tbody>
-              </table>
+                    foreach ($logs as $log) {
+                      $log = array_map('htmlspecialchars', $log);
+                      $log['user_name'] = strlen($log['user_name']) > 11 ? substr($log['user_name'], 0, 11) . '...' : $log['user_name'];
+                      $log['message'] = strlen($log['message']) > 30 ? substr($log['message'], 0, 30) . '...' : $log['message'];
+                    ?>
+                      <tr class="group transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer" onclick="window.location.href='./registros.php?id=<?= Security::hide($log['id']) ?>'">
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200"><?= $log['id'] ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= $log['user_id'] ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= $log['user_name'] ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            <?= Format::actionName($log['action']) ?>
+                          </span>
+                        </td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= Format::tableName($log['target_table']) ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= $log['target_id'] ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= $log['message'] ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= $log['ip_address'] ?></td>
+                        <td class="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"><?= $log['timestamp'] ?></td>
+                      </tr>
+                    <?php } ?>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

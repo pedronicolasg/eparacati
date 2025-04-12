@@ -33,7 +33,7 @@ $userController = new UserController($conn);
 $classController = new ClassController($conn);
 $equipmentController = new EquipmentController($conn);
 $scheduleController = new ScheduleController($conn);
-$ui = new UI();
+$ui = new UI($conn);
 
 // Em prod será substituido por Cron Jobs
 $classController->checkUpgrades();
@@ -51,5 +51,6 @@ $requiredRoles ??= ['aluno', 'lider', 'professor', 'gestao'];
 
 if (!isset($allowUnauthenticatedAccess) || !$allowUnauthenticatedAccess) {
     $currentUser = $userController->verifySession($requiredRoles);
-    $theme = $currentUser['website_theme'];
+    $currentUserPreferences = $currentUser['preferences'] ?? UserController::getDefaultPreferences();
+    $theme = $currentUserPreferences['theme'];
 }

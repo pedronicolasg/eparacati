@@ -1,23 +1,35 @@
 <?php
 require_once 'core/conn.php';
 
+require_once 'controllers/Schedule.php';
+
 require_once 'utils/Security.php';
 require_once 'utils/Navigation.php';
-require_once 'utils/fileUploader.php';
+require_once 'utils/FileUploader.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UserController
 {
     private $conn;
-    private $security;
-    private $fileUploader;
 
     public function __construct($conn)
     {
         $this->conn = $conn;
-        $this->security = new Security($conn);
-        $this->fileUploader = new FileUploader();
+    }
+
+    private function getSecurity()
+    {
+        return new Security($this->conn);
+    }
+
+    private function getFileUploader()
+    {
+        return new FileUploader();
+    }
+    private function getScheduleController()
+    {
+        return new ScheduleController($this->conn);
     }
 
     public function verifySession($allowedRoles = null)
@@ -59,7 +71,7 @@ class UserController
     public function getInfo($identifier, $type = "id", $fields = [])
     {
         $defaultFields = ["id"];
-        $allowedFields = ["id", "name", "email", "role", "class_id", "profile_photo", "bio", "website_theme", "created_at", "updated_at"];
+        $allowedFields = ["id", "name", "email", "phone", "role", "class_id", "profile_photo", "bio", "created_at", "updated_at", "preferences"];
 
         if (empty($fields)) {
             $fields = $allowedFields;
@@ -68,7 +80,7 @@ class UserController
             $fields = array_unique(array_merge($defaultFields, $fields));
         }
 
-        $sqlFields = implode(", ", $fields);
+        $sqlFields = implode(", ", array_diff($fields, ["preferences"]));
         $sql = "";
         $params = [];
 
@@ -83,29 +95,72 @@ class UserController
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        $userInfo = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+        if ($identifier !== null && in_array("preferences", $fields)) {
+            $this->ensurePreferencesExist($userInfo["id"]);
+            $preferencesStmt = $this->conn->prepare("SELECT * FROM preferences WHERE user_id = :user_id");
+            $preferencesStmt->execute(["user_id" => $userInfo["id"]]);
+            $userInfo["preferences"] = $preferencesStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        }
+
+        return $userInfo;
     }
 
     public function getByRole($role)
     {
-        $sql = "SELECT id, name, email, role, class_id, profile_photo, website_theme, created_at, updated_at
+        $sql = "SELECT id, name, email, role, class_id, profile_photo, phone, created_at, updated_at
                 FROM users WHERE role = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$role]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function register($name, $email, $password, $role, $class_id, $alerts = true)
+    public static function getDefaultPreferences()
     {
-        $id = $this->security->generateUniqueId(8, "users");
-        $created_at = date("d-m-Y H:i:s");
-        $profile_photo = $this->generateDefaultPFP($name);
+        return [
+            'theme' => 'light',
+            'scheduleAppView' => 'grid'
+        ];
+    }
 
-        if (empty($name) || empty($email) || empty($password || empty($role)) && $alerts) {
-            Navigation::alert(
-                "Preencha todos os campos!",
-                "../../../dashboard/pages/usuarios.php"
-            );
+    public function createPreferences($userId, $preferences = [])
+    {
+        $defaultPreferences = self::getDefaultPreferences();
+        $preferences = array_merge($defaultPreferences, $preferences);
+
+        $sql = 'INSERT INTO preferences (user_id, ' . implode(', ', array_keys($preferences)) . ')
+                VALUES (:user_id, :' . implode(', :', array_keys($preferences)) . ')';
+        $stmt = $this->conn->prepare($sql);
+
+        $preferencesData = array_merge(['user_id' => $userId], $preferences);
+        $stmt->execute($preferencesData);
+    }
+
+    public function ensurePreferencesExist($userId)
+    {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM preferences WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        if ($stmt->fetchColumn() == 0) {
+            $this->createPreferences($userId);
+        }
+    }
+
+    public function register($name, $email, $phone, $password, $role, $class_id, $alerts = true)
+    {
+        $security = $this->getSecurity();
+
+        if (empty($name) || empty($email) || empty($password) || empty($role)) {
+            if ($alerts) {
+                Navigation::alert(
+                    "Preencha todos os campos!",
+                    "../../../dashboard/pages/usuarios.php",
+                    'error',
+                    'Erro'
+                );
+            }
+            throw new Exception("Campos obrigatórios não preenchidos");
         }
 
         $sql = "SELECT id FROM users WHERE email = ?";
@@ -116,30 +171,55 @@ class UserController
             if ($alerts) {
                 Navigation::alert(
                     "Email já cadastrado!",
-                    "../../../dashboard/pages/usuarios.php"
+                    "../../../dashboard/pages/usuarios.php",
+                    'error',
+                    'Erro'
                 );
             }
-        } else {
-            $sql = 'INSERT INTO users (id, name, email, password, role, class_id, profile_photo, website_theme, created_at)
+            throw new Exception("Email já cadastrado");
+        }
+
+        $id = $security->generateUniqueId(8, "users");
+        $created_at = date("d-m-Y H:i:s");
+        $profile_photo = $this->generateDefaultPFP($name);
+
+        try {
+            $this->conn->beginTransaction();
+
+            $sql = 'INSERT INTO users (id, name, email, phone, password, role, class_id, profile_photo, created_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt = $this->conn->prepare($sql);
             $data = [
                 $id,
                 $name,
                 Security::sanitizeInput($email),
+                !empty($phone) ? $phone : null,
                 Security::passw($password),
                 $role,
                 $class_id,
                 $profile_photo,
-                'light',
-                $created_at,
+                $created_at
             ];
             $stmt->execute($data);
+
+            $defaultPreferences = self::getDefaultPreferences();
+            $preferencesSql = 'INSERT INTO preferences (user_id, ' . implode(', ', array_keys($defaultPreferences)) . ')
+                               VALUES (:user_id, :' . implode(', :', array_keys($defaultPreferences)) . ')';
+            $preferencesStmt = $this->conn->prepare($preferencesSql);
+            $preferencesData = array_merge(['user_id' => $id], $defaultPreferences);
+            $preferencesStmt->execute($preferencesData);
+
+            $this->conn->commit();
+            return $id;
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            throw $e;
         }
     }
 
     public function bulkAdd($filePath)
     {
+        $security = $this->getSecurity();
         try {
             $spreadsheet = IOFactory::load($filePath);
             $worksheet = $spreadsheet->getActiveSheet();
@@ -150,13 +230,13 @@ class UserController
 
             foreach ($rows as $index => $row) {
                 try {
-                    if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3])) {
+                    if (empty($row[0]) || empty($row[1]) || empty($row[3])) {
                         $results['errors'][] = "Linha " . ($index + 2) . ": Campos obrigatórios faltando";
                         continue;
                     }
 
-                    $id = $this->security->generateUniqueId(8, 'users');
-                    $this->register($row[0], $row[1], $row[2], $row[3], !empty($row[4]) ? $row[4] : null, false);
+                    $id = $security->generateUniqueId(8, 'users');
+                    $this->register($row[0], $row[1], $row[2] ?? null, $row[3], !empty($row[4]) ? $row[4] : null, !empty($row[5]) ? $row[5] : null, false);
 
                     $results['success']++;
                     $results['created_users'][$row[0]] = $id;
@@ -167,7 +247,7 @@ class UserController
 
             return $results;
         } catch (Exception $e) {
-            Navigation::alert("Erro ao processar arquivo: " . $e->getMessage());
+            Navigation::alert("Erro ao processar arquivo: " . $e->getMessage(), "../../../dashboard/pages/usuarios.php", 'error', 'Erro');
         }
     }
 
@@ -190,12 +270,12 @@ class UserController
             } else {
                 $msg = "Senha incorreta!";
                 $path = "../../../login.php";
-                Navigation::alert($msg, $path);
+                Navigation::alert($msg, $path, 'error', 'Erro');
             }
         } else {
             $msg = "Email não cadastrado!";
             $path = "../../../login.php";
-            Navigation::alert($msg, $path);
+            Navigation::alert($msg, $path, 'error', 'Erro');
         }
     }
 
@@ -247,15 +327,28 @@ class UserController
 
     public function updateTheme($userId)
     {
-        $userInfo = $this->getInfo($userId, "id", ["website_theme"]);
+        $userInfo = $this->getInfo($userId, "id", ["preferences"]);
 
-        $currentTheme = $userInfo["website_theme"];
+        $currentTheme = $userInfo["preferences"]["theme"] ?? "dark";
         $newTheme = $currentTheme === "light" ? "dark" : "light";
 
         $stmt = $this->conn->prepare(
-            "UPDATE users SET website_theme = ? WHERE id = ?"
+            "UPDATE preferences SET theme = ? WHERE user_id = ?"
         );
         $stmt->execute([$newTheme, $userId]);
+    }
+
+    public function updateScheduleAppView($userId)
+    {
+        $userInfo = $this->getInfo($userId, "id", ["preferences"]);
+
+        $currentView = $userInfo["preferences"]["scheduleAppView"] ?? "grid";
+        $newView = $currentView === "grid" ? "list" : "grid";
+
+        $stmt = $this->conn->prepare(
+            "UPDATE preferences SET scheduleAppView = ? WHERE user_id = ?"
+        );
+        $stmt->execute([$newView, $userId]);
     }
 
     public function updateRole($userId, $role)
@@ -276,9 +369,10 @@ class UserController
 
     private function updateProfilePhoto($imageFile, $userId)
     {
+        $fileUploader = $this->getFileUploader();
         $uploadPath = '../../../../public/assets/images/profile_photos/';
 
-        $pfpPath = $this->fileUploader->uploadImage(
+        $pfpPath = $fileUploader->uploadImage(
             $imageFile,
             $uploadPath,
             256,
@@ -321,7 +415,19 @@ class UserController
 
     public function delete($id)
     {
-        $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
-        return $stmt->execute([$id]);
+        try {
+            $this->conn->beginTransaction();
+            $scheduleController = $this->getScheduleController();
+
+            $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$id]);
+
+            $scheduleController->cancel(['user_id' => $id]);
+
+            $this->conn->commit();
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            Navigation::alert("Falha ao deletar o usuário: " . $e->getMessage(), $_SERVER['HTTP_REFERER']);
+        }
     }
 }

@@ -2,6 +2,11 @@
 $requiredRoles = ['gestao'];
 require_once '../../bootstrap.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    Navigation::alert('Método inválido', $_SERVER['HTTP_REFERER'], 'error', 'Método Inválido');
+    exit;
+}
+
 try {
     $id = intval($_GET['id']);
     $deleteStudents = isset($_GET['deleteStudents']) ? true : false;
@@ -25,6 +30,12 @@ try {
     );
 
     $classController->delete($id, $deleteStudents);
+
+    $_SESSION['alert'][] = [
+        'titulo' => 'Sucesso',
+        'mensagem' => 'Turma ' . $classInfo['name'] . ' deletada com sucesso',
+        'tipo' => 'success'
+    ];
     Navigation::redirect($_SERVER['HTTP_REFERER'], true);
 } catch (Exception $e) {
     echo $e->getMessage();

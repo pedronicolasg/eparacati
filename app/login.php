@@ -1,6 +1,6 @@
 <?php
-require_once 'src/utils/Navigation.php';
-@session_start();
+$allowUnauthenticatedAccess = true;
+require_once __DIR__ . "/src/bootstrap.php";
 
 if (isset($_SESSION['id'])) {
   Navigation::redirect('index.php');
@@ -14,24 +14,12 @@ if (isset($_SESSION['id'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Login</title>
-  <link rel="shortcut icon" href="../public/../public/assets/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="../public/../public/assets/css/style.css">
-  <style>
-    .glassmorphism {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    }
-
-    .input-focus:focus {
-      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
-    }
-  </style>
+  <link rel="shortcut icon" href="../public/assets/images/logo.svg" type="image/x-icon">
+  <link rel="stylesheet" href="../public/assets/css/output.css">
 </head>
 
 <body class="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat py-12 px-4 sm:px-6 lg:px-8" style="background-image: url('../public/../public/assets/images/loginbackground.jpg');">
+  <?php UI::renderPopup(true); ?>
   <div class="glassmorphism p-8 rounded-2xl w-full max-w-md space-y-8 transition-all duration-300 hover:shadow-xl">
     <div class="text-center">
       <div class="mx-auto h-16 w-16 rounded-full bg-white bg-opacity-20 flex items-center justify-center border border-white border-opacity-30">

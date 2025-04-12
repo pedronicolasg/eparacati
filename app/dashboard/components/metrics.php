@@ -49,3 +49,16 @@
     </div>
   </div>
 </div>
+
+<div class="bg-white dark:bg-slate-800 rounded-lg p-5 border-t-4 border-yellow-500 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+  <div class="flex justify-between items-start">
+    <div>
+      <p class="text-gray-600 dark:text-gray-400 text-sm">Agendamentos Ativos</p>
+      <h3 class="text-3xl font-bold text-gray-900 dark:text-white mt-1"><?= $scheduleController->count(); ?></h3>
+      <a href="pages/agendamentos.php" class="font-bold text-yellow-500 hover:text-yellow-600 dark:text-yellow-400 dark:hover:text-yellow-300 text-sm mt-2 inline-block hover:underline">Gerenciar Agendamentos</a>
+    </div>
+    <div class="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
+      <i class="fa-solid fa-clipboard-list text-yellow-500 dark:text-yellow-400 text-xl"></i>
+    </div>
+  </div>
+</div>

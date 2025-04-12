@@ -30,11 +30,9 @@
           <select id="type" name="type" type="type"
             class="bg-gray-50 border border-gray-300 text-sm rounded-lg w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white">
             <option selected>Selecione</option>
-            <option value="notebook">Notebook</option>
-            <option value="extensao">Extensão</option>
-            <option value="projetor">Projetor</option>
-            <option value="sala">Sala</option>
-            <option value="outro">Outro</option>
+            <?php foreach ($equipmentController->getTypes() as $type): ?>
+              <option value="<?= htmlspecialchars($type) ?>"><?= htmlspecialchars(Format::typeName($type)) ?></option>
+            <?php endforeach; ?>
           </select>
         </div>
 

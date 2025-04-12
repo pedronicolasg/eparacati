@@ -1,13 +1,12 @@
-function searchEquipment() {
-  // Selecionar apenas o input de busca da lista de equipamentos
+function searchEquipmentList() {
   const searchInput = document.querySelector('div.flex.flex-col.sm\\:flex-row.gap-3 input[placeholder="Buscar equipamento..."]');
 
-  // Selecionar especificamente o grid de equipamentos (o que está logo abaixo dos filtros)
-  const equipmentContainer = document.querySelector('div.flex.flex-col.md\\:flex-row.md\\:justify-between.md\\:items-center.mb-6.gap-4 + div.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
 
-  if (!searchInput || !equipmentContainer) return; // Se não encontrar os elementos, sai da função
+  const equipmentContainer = document.querySelector('div.space-y-4');
 
-  const equipmentCards = equipmentContainer.querySelectorAll('.relative.bg-white.dark\\:bg-gray-800.rounded-xl.overflow-hidden.shadow-md');
+  if (!searchInput || !equipmentContainer) return;
+
+  const equipmentCards = equipmentContainer.querySelectorAll('.flex.flex-col.sm\\:flex-row.items-start.sm\\:items-center.justify-between.p-4.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-md.mb-4');
 
   const getTextContent = (element, selector) => {
     const el = element.querySelector(selector);
@@ -18,13 +17,12 @@ function searchEquipment() {
     let hasVisibleCards = false;
 
     equipmentCards.forEach(card => {
-      const name = getTextContent(card, 'h3');
+      const name = getTextContent(card, 'h3.font-medium.text-lg.sm\\:text-base.truncate');
       const category = getTextContent(card, 'span.bg-purple-600, span.bg-indigo-600');
-      const description = getTextContent(card, 'p.text-sm.text-gray-600.dark\\:text-gray-400.mb-3');
+      const description = getTextContent(card, 'p.text-sm.text-gray-600.dark\\:text-gray-400.line-clamp-2');
 
       const matches = searchTerm === '' ||
         [name, category, description].some(text => text.includes(searchTerm));
-
       card.style.display = matches ? '' : 'none';
       if (matches) hasVisibleCards = true;
     });
@@ -57,7 +55,6 @@ function searchEquipment() {
     handleNoResults(searchTerm, hasResults);
   });
 
-  // Limpar busca se houver parâmetros na URL que possam afetar
   const urlParams = new URLSearchParams(window.location.search);
   if (!urlParams.has('search')) {
     searchInput.value = '';
@@ -65,4 +62,4 @@ function searchEquipment() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', searchEquipment);
+document.addEventListener('DOMContentLoaded', searchEquipmentList);

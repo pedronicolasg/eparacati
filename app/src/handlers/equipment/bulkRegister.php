@@ -26,8 +26,19 @@ try {
 
   $result = $equipmentController->bulkRegister($spreadsheet['tmp_name']);
 
-  $_SESSION['upload_success'] = $result['success'];
-  $_SESSION['upload_errors'] = $result['errors'];
+  $_SESSION['alert'][] = [
+    'titulo' => 'Sucesso',
+    'mensagem' => $result['success'] . ' Equipamentos adicionados com sucesso',
+    'tipo' => 'success'
+  ];
+
+  foreach ($result['errors'] as $error) {
+    $_SESSION['alert'][] = [
+      'titulo' => 'Erro',
+      'mensagem' => $error,
+      'tipo' => 'error'
+    ];
+  }
 
   $createdEquipments = array_map(function ($name, $id) {
     return "$name ($id)";

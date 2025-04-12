@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E.E.E.P. Profª Elsa Maria Porto Costa Lima</title>
   <link rel="shortcut icon" href="public/assets/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="public/assets/css/style.css">
+  <link rel="stylesheet" href="public/assets/css/output.css">
   <style type="text/css">
     @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap');
 

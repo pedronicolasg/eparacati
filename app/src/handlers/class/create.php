@@ -2,6 +2,11 @@
 $requiredRoles = ['gestao'];
 require_once "../../bootstrap.php";
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Navigation::alert('Método inválido', $_SERVER['HTTP_REFERER'], 'error', 'Método Inválido');
+    exit;
+}
+
 try {
     $name = $_POST['name'];
     $grade = $_POST['grade'];
@@ -52,7 +57,12 @@ try {
         Security::getIp()
     );
 
-    Navigation::redirect($classesPagePath);
+    $_SESSION['alert'][] = [
+        'titulo' => 'Sucesso',
+        'mensagem' => 'Turma criada com sucesso',
+        'tipo' => 'success'
+    ];
+    Navigation::redirect($_SERVER['HTTP_REFERER']);
 } catch (Exception $e) {
     error_log($e->getMessage());
     Navigation::alert("Ocorreu um erro ao criar a turma. Por favor, tente novamente mais tarde.", $_SERVER['HTTP_REFERER']);

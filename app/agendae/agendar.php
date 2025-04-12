@@ -95,95 +95,17 @@ $inputSelectedDate = $selectedDate->format('Y-m-d');
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê | Agendar Equipamento</title>
-  <link rel="stylesheet" href="../../public/assets/css/style.css">
+  <link rel="stylesheet" href="../../public/assets/css/output.css">
   <link rel="shortcut icon" href="../../public/assets/images/logo.svg" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-
-    .calendar-day {
-      aspect-ratio: 1/1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .calendar-day.today {
-      border: 2px solid #22c55e;
-    }
-
-    .calendar-day.selected {
-      background-color: #22c55e;
-      color: white;
-    }
-
-    .calendar-day.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .dark .calendar-day.today {
-      border-color: #16a34a;
-    }
-
-    .dark .calendar-day.selected {
-      background-color: #16a34a;
-    }
-
-    .calendar-day:not(.disabled):not(.selected):hover {
-      background-color: #f3f4f6;
-    }
-
-    .dark .calendar-day:not(.disabled):not(.selected):hover {
-      background-color: #374151;
-    }
-
-    .equipment-image {
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    .time-slot-container {
-      max-height: 300px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #d1d5db transparent;
-    }
-
-    .time-slot-container::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .time-slot-container::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .time-slot-container::-webkit-scrollbar-thumb {
-      background-color: #d1d5db;
-      border-radius: 20px;
-    }
-
-    .dark .time-slot-container {
-      scrollbar-color: #4b5563 transparent;
-    }
-
-    .dark .time-slot-container::-webkit-scrollbar-thumb {
-      background-color: #4b5563;
-    }
-  </style>
 </head>
 
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen">
 
-  <?php UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg'); ?>
+  <?php
+  UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg');
+  UI::renderPopup(true);
+  ?>
 
   <div class="container mx-auto px-4 py-8 max-w-5xl">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
@@ -236,7 +158,7 @@ $inputSelectedDate = $selectedDate->format('Y-m-d');
               </label>
               <select name="class_id"
                 class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent">
-                <option value="">Selecione uma turma (opcional)</option>
+                <option value="">Selecione uma turma</option>
                 <?php foreach ($classes as $class): ?>
                   <option value="<?php echo $class['id']; ?>">
                     <?php echo htmlspecialchars($class['name']); ?>
@@ -247,7 +169,7 @@ $inputSelectedDate = $selectedDate->format('Y-m-d');
 
             <div class="space-y-2">
               <label class="block text-sm font-medium">
-                Observações (opcional)
+                Observações
               </label>
               <textarea name="notes" rows="3"
                 class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent"

@@ -2,7 +2,20 @@
 $requiredRoles = ['gestao'];
 require_once "../../bootstrap.php";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  if (!isset($_SESSION['alert'])) {
+    $_SESSION['alert'] = [];
+  }
+  $_SESSION['alert'][] = [
+    'titulo' => 'Método Inválido',
+    'mensagem' => 'Método inválido',
+    'tipo' => 'error'
+  ];
+  Navigation::redirect($_SERVER['HTTP_REFERER']);
+  exit;
+}
+
+try {
   $id = $_POST['id'];
   $name = $_POST['name'];
   $type = $_POST['type'];
@@ -12,9 +25,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   function validateType($type)
   {
-    $validTypes = ['outro', 'notebook', 'extensao', 'projetor', 'sala'];
+    global $equipmentController;
+    $validTypes = $equipmentController->getTypes();
     if (!in_array($type, $validTypes)) {
-      Navigation::alert("Tipo inválido!", $_SERVER['HTTP_REFERER']);
+      if (!isset($_SESSION['alert'])) {
+        $_SESSION['alert'] = [];
+      }
+      $_SESSION['alert'][] = [
+        'titulo' => 'Validação',
+        'mensagem' => 'Tipo inválido!',
+        'tipo' => 'error'
+      ];
+      Navigation::redirect($_SERVER['HTTP_REFERER']);
       exit;
     }
   }
@@ -23,7 +45,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   {
     $validStatus = ['disponivel', 'agendado', 'indisponivel'];
     if (!in_array($status, $validStatus)) {
-      Navigation::alert("Status inválido!", $_SERVER['HTTP_REFERER']);
+      if (!isset($_SESSION['alert'])) {
+        $_SESSION['alert'] = [];
+      }
+      $_SESSION['alert'][] = [
+        'titulo' => 'Validação',
+        'mensagem' => 'Status inválido!',
+        'tipo' => 'error'
+      ];
+      Navigation::redirect($_SERVER['HTTP_REFERER']);
       exit;
     }
   }
@@ -85,4 +115,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   }
 
   Navigation::redirect($_SERVER['HTTP_REFERER']);
+} catch (Exception $e) {
+  if (!isset($_SESSION['alert'])) {
+    $_SESSION['alert'] = [];
+  }
+  $_SESSION['alert'][] = [
+    'titulo' => 'Erro',
+    'mensagem' => $e->getMessage(),
+    'tipo' => 'error'
+  ];
+  Navigation::redirect($_SERVER['HTTP_REFERER']);
+  exit;
 }

@@ -10,13 +10,24 @@ class Navigation
     self::outputScript("location.href='$location';");
   }
 
-  public static function alert($message, $location = null)
+  public static function alert($message, $location = null, $type = 'error', $title = 'Atenção')
   {
-    $script = 'alert("' . $message . '");';
-    if ($location !== null) {
-      $script .= "location.href='$location';";
+    if (!isset($_SESSION['alert'])) {
+      $_SESSION['alert'] = [];
     }
-    self::outputScript($script);
+    
+    $_SESSION['alert'][] = [
+      'titulo' => $title,
+      'mensagem' => $message,
+      'tipo' => $type
+    ];
+    
+    if ($location !== null) {
+      self::redirect($location);
+    } else {
+      $script = 'history.back();';
+      self::outputScript($script);
+    }
   }
 
   public static function redirectToLogin()

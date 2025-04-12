@@ -26,20 +26,31 @@ try {
 
   $result = $userController->bulkAdd($spreadsheet['tmp_name']);
 
-  $_SESSION['upload_success'] = $result['success'];
-  $_SESSION['upload_errors'] = $result['errors'];
+  $_SESSION['alert'][] = [
+    'titulo' => 'Sucesso',
+    'mensagem' => $result['success'] . ' Usuários adicionados com sucesso',
+    'tipo' => 'success'
+  ];
+
+  foreach ($result['errors'] as $error) {
+    $_SESSION['alert'][] = [
+      'titulo' => 'Erro',
+      'mensagem' => $error,
+      'tipo' => 'error'
+    ];
+  }
 
   $createdUsers = array_map(function ($name, $id) {
     return "$name ($id)";
   }, array_keys($result['created_users']), $result['created_users']);
-  $createdUserMessage = "Foram adicionados " . $result['success'] . " novos equipamentos:\n" . implode("\n", $createdUsers);
+  $message = "Foram adicionados " . $result['success'] . " novos equipamentos:\n" . implode("\n", $createdUsers);
 
   $logger->action(
     $currentUser['id'],
     'add',
     'users',
     null,
-    $createdUserMessage,
+    $message,
     Security::getIp()
   );
 

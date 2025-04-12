@@ -1,23 +1,35 @@
 <?php
 require_once 'core/conn.php';
 
+require_once 'controllers/Schedule.php';
+
 require_once 'utils/Security.php';
 require_once 'utils/Navigation.php';
-require_once 'utils/fileUploader.php';
+require_once 'utils/FileUploader.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class EquipmentController
 {
   private $conn;
-  private $security;
-  private $fileUploader;
-
   public function __construct($conn)
   {
     $this->conn = $conn;
-    $this->security = new Security($conn);
-    $this->fileUploader = new FileUploader();
+  }
+
+  private function getSecurity()
+  {
+    return new Security($this->conn);
+  }
+
+  private function getFileUploader()
+  {
+    return new FileUploader();
+  }
+
+  private function getScheduleController()
+  {
+    return new ScheduleController($this->conn);
   }
 
   public function count($filters = [])
@@ -41,7 +53,7 @@ class EquipmentController
 
   public function getInfo($id, $fields = [])
   {
-    $defaultFields = ['id', 'name', 'status', 'type', 'description', 'image', 'created_at'];
+    $defaultFields = ['id', 'name', 'status', 'type', 'description', 'image', 'created_at', 'updated_at'];
 
     if (empty($fields)) {
       $fields = $defaultFields;
@@ -114,9 +126,23 @@ class EquipmentController
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
+  public function getTypes()
+  {
+    $sql = "SHOW COLUMNS FROM equipments LIKE 'type'";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result && preg_match("/^enum\((.*)\)$/", $result['Type'], $matches)) {
+      return str_getcsv($matches[1], ',', "'");
+    }
+
+    return [];
+  }
+
   public function register($name, $type, $status, $description = null, $image = null, $alerts = true)
   {
-    $validTypes = ['notebook', 'extensao', 'sala', 'projetor', 'outro'];
+    $validTypes = $this->getTypes();
     $validStatuses = ['disponivel', 'indisponivel'];
 
     if (!in_array($type, $validTypes)) {
@@ -141,7 +167,8 @@ class EquipmentController
       return false;
     }
 
-    $id = $this->security->generateUniqueId(8, "equipments");
+    $security = $this->getSecurity();
+    $id = $security->generateUniqueId(8, "equipments");
     $created_at = date("d-m-Y H:i:s");
 
     if (empty($name) || empty($type) && $alerts) {
@@ -202,7 +229,8 @@ class EquipmentController
             continue;
           }
 
-          $id = $this->security->generateUniqueId(8, 'equipments');
+          $security = $this->getSecurity();
+          $id = $security->generateUniqueId(8, 'equipments');
           $this->register($row[0], $row[1], $row[2], $row[3], !empty($row[4]) ? $row[4] : null, false);
 
           $results['success']++;
@@ -222,7 +250,8 @@ class EquipmentController
   {
     $uploadPath = '../../../../public/assets/images/equipment_photos/';
 
-    $pfpPath = $this->fileUploader->uploadImage(
+    $fileUploader = $this->getFileUploader();
+    $pfpPath = $fileUploader->uploadImage(
       $imageFile,
       $uploadPath,
       900,
@@ -287,10 +316,26 @@ class EquipmentController
 
   public function delete($id)
   {
-    $this->deleteImage($id);
+    try {
+      $this->deleteImage($id);
 
-    $sql = "DELETE FROM equipments WHERE id = ?";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$id]);
+      $scheduleController = $this->getScheduleController();
+      $relatedSchedules = $scheduleController->get(['equipment_id' => $id]);
+
+      if (!empty($relatedSchedules) && !$scheduleController->cancel(['equipment_id' => $id])) {
+        Navigation::alert("Erro ao cancelar agendamentos relacionados.", $_SERVER['HTTP_REFERER']);
+      }
+
+      $sql = "DELETE FROM equipments WHERE id = :id";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+      $stmt->execute();
+
+      if ($stmt->rowCount() === 0) {
+        Navigation::alert("Nenhum equipamento encontrado com o ID fornecido.", $_SERVER['HTTP_REFERER']);
+      }
+    } catch (Exception $e) {
+      Navigation::alert("Erro ao deletar equipamento: " . $e->getMessage(), $_SERVER['HTTP_REFERER']);
+    }
   }
 }

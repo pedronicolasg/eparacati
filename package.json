@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "tailwind build -i public/assets/css/tailwind.css -o public/assets/css/style.css --watch",
-    "build": "tailwind build -i public/assets/css/tailwind.css -o public/assets/css/style.css"
+    "dev": "tailwind build -i public/assets/css/input.css -o public/assets/css/output.css --watch",
+    "build": "tailwind build -i public/assets/css/input.css -o public/assets/css/output.css"
   },
   "dependencies": {},
   "devDependencies": {

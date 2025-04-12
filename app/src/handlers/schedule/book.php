@@ -2,26 +2,40 @@
 $requiredRoles = ['funcionario', 'professor', 'gestao'];
 require_once "../../bootstrap.php";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  if (!isset($_SESSION['alert'])) {
+    $_SESSION['alert'] = [];
+  }
+  $_SESSION['alert'][] = [
+    'titulo' => 'Método Inválido',
+    'mensagem' => 'Método inválido',
+    'tipo' => 'error'
+  ];
+  Navigation::redirect($_SERVER['HTTP_REFERER']);
+  exit;
+}
+
+try {
+  $timeSlots = isset($_POST["time_slots"]) ? (array)$_POST["time_slots"] : [];
   $equipmentId = isset($_POST["equipment_id"]) ? (string)$_POST["equipment_id"] : null;
   $selectedDate = isset($_POST["selected_date"]) ? (string)$_POST["selected_date"] : null;
-  $timeSlots = isset($_POST["time_slots"]) ? (array)$_POST["time_slots"] : [];
-
+  $notes = isset($_POST["notes"]) ? Security::sanitizeInput((string)$_POST["notes"]) : null;
   $classId = isset($_POST["class_id"]) && !empty($_POST["class_id"]) ? (string)$_POST["class_id"] : null;
-  $notes = isset($_POST["notes"]) ? Security::sanitizeInput((string)$_POST["notes"]) : "";
 
   $errors = [];
 
-  if (!$equipmentId) {
-    $errors[] = "Equipamento é obrigatório.";
-  }
+  $requiredFields = [
+    'equipmentId' => 'Equipamento é obrigatório.',
+    'selectedDate' => 'Data é obrigatória.',
+    'timeSlots' => 'Pelo menos um horário deve ser selecionado.',
+    'notes' => 'Observações são obrigatórias.',
+    'classId' => 'Turma é obrigatória.'
+  ];
 
-  if (!$selectedDate) {
-    $errors[] = "Data é obrigatória.";
-  }
-
-  if (empty($timeSlots)) {
-    $errors[] = "Pelo menos um horário deve ser selecionado.";
+  foreach ($requiredFields as $field => $errorMessage) {
+    if (empty($$field) || ($field === 'timeSlots' && empty($timeSlots))) {
+      $errors[] = $errorMessage;
+    }
   }
 
   $currentDate = new DateTime();
@@ -74,18 +88,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = $successCount == 1
           ? "Equipamento agendado com sucesso para 1 horário!"
           : "Equipamento agendado com sucesso para $successCount horários!";
-        Navigation::alert($message, $_SERVER['HTTP_REFERER']);
+        $_SESSION['alert'][] = [
+          'titulo' => 'Agendamento Realizado',
+          'mensagem' => $message,
+          'tipo' => 'success'
+        ];
+        Navigation::redirect('../../../agendae/index.php', true);
       } else {
-        Navigation::alert('Não foi possível realizar o agendamento. Verifique disponibilidade.', $_SERVER['HTTP_REFERER']);
+        $_SESSION['alert'][] = [
+          'titulo' => 'Falha no Agendamento',
+          'mensagem' => 'Não foi possível realizar o agendamento. Verifique disponibilidade.',
+          'tipo' => 'error'
+        ];
+        Navigation::redirect($_SERVER['HTTP_REFERER']);
       }
     } catch (Exception $e) {
-      Navigation::alert('Erro ao agendar equipamento: ' . $e->getMessage(), $_SERVER['HTTP_REFERER']);
+      $_SESSION['alert'][] = [
+        'titulo' => 'Erro no Agendamento',
+        'mensagem' => 'Erro ao agendar equipamento: ' . $e->getMessage(),
+        'tipo' => 'error'
+      ];
+      Navigation::redirect($_SERVER['HTTP_REFERER']);
     }
   } else {
-    Navigation::alert(implode('<br>', $errors), $_SERVER['HTTP_REFERER']);
+    $_SESSION['alert'][] = [
+      'titulo' => 'Erro de Validação',
+      'mensagem' => implode('<br>', $errors),
+      'tipo' => 'error'
+    ];
+    Navigation::redirect($_SERVER['HTTP_REFERER']);
   }
-
-  Navigation::redirect($_SERVER['HTTP_REFERER']);
-} else {
+} catch (Exception $e) {
+  $_SESSION['alert'][] = [
+    'titulo' => 'Erro Inesperado',
+    'mensagem' => $e->getMessage(),
+    'tipo' => 'error'
+  ];
   Navigation::redirect($_SERVER['HTTP_REFERER']);
 }

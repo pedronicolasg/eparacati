@@ -47,14 +47,6 @@ class Security
     return $randomId;
   }
 
-  public static function hide($tx)
-  {
-    if (!empty($tx)) {
-      $tx = base64_encode(base64_encode(base64_encode($tx)));
-    }
-    return $tx;
-  }
-
   public static function show($tx)
   {
     if (!empty($tx)) {
@@ -63,9 +55,17 @@ class Security
     return $tx;
   }
 
+  public static function hide($tx)
+  {
+    if (!empty($tx)) {
+      $tx = base64_encode(base64_encode(base64_encode($tx)));
+    }
+    return $tx;
+  }
+
   public static function passw($senha)
   {
-    $senha = Security::hide($senha);
+    $senha = self::hide($senha);
     return md5($senha);
   }
 

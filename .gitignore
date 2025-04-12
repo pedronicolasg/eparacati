@@ -1,10 +1,15 @@
 ##### Specific project files
+
 # Secrets
 config.php
+EPAracatiDBStructure.sql
 
 # Uploads
-public/assets/images/profile_photos
-public/assets/images/equipment_photos
+public/assets/images/profile_photos/
+public/assets/images/equipment_photos/
+
+# CSS
+output.css
 
 # Tests
 tests.php

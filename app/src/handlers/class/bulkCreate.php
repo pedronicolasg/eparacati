@@ -1,17 +1,16 @@
 <?php
 $requiredRoles = ["gestao"];
 require_once "../../bootstrap.php";
-$classesPagePath = '../../../dashboard/pages/turmas.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   $_SESSION['upload_error'] = "Método inválido";
-  Navigation::redirect($classesPagePath);
+  Navigation::redirect($_SERVER['HTTP_REFERER']);
   exit;
 }
 
 try {
   if (!isset($_FILES['excel_file'])) {
-    Navigation::alert("Nenhum arquivo enviado", $classesPagePath);
+    Navigation::alert("Nenhum arquivo enviado", $_SERVER['HTTP_REFERER']);
   }
 
   $allowedTypes = [
@@ -20,29 +19,40 @@ try {
   ];
 
   if (!in_array($_FILES['excel_file']['type'], $allowedTypes)) {
-    Navigation::alert("Tipo de arquivo inválido. Use .xlsx ou .xls", $classesPagePath);
+    Navigation::alert("Tipo de arquivo inválido. Use .xlsx ou .xls", $_SERVER['HTTP_REFERER']);
   }
 
   $result = $classController->bulkCreate($_FILES['excel_file']['tmp_name']);
 
-  $_SESSION['upload_success'] = $result['success'];
-  $_SESSION['upload_errors'] = $result['errors'];
+  $_SESSION['alert'][] = [
+    'titulo' => 'Sucesso',
+    'mensagem' => $result['success'] . ' Turmas adicionadas com sucesso',
+    'tipo' => 'success'
+  ];
 
-  $createdClasses = array_map(function($name, $id) {
+  foreach ($result['errors'] as $error) {
+    $_SESSION['alert'][] = [
+      'titulo' => 'Erro',
+      'mensagem' => $error,
+      'tipo' => 'error'
+    ];
+  }
+
+  $createdClasses = array_map(function ($name, $id) {
     return "$name ($id)";
   }, array_keys($result['created_classes']), $result['created_classes']);
   $createdClassesMessage = "Foram adicionadas " . $result['success'] . " novas turmas: " . implode("\n", $createdClasses);
 
   $logger->action(
-  $currentUser['id'],
-  'add',
-  'classes',
-  null,
-  $createdClassesMessage,
-  ipAddress: Security::getIp()
-);
+    $currentUser['id'],
+    'add',
+    'classes',
+    null,
+    $createdClassesMessage,
+    ipAddress: Security::getIp()
+  );
 
-  Navigation::redirect($classesPagePath);
+  Navigation::redirect($_SERVER['HTTP_REFERER']);
 } catch (Exception $e) {
-  Navigation::alert($_SESSION['upload_error'] = $e->getMessage(), $classesPagePath);
+  Navigation::alert($_SESSION['upload_error'] = $e->getMessage(), $_SERVER['HTTP_REFERER']);
 }

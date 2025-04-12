@@ -9,7 +9,7 @@ require_once __DIR__ . "/src/bootstrap.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EP Aracati</title>
-    <link rel="stylesheet" href="../public/assets/css/style.css">
+    <link rel="stylesheet" href="../public/assets/css/output.css">
     <link rel="shortcut icon" href="../public/assets/images/logo.svg" type="image/x-icon">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 </head>
@@ -17,6 +17,7 @@ require_once __DIR__ . "/src/bootstrap.php";
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     <?php
     UI::renderNavbar($currentUser, "./", "Home", "green");
+    UI::renderPopup(true);
 
     $carouselItems = [
         ["image" => "../public/assets/images/carousel1.png", "text" => "O grande momento chegou! O edital de matrícula para os novatos 2025 já está disponível!"],
@@ -36,12 +37,10 @@ require_once __DIR__ . "/src/bootstrap.php";
             "CONTEÚDO DO ITEM, EX: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         ],
     ];
-
-    UI::renderHeader("./", $carouselItems, $newsItems);
     ?>
 
     <main class="flex flex-col items-center min-h-screen">
-
+        <?php UI::renderHeader("./", $carouselItems, $newsItems); ?>
     </main>
 
     <?php

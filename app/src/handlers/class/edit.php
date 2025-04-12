@@ -2,6 +2,11 @@
 $requiredRoles = ['gestao'];
 require_once '../../bootstrap.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Navigation::alert('Método inválido', $_SERVER['HTTP_REFERER'], 'error', 'Método Inválido');
+  exit;
+}
+
 try {
   $id = $_POST['id'];
   $name = $_POST['name'];
@@ -92,7 +97,11 @@ try {
     );
   }
 
-  $_SESSION['success'] = true;
+  $_SESSION['alert'][] = [
+    'titulo' => 'Sucesso',
+    'mensagem' => 'Turma atualizada com sucesso',
+    'tipo' => 'success'
+  ];
   Navigation::redirect($_SERVER['HTTP_REFERER']);
 } catch (Exception $e) {
   echo $e->getMessage();
