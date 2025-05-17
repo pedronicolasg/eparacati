@@ -1,5 +1,5 @@
 <?php
-$requiredRoles = ['gremio', 'professor', 'gestao'];
+$requiredRoles = ['gremio', 'professor', 'pdt', 'gestao'];
 require_once dirname(__DIR__) . '/src/bootstrap.php';
 ?>
 
@@ -10,77 +10,37 @@ require_once dirname(__DIR__) . '/src/bootstrap.php';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard</title>
-  <link rel="stylesheet" href="../../public/assets/css/output.css">
+  <link rel="stylesheet" href="../../public/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" href="../../public/assets/images/altlogo.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
-  <?php
-  UI::renderNavbar($currentUser, '../', 'Dashboard', 'blue', 'altlogo.svg');
-  UI::renderPopup(true);
-  ?>
-
-  <main class="container mx-auto px-4 py-6">
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard (<?= Format::roleName($currentUser['role']) ?>)</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Boas-vindas ao seu painel de controle <?= $currentUser['name']; ?>.</p>
+<body class="bg-gradient-to-br from-slate-50 to-slate-200 dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+  <?php UI::renderNavbar($currentUser, '../', 'Dashboard', 'blue', 'altlogo.svg');
+  UI::renderPopup(true); ?>
+  <main class="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8 relative z-10">
+    <div class="absolute top-0 left-0 w-full h-72 bg-gradient-to-tr from-blue-700/30 via-purple-700/20 to-pink-600/10 dark:from-blue-900/40 dark:via-purple-900/30 dark:to-pink-900/20 -z-10 rounded-b-3xl blur-sm"></div>
+    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-black bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent drop-shadow-lg tracking-tight">Dashboard <span class="text-xl font-semibold text-gray-700 dark:text-gray-300">(<?= Format::roleName($currentUser['role']) ?>)</span></h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 mt-2">Olá, <span class="font-bold text-blue-700 dark:text-blue-300"><?= $currentUser['name']; ?></span>! Bem-vindo(a) ao seu painel de controle.</p>
+      </div>
+      <div class="flex items-center gap-4 bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-lg px-6 py-4 border border-blue-100 dark:border-blue-900/30 backdrop-blur-md">
+        <div class="bg-blue-100 dark:bg-blue-900/60 p-3 rounded-xl flex items-center justify-center">
+          <i class="fas fa-clock text-blue-600 dark:text-blue-400 text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Data atual</p>
+          <p class="font-bold text-gray-800 dark:text-gray-200 text-lg"><?= date('d/m/Y') ?></p>
+        </div>
+      </div>
     </div>
 
-    <section class="mb-8">
-      <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-blue-500 pb-2 inline-block">Métricas Principais</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-        <?php include_once 'components/metrics.php'; ?>
-      </div>
-    </section>
+    <?php require_once 'view/' . $currentUser['role'] . '.php'; ?>
 
-    <section class="mb-8">
-      <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-blue-500 pb-2 inline-block">APPS</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <?php include_once 'components/apps.php'; ?>
-      </div>
-    </section>
-
-    <section class="mb-8">
-      <div class="bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-sm dark:shadow-none border border-gray-200 dark:border-slate-700">
-        <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-slate-700">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Próximas Reservas de Equipamentos</h2>
-          <a href="pages/agendamentos.php
-          " class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hover:underline flex items-center text-sm">
-            <span>Ver Todas</span>
-            <i class="fas fa-arrow-right ml-2"></i>
-          </a>
-        </div>
-        <div class="overflow-x-auto">
-          <?php include_once 'components/bookings.php'; ?>
-        </div>
-      </div>
-    </section>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <section class="lg:col-span-2">
-        <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-blue-500 pb-2 inline-block">Ações Rápidas</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <?php include_once 'components/actions.php'; ?>
-        </div>
-      </section>
-
-      <section class="lg:col-span-1">
-        <div class="bg-white dark:bg-slate-800 rounded-lg overflow-hidden h-full shadow-sm dark:shadow-none border border-gray-200 dark:border-slate-700">
-          <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-slate-700">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Registros Recentes</h2>
-            <a href="pages/registros.php" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-sm hover:underline">Ver Todos</a>
-          </div>
-          <div class="p-4">
-            <div class="space-y-3">
-              <?php include_once 'components/logs.php'; ?>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
   </main>
   <?php UI::renderFooter('../',); ?>
+  <div class="fixed inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none -z-10"></div>
 </body>
 
 </html>

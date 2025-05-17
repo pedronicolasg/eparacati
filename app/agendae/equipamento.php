@@ -1,152 +1,161 @@
 <?php
-$requiredRoles = ['funcionario', 'professor', 'gestao'];
+$requiredRoles = ['funcionario', 'professor', 'pdt', 'gestao'];
 require_once dirname(__DIR__) . '/src/bootstrap.php';
 
 $currentEquipmentId = isset($_GET['id']) ? Security::show($_GET['id']) : null;
 if (!empty($currentEquipmentId)) {
-  $currentEquipment = $equipmentController->getInfo($currentEquipmentId);
-  if ($currentEquipment['status'] == 'disponivel') {
-    $color = 'green';
-  } else {
-    $color = 'red';
-  }
+  $currentEquipment = $equipmentModel->getInfo($currentEquipmentId);
+  $statusColor = $currentEquipment['status'] == 'disponivel' ? 'green' : 'red';
+  $statusText = Format::statusName($currentEquipment['status']);
+  $typeName = Format::typeName($currentEquipment['type']);
 } else {
-  Navigation::redirect($_SERVER['HTTP_REFERER']);
+  $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
+  Navigation::redirect($referer);
+  exit;
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
+<html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?> h-full scroll-smooth">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agendaê</title>
-  <link rel="stylesheet" href="../../public/assets/css/output.css">
-  <link rel="shortcut icon" href="../../public/assets/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Agendaê | <?= htmlspecialchars($currentEquipment['name']) ?></title>
+  <link rel="stylesheet" href="../../public/css/output.css">
+  <link rel="shortcut icon" href="../../public/images/logo.svg" type="image/x-icon">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap');
+
+    body {
+      font-family: "Exo", sans-serif;
+    }
+
+    img[src*='placehold.co'] {
+      filter: grayscale(50%) brightness(95%);
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 
-<body
-  class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen">
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans antialiased transition-colors duration-300">
 
   <?php
-  UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg');
+  UI::renderNavbar($currentUser, '../', '', 'teal', 'logo.svg');
   UI::renderPopup(true);
   ?>
 
-  <div class="container mx-auto px-4 py-8 max-w-5xl">
-    <header class="flex justify-between items-center mb-6">
-      <div class="flex items-center">
-        <i class="fa-solid fa-bolt text-cyan-600 dark:text-cyan-400 text-2xl"></i>
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-white ml-2">Detalhes do Equipamento</h1>
+  <main class="container mx-auto px-4 py-12 sm:py-16 lg:py-20">
+    <header class="mb-10 flex flex-col sm:flex-row justify-between items-center gap-6 animate-slide-up">
+      <div class="flex items-center gap-4">
+        <i class="fas fa-info-circle text-4xl text-teal-600 dark:text-teal-400"></i>
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Detalhes do Equipamento</h1>
       </div>
-
-      <div class="flex space-x-2">
-        <?php if ($currentUser['role'] == 'gestao') { ?>
-          <button
-            onclick="window.location.href='../dashboard/pages/equipamentos.php?id=<?php echo Security::hide($currentEquipment['id']); ?>'"
-            class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 dark:focus:ring-offset-gray-800"
-            aria-label="Editar equipamento">
-            <i class="fa-solid fa-pencil text-cyan-600 dark:text-cyan-400 text-lg"></i>
-          </button>
-        <?php } ?>
-        <button
-          onclick="window.location.href='index.php'"
-          class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
-          aria-label="Voltar">
-          <i class="fa-solid fa-arrow-left text-green-600 dark:text-green-400 text-lg"></i>
-        </button>
+      <div class="flex items-center gap-3">
+        <?php if ($currentUser['role'] == 'gestao') : ?>
+          <a href="../dashboard/pages/equipamentos.php?id=<?php echo Security::hide($currentEquipment['id']); ?>"
+            class="inline-flex items-center justify-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            aria-label="Editar equipamento" title="Editar equipamento">
+            <i class="fa-solid fa-pencil mr-2"></i> Editar
+          </a>
+        <?php endif; ?>
+        <a href="index.php"
+          class="inline-flex items-center justify-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          aria-label="Voltar para a lista" title="Voltar para a lista">
+          <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+        </a>
       </div>
     </header>
 
-    <main class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-      <div class="bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-cyan-600 dark:to-blue-600 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center">
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white backdrop-blur-sm animate-pulse-slow">
-            <span class="w-2 h-2 mr-2 rounded-full bg-<?= $color ?>-600"></span>
-            <?= Format::statusName($currentEquipment['status']) ?>
-          </span>
-          <span class="ml-4 text-white text-sm font-medium">ID: <?= $currentEquipment['id'] ?></span>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 animate-slide-up">
+      <div class="grid grid-cols-1 lg:grid-cols-2">
+        <div class="relative bg-gray-100 dark:bg-gray-800/50 p-8 flex items-center justify-center">
+          <img
+            src="<?php echo !empty($currentEquipment['image']) ? htmlspecialchars($currentEquipment['image']) : 'https://placehold.co/600x450/e2e8f0/64748b?text=' . urlencode($typeName) . '&font=sans'; ?>"
+            alt="Imagem de <?= htmlspecialchars($currentEquipment['name']) ?>"
+            class="w-full h-64 lg:h-full object-contain rounded-xl shadow-md transition-transform duration-500 hover:scale-105"
+            loading="lazy">
         </div>
-        <div>
-          <span class="px-3 py-1 text-xs uppercase tracking-wider font-semibold rounded-full bg-white/20 text-white backdrop-blur-sm">
-            <?= Format::typeName($currentEquipment['type']) ?>
-          </span>
-        </div>
-      </div>
 
-      <div class="md:flex">
-        <div class="md:w-2/5 p-4 flex items-center justify-center bg-gray-100 dark:bg-gray-700/30">
-          <div class="relative overflow-hidden rounded-lg group">
-            <img
-              src="<?php echo $currentEquipment['image'] ?? 'https://placehold.co/900x600.png?text=' . Format::typeName($currentEquipment['type']) . '&font=poppings' ?>"
-              alt="<?= $currentEquipment['name'] ?>"
-              class="w-full h-64 object-contain transition-transform duration-500 transform group-hover:scale-105">
+        <div class="p-8 lg:p-10 flex flex-col gap-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 class="text-3xl font-semibold text-gray-900 dark:text-white"><?php echo htmlspecialchars($currentEquipment['name']); ?></h2>
+            <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium text-white bg-<?php echo $statusColor; ?>-600 dark:bg-<?php echo $statusColor; ?>-700">
+              <span class="w-2 h-2 mr-2 rounded-full bg-<?php echo $statusColor; ?>-500"></span>
+              <?php echo htmlspecialchars($statusText); ?>
+            </span>
           </div>
-        </div>
 
-        <div class="md:w-3/5 p-6">
-          <div class="mb-4">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2"><?= $currentEquipment['name'] ?></h2>
-            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-4">
-              <div class="flex items-center">
-                <i class="fa-regular fa-calendar mr-2 text-gray-400 dark:text-gray-500"></i>
-                <span>Criado em: <?= $currentEquipment['created_at'] ?></span>
-              </div>
-              <div class="flex items-center">
-                <i class="fa-solid fa-arrows-rotate mr-2 text-gray-400 dark:text-gray-500"></i>
-                <span>Atualizado em: <?= $currentEquipment['updated_at'] ?></span>
-              </div>
+          <div class="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-tag text-gray-400 dark:text-gray-500"></i>
+              <span class="font-medium text-gray-700 dark:text-gray-300"><?php echo htmlspecialchars($typeName); ?></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-hashtag text-gray-400 dark:text-gray-500"></i>
+              <span class="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">ID: <?php echo htmlspecialchars($currentEquipment['id']); ?></span>
             </div>
           </div>
 
-          <div class="mb-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Descrição</h3>
-            <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Descrição</h3>
+            <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
               <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                <?= $currentEquipment['description'] ?>
+                <?php echo !empty($currentEquipment['description']) ? nl2br(htmlspecialchars($currentEquipment['description'])) : '<span class="italic text-gray-400 dark:text-gray-500">Nenhuma descrição fornecida.</span>'; ?>
               </p>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md">
-              <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</h3>
-              <div class="flex items-center">
-                <span class="inline-block w-3 h-3 rounded-full bg-<?= $color ?>-500 mr-2"></span>
-                <span class="text-<?= $color ?>-600 dark:text-<?= $color ?>-400 font-medium"><?= Format::statusName($currentEquipment['status']) ?></span>
+          <div class="text-xs text-gray-400 dark:text-gray-500 flex flex-col sm:flex-row gap-4">
+            <div class="flex items-center gap-2">
+              <i class="fa-regular fa-calendar-plus"></i>
+              <span>Criado em: <?php echo htmlspecialchars(Format::date($currentEquipment['created_at'])); ?></span>
+            </div>
+            <?php if (!empty($currentEquipment['updated_at'])) : ?>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Última atualização: <?php echo htmlspecialchars(Format::date($currentEquipment['updated_at'])); ?></span>
               </div>
-            </div>
-
-            <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md">
-              <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Tipo</h3>
-              <span class="font-medium text-gray-800 dark:text-gray-200"><?= Format::typeName($currentEquipment['type']) ?></span>
-            </div>
-
-            <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md">
-              <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">ID</h3>
-              <span class="font-medium text-gray-800 dark:text-gray-200"><?= $currentEquipment['id'] ?></span>
-            </div>
+            <?php endif; ?>
           </div>
 
-          <?php if ($currentEquipment['status'] === 'disponivel') { ?>
-            <button onclick="window.location.href='agendar.php?id=<?= Security::hide($currentEquipment['id']); ?>'" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 flex items-center justify-center">
-              <i class="fa-regular fa-calendar-check mr-2"></i>
-              Agendar
-            </button>
-          <?php } else { ?>
-            <button disabled="" class="w-full bg-gray-400 dark:bg-gray-600 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800 flex items-center justify-center cursor-not-allowed">
-              <i class="fas fa-ban mr-2"></i>
-              Indisponível
-            </button>
-          <?php } ?>
+          <div class="mt-6">
+            <?php if ($currentEquipment['status'] === 'disponivel') : ?>
+              <a href="agendar.php?id=<?php echo Security::hide($currentEquipment['id']); ?>"
+                class="w-full flex items-center justify-center bg-teal-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-teal-700 hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                <i class="fa-regular fa-calendar-check mr-3"></i> Agendar Equipamento
+              </a>
+            <?php else : ?>
+              <button disabled
+                class="w-full flex items-center justify-center bg-gray-400 dark:bg-gray-600 text-gray-100 dark:text-gray-300 py-3 px-6 rounded-lg font-semibold text-lg cursor-not-allowed opacity-70">
+                <i class="fas fa-ban mr-3"></i> Indisponível para Agendamento
+              </button>
+            <?php endif; ?>
+          </div>
         </div>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
 
-  <?php UI::renderFooter('../'); ?>
+  <?php
+  UI::renderFooter('../');
+  ?>
 
 </body>
 

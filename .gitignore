@@ -2,11 +2,17 @@
 
 # Secrets
 config.php
-EPAracatiDBStructure.sql
+
+# Database
+DBSchema.sql
+.datagrip/
+
+# Obsidian
+documentation/
 
 # Uploads
-public/assets/images/profile_photos/
-public/assets/images/equipment_photos/
+public/images/profile_photos/
+public/images/equipment_photos/
 
 # CSS
 output.css
@@ -350,6 +356,9 @@ cmake-build-*/
 
 # File-based project format
 *.iws
+
+# Fleet IDE
+.fleet
 
 # IntelliJ
 out/

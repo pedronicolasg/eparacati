@@ -10,9 +10,9 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Agendamentos</title>
-  <link rel="stylesheet" href="../../../public/assets/css/output.css">
+  <link rel="stylesheet" href="../../../public/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -55,111 +55,56 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                 </a>
               </div>
             </li>
-            <?php if (isset($currentEquipment)): ?>
-              <li aria-current="page">
-                <div class="flex items-center">
-                  <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="m1 9 4-4-4-4" />
-                  </svg>
-                  <span
-                    class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400"><?php echo $currentEquipment['name']; ?></span>
-                </div>
-              </li>
-            <?php endif; ?>
           </ol>
         </nav>
       </div>
     </header>
     <main>
-      <div class="max-w-7xl mx-auto px-4 mt-5">
-        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden mb-5">
-          <div class="p-4 flex items-center justify-between gap-4">
-            <div class="relative inline-block text-left">
-              <button id="dropdownRadioButton" onclick="toggleDropdown()"
-                class="h-10 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-                type="button">
-                <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-                </svg>
-                Categoria
-                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 1 4 4 4-4" />
-                </svg>
-              </button>
+      <div class="max-w-7xl mx-auto px-4 mt-8">
+        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Gerenciamento de Agendamentos</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Visualize e gerencie todos os agendamentos da plataforma</p>
+          </div>
 
-
-              <div id="dropdownRadio"
-                class="z-50 hidden absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
-                <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdownRadioButton">
-                  <li>
-                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                      <input id="filter-radio-all" type="radio" value="" name="filter-radio" onclick="filterRole('')"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                      <label for="filter-radio-all"
-                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Todos</label>
-                    </div>
-                  </li>
-                  <?php
-                  $types = $conn
-                    ->query("SELECT DISTINCT type FROM equipments")
-                    ->fetchAll(PDO::FETCH_COLUMN);
-
-                  $typeLabels = [
-                    'notebook' => 'Notebook',
-                    'projetor' => 'Projetor',
-                    'extensao' => 'Extensão',
-                    'sala' => 'Sala',
-                    'outro' => 'Outro'
-                  ];
-
-                  foreach ($types as $type) {
-                    $safeType = htmlspecialchars($type, ENT_QUOTES, "UTF-8");
-                    $label = isset($typeLabels[$type]) ? $typeLabels[$type] : $type;
-                  ?>
-                    <li>
-                      <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                        <input id="filter-radio-<?= $safeType ?>" type="radio" name="filter-radio"
-                          value="<?= $safeType ?>"
-                          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          onchange="filterEquipments(this.value)">
-                        <label for="filter-radio-<?= $safeType ?>"
-                          class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($label, ENT_QUOTES, "UTF-8") ?></label>
-                      </div>
-                    </li>
-                  <?php
-                  }
-                  ?>
-                </ul>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-indigo-500 dark:text-indigo-400"></i>
               </div>
+              <input type="text"
+                class="h-12 w-full pl-12 pr-4 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/30 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:focus:ring-indigo-800 dark:focus:ring-opacity-30 shadow-sm transition-all duration-300 ease-in-out placeholder-gray-400 dark:placeholder-gray-500"
+                placeholder="Pesquisar agendamentos">
             </div>
+          </div>
+        </div>
 
-            <div class="flex items-center gap-4">
-              <div class="relative w-72">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-search w-4 h-4 text-gray-400"></i>
-                </div>
-                <input type="text"
-                  class="h-10 w-full pl-10 pr-4 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="Pesquisar agendamentos">
-              </div>
+        <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100/80 dark:border-gray-700/80 overflow-hidden mb-8 transition-all duration-500 hover:shadow-2xl">
+          <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-gray-100 dark:divide-gray-700 border-b border-gray-100 dark:border-gray-700">
+            <div class="p-6 text-center">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total</p>
+              <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400"><?php echo $scheduleModel->count(); ?></p>
+            </div>
+            <div class="p-6 text-center">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Hoje</p>
+              <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400"><?php echo $scheduleModel->count([], 'today'); ?></p>
+            </div>
+            <div class="p-6 text-center">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Semana</p>
+              <p class="text-3xl font-bold text-amber-600 dark:text-amber-400"><?php echo $scheduleModel->count([], 'week'); ?></p>
+            </div>
+            <div class="p-6 text-center">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Mês</p>
+              <p class="text-3xl font-bold text-purple-600 dark:text-purple-400"><?php echo $scheduleModel->count([], 'month'); ?></p>
             </div>
           </div>
 
-          <div class="max-w-7xl mx-auto px-4 py-8 overflow-x-auto">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
+          <div class="p-6 md:p-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               <?php
               $type = $_GET['type'] ?? null;
               $ui->renderBookings('../../../');
               ?>
-
             </div>
           </div>
         </div>
@@ -167,8 +112,7 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
     </main>
   </div>
 
-  <script src="../../../public/assets/js/dashboard/booking/searchBarController.js"></script>
-  <script src="../../../public/assets/js/dashboard/booking/filterDropdown.js"></script>
+  <script src="../../../public/js/dashboard/booking/searchBarController.js"></script>
 </body>
 
 </html>

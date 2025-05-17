@@ -5,24 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E.E.E.P. Profª Elsa Maria Porto Costa Lima</title>
-  <link rel="shortcut icon" href="public/assets/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="public/assets/css/output.css">
-  <style type="text/css">
-    @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap');
-
-    body {
-      font-family: "Exo", sans-serif;
-    }
-
-    .hero-pattern {
-      background-color: #ffffff;
-      background-image: url("public/assets/images/landingpage/background.svg");
-    }
-
-    .dark .hero-pattern {
-      background-color: #0f172a;
-    }
-  </style>
+  <link rel="shortcut icon" href="public/images/logo.svg" type="image/x-icon">
+  <link rel="stylesheet" href="public/css/output.css">
 </head>
 
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -30,7 +14,7 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-4">
         <div class="flex items-center">
-          <img src="public/assets/images/logo.svg" alt="EP Aracati Logo" class="h-10 w-auto mr-3">
+          <img src="public/images/logo.svg" alt="EP Aracati Logo" class="h-10 w-auto mr-3">
           <span class="font-bold text-xl text-green-600 dark:text-green-400">EP Aracati</span>
         </div>
 
@@ -82,7 +66,7 @@
           <a href="#estrutura" class="text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400 font-medium">Estrutura</a>
           <a href="#depoimentos" class="text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400 font-medium">Depoimentos</a>
           <a href="#contato" class="text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400 font-medium">Contato</a>
-          <a href="#" class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-medium rounded-md shadow-sm transition-colors duration-300 w-full text-center mt-2">Área do Aluno</a>
+          <a href="app/" class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-medium rounded-md shadow-sm transition-colors duration-300 w-full text-center mt-2">Área do Usuário</a>
         </nav>
       </div>
     </div>
@@ -108,7 +92,7 @@
           </div>
         </div>
         <div class="md:w-1/2">
-          <img src="public/assets/images/landingPage/banner.png" alt="EP Aracati Campus" class="rounded-lg shadow-xl w-full h-auto">
+          <img src="public/images/landingPage/banner.png" alt="EP Aracati Campus" class="rounded-lg shadow-xl w-full h-auto">
         </div>
       </div>
     </div>
@@ -141,12 +125,12 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row items-center">
         <div class="md:w-1/2 mb-10 md:mb-0">
-          <img src="public/assets/images/logo.svg" alt="Sobre EP Aracati" class="rounded-lg shadow-xl w-full h-auto">
+          <img src="public/images/logo.svg" alt="Sobre EP Aracati" class="rounded-lg w-full h-auto">
         </div>
         <div class="md:w-1/2 md:pl-10">
           <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">Sobre a EP Aracati</h2>
           <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-            Fundada em 20XX, a Escola Profissionalizante de Aracati (EP Aracati) é uma instituição de ensino comprometida com a formação integral de seus alunos, combinando excelência acadêmica, valores éticos e preparação para o mercado de trabalho.
+            Fundada em 2009, a Escola Profissionalizante de Aracati (EP Aracati) é uma instituição de ensino comprometida com a formação integral de seus alunos, combinando excelência acadêmica, valores éticos e preparação para o mercado de trabalho.
           </p>
           <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
             Nossa missão é formar cidadãos críticos, éticos e preparados para os desafios do século XXI, contribuindo para o desenvolvimento sustentável da região de Aracati e do estado do Ceará.
@@ -168,7 +152,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span class="text-gray-700 dark:text-gray-300">Infraestrutura moderna</span>
+              <span class="text-gray-700 dark:text-gray-300">Infraestrutura</span>
             </div>
             <div class="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,11 +178,11 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- ENFER -->
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105">
-          <img src="public/assets/images/landingPage/cursos/ENFER.png" alt="Técnico em Enfermagem" class="w-full h-48 object-cover">
+          <img src="public/images/landingPage/cursos/ENFER.png" alt="Técnico em Enfermagem" class="w-full h-48 object-cover">
           <div class="p-6">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Técnico em Enfermagem</h3>
             <p class="text-gray-700 dark:text-gray-300 mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
             </p>
             <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,11 +198,11 @@
 
         <!-- GUIA -->
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105">
-          <img src="public/assets/images/landingPage/cursos/GUIA.png" alt="Guia de Turismo" class="w-full h-48 object-cover">
+          <img src="public/images/landingPage/cursos/GUIA.png" alt="Guia de Turismo" class="w-full h-48 object-cover">
           <div class="p-6">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Guia de Turismo</h3>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Técnico em Guia de Turismo</h3>
             <p class="text-gray-700 dark:text-gray-300 mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
             </p>
             <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -234,11 +218,11 @@
 
         <!-- INFOR -->
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105">
-          <img src="public/assets/images/landingPage/cursos/INFOR.png" alt="Técnico em Administração" class="w-full h-48 object-cover">
+          <img src="public/images/landingPage/cursos/INFOR.png" alt="Técnico em Administração" class="w-full h-48 object-cover">
           <div class="p-6">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Técnico em Informática</h3>
             <p class="text-gray-700 dark:text-gray-300 mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
             </p>
             <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -254,11 +238,11 @@
 
         <!-- S.E.R -->
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105">
-          <img src="public/assets/images/landingPage/cursos/SER.png" alt="Técnico em Sistemas de Energias Renováveis" class="w-full h-48 object-cover">
+          <img src="public/images/landingPage/cursos/SER.png" alt="Técnico em Sistemas de Energias Renováveis" class="w-full h-48 object-cover">
           <div class="p-6">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Técnico em Sistemas de Energias Renováveis</h3>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Técnico em Sistemas de Energia Renováveis</h3>
             <p class="text-gray-700 dark:text-gray-300 mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean neque nisl, semper at commodo nec, finibus et ligula.
             </p>
             <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -291,7 +275,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Laboratórios de Informática</h3>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Laboratório de Informática</h3>
           <p class="text-gray-700 dark:text-gray-300">
             Equipados com computadores modernos, softwares atualizados e acesso à internet de alta velocidade para aulas práticas e projetos.
           </p>
@@ -315,7 +299,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Laboratórios de Ciências</h3>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Laboratórios Técnicos</h3>
           <p class="text-gray-700 dark:text-gray-300">
             Espaços equipados para aulas práticas de física, química e biologia, com materiais e instrumentos modernos.
           </p>
@@ -542,7 +526,7 @@
                 </svg>
                 <div>
                   <h4 class="font-medium text-gray-900 dark:text-white">Telefone</h4>
-                  <p class="text-gray-700 dark:text-gray-300">(88) XXXXX-XXXX</p>
+                  <p class="text-gray-700 dark:text-gray-300">(88) 9381-4360</p>
                 </div>
               </div>
               <div class="flex items-start">
@@ -596,7 +580,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
           <div class="flex items-center mb-4">
-            <img src="public/assets/images/logo.svg" alt="EP Aracati Logo" class="h-10 w-auto mr-3">
+            <img src="public/images/logo.svg" alt="EP Aracati Logo" class="h-10 w-auto mr-3">
             <span class="font-bold text-xl text-green-600 dark:text-green-400">EP Aracati</span>
           </div>
           <p class="text-gray-700 dark:text-gray-400 mb-4">
@@ -652,13 +636,12 @@
       </div>
 
       <div class="border-t border-gray-200 dark:border-gray-800 mt-10 pt-8 text-center text-gray-700 dark:text-gray-400">
-        <p>&copy; 2025 E.E.E.P. Profª Elsa Maria Porto Costa Lima.</p>
-        <p class="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-500">Desenvolvido por <a target="_blank" href="https://www.notion.so/Cr-ditos-1b060ff25303805eb9b3c64bf8521ae1?pvs=4" class="text-red-400 hover:text-red-500">Cyclone Team</a></p>
+        <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg">Pedro Nícolas Gomes de Souza</a>.</p>
       </div>
     </div>
   </footer>
 
-  <script src="public/assets/js/landingPage.js"></script>
+  <script src="public/js/landingPage.js"></script>
 </body>
 
 </html>

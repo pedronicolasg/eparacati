@@ -1,7 +1,7 @@
 <?php
 require_once 'core/conn.php';
 require_once 'Navigation.php';
-require_once 'controllers/User.php';
+require_once 'models/User.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -9,12 +9,12 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class Logger
 {
   private $conn;
-  private $userController;
+  private $userModel;
 
   public function __construct($conn)
   {
     $this->conn = $conn;
-    $this->userController = new UserController($conn);
+    $this->userModel = new UserModel($conn);
   }
 
   public function action($userId, $action, $targetTable, $targetId = null, $message = '', $ipAddress = null)
@@ -24,7 +24,7 @@ class Logger
     }
     try {
 
-      $userActionInfo = $this->userController->getInfo($userId, 'id', ['name']);
+      $userActionInfo = $this->userModel->getInfo($userId, 'id', ['name']);
 
       $sql = "INSERT INTO logs (user_id, user_name, action, target_table, target_id, message, ip_address, timestamp) 
                     VALUES (:user_id, :user_name, :action, :target_table, :target_id, :message, :ip_address, :timestamp)";
@@ -40,8 +40,12 @@ class Logger
         ':timestamp' => date('d-m-Y H:i:s')
       ]);
     } catch (PDOException $e) {
-      error_log("Erro ao registrar log: " . $e->getMessage());
-      Navigation::alert("Não foi possível registrar o log.");
+      Navigation::alert(
+        "Não foi possível registrar o log.",
+        $e->getMessage(),
+        "error",
+        $_SERVER['HTTP_REFERER']
+      );
     }
   }
 
@@ -56,15 +60,19 @@ class Logger
       $result = $stmt->fetch(PDO::FETCH_ASSOC);
       return $result !== false ? $result : null;
     } catch (PDOException $e) {
-      error_log("Erro ao buscar log específico: " . $e->getMessage());
-      Navigation::alert("Não foi possível buscar o log solicitado.");
+      Navigation::alert(
+        "Não foi possível buscar o log solicitado.",
+        $e->getMessage(),
+        "error"
+      );
     }
   }
 
-  public function getLogs($filters = [])
+  public function getLogs($filters = [], $page = null, $perPage = 10)
   {
     try {
-      $sql = "SELECT * FROM logs WHERE 1=1 AND active = 1";
+      $baseSql = "SELECT * FROM logs WHERE 1=1 AND active = 1";
+      $countSql = "SELECT COUNT(*) FROM logs WHERE 1=1 AND active = 1";
       $params = [];
 
       $filterMappings = [
@@ -78,19 +86,64 @@ class Logger
 
       foreach ($filterMappings as $filterKey => $sqlCondition) {
         if (!empty($filters[$filterKey])) {
-          $sql .= " AND $sqlCondition = :$filterKey";
+          $condition = " AND $sqlCondition = :$filterKey";
+          $baseSql .= $condition;
+          $countSql .= $condition;
           $params[":$filterKey"] = $filters[$filterKey];
         }
       }
 
-      $sql .= " ORDER BY id DESC";
+      $isPagination = $page !== null;
 
-      $stmt = $this->conn->prepare($sql);
-      $stmt->execute($params);
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      if ($isPagination) {
+        $countStmt = $this->conn->prepare($countSql);
+        $countStmt->execute($params);
+        $totalRecords = $countStmt->fetchColumn();
+
+        $totalPages = ceil($totalRecords / $perPage);
+
+        $page = max(1, min($page, $totalPages));
+
+        $offset = ($page - 1) * $perPage;
+
+        $baseSql .= " ORDER BY id DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->conn->prepare($baseSql);
+
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+      } else {
+        $baseSql .= " ORDER BY id DESC";
+        $stmt = $this->conn->prepare($baseSql);
+      }
+
+      foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+      }
+
+      $stmt->execute();
+      $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      if (!$isPagination) {
+        return $results;
+      }
+
+      return [
+        'data' => $results,
+        'pagination' => [
+          'total' => $totalRecords,
+          'per_page' => $perPage,
+          'current_page' => $page,
+          'total_pages' => $totalPages
+        ]
+      ];
     } catch (PDOException $e) {
-      error_log("Erro ao buscar logs: " . $e->getMessage());
-      Navigation::alert("Não foi possível buscar os logs.");
+      Navigation::alert(
+        "Não foi possível buscar os logs.",
+        $e->getMessage(),
+        "error"
+      );
+      return $isPagination ? ['data' => [], 'pagination' => ['total' => 0, 'per_page' => $perPage, 'current_page' => 1, 'total_pages' => 0]] : [];
     }
   }
 
@@ -118,7 +171,11 @@ class Logger
         break;
 
       default:
-        Navigation::alert("Formato não suportado: $format");
+        Navigation::alert(
+          "Formato não suportado: $format",
+          "Use formato de planilha Excel ou JSON",
+          "error"
+        );
         break;
     }
   }
@@ -203,8 +260,11 @@ class Logger
       $stmt = $this->conn->prepare($sql);
       $stmt->execute([':days' => $days]);
     } catch (PDOException $e) {
-      error_log("Erro ao deletar logs antigos: " . $e->getMessage());
-      Navigation::alert("Não foi possível deletar logs antigos.");
+      Navigation::alert(
+        "Não foi possível deletar logs antigos.",
+        $e->getMessage(),
+        "error"
+      );
     }
   }
 }

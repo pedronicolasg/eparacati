@@ -1,7 +1,49 @@
 <?php
 $requiredRoles = ["gestao"];
 require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
+
+$itemsPerPage = 10;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $itemsPerPage;
+
+$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+$selectedRole = isset($_GET["role"]) ? $_GET["role"] : null;
+
+$sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.profile_photo, u.class_id, c.name as class_name
+        FROM users u
+        LEFT JOIN classes c ON u.class_id = c.id
+        WHERE 1=1";
+
+$params = [];
+if ($selectedRole) {
+  $sql .= " AND u.role = :role";
+  $params[':role'] = $selectedRole;
+}
+if ($searchTerm) {
+  $sql .= " AND (u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search OR c.name LIKE :search)";
+  $params[':search'] = "%$searchTerm%";
+}
+
+$countSql = str_replace('SELECT u.id, u.name, u.email, u.phone, u.role, u.profile_photo, u.class_id, c.name as class_name', 'SELECT COUNT(*)', $sql);
+$stmt = $conn->prepare($countSql);
+foreach ($params as $key => $value) {
+  $stmt->bindValue($key, $value);
+}
+$stmt->execute();
+$totalItems = $stmt->fetchColumn();
+$totalPages = ceil($totalItems / $itemsPerPage);
+
+$sql .= " ORDER BY u.name LIMIT :limit OFFSET :offset";
+$stmt = $conn->prepare($sql);
+foreach ($params as $key => $value) {
+  $stmt->bindValue($key, $value);
+}
+$stmt->bindValue(':limit', $itemsPerPage, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
 
@@ -9,9 +51,9 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Usuários</title>
-  <link rel="stylesheet" href="../../../public/assets/css/output.css">
+  <link rel="stylesheet" href="../../../public/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -25,7 +67,6 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
           (<?php echo Format::roleName($currentUser["role"]); ?>)</h1>
-
 
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
@@ -71,7 +112,6 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                     d="m1 1 4 4 4-4" />
                 </svg>
               </button>
-
 
               <div id="dropdownRadio"
                 class="z-50 hidden absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
@@ -126,9 +166,9 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <i class="fas fa-search w-4 h-4 text-gray-400"></i>
                 </div>
-                <input type="text"
+                <input type="text" id="search-users" value="<?php echo htmlspecialchars($searchTerm); ?>"
                   class="h-10 w-full pl-10 pr-4 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="Pesquisar usuários">
+                  placeholder="Pesquisar por nome, email, telefone ou turma">
               </div>
             </div>
           </div>
@@ -145,34 +185,14 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
-                <?php
-                $selectedRole = isset($_GET["role"]) ? $_GET["role"] : null;
-
-                $sql = "SELECT u.id, u.name, u.email, u.phone, u.role, u.profile_photo, u.class_id, c.name as class_name
-                    FROM users u
-                    LEFT JOIN classes c ON u.class_id = c.id";
-
-                if ($selectedRole) {
-                  $sql .= " WHERE u.role = :role";
-                }
-
-                $stmt = $conn->prepare($sql);
-
-                if ($selectedRole) {
-                  $stmt->bindParam(":role", $selectedRole, PDO::PARAM_STR);
-                }
-
-                $stmt->execute();
-
-                if ($stmt->rowCount() > 0) {
-                  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                ?>
+                <?php if (count($users) > 0): ?>
+                  <?php foreach ($users as $row): ?>
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
                       <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center space-x-4">
-                          <img class="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700" 
-                               src="<?= htmlspecialchars($row["profile_photo"]) ?>" 
-                               alt="Foto do usuário">
+                          <img class="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+                            src="<?= htmlspecialchars($row["profile_photo"]) ?>"
+                            alt="Foto do usuário">
                           <div>
                             <div class="text-sm font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition">
                               <a href="../../perfil.php?id=<?= htmlspecialchars(Security::hide($row["id"])) ?>">
@@ -218,22 +238,20 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                         </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="<?= htmlspecialchars('turmas.php?id=' . Security::hide($row['class_id'])); ?>" 
+                        <a href="<?= htmlspecialchars('turmas.php?id=' . Security::hide($row['class_id'])); ?>"
                           class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 hover:underline transition">
                           <?= htmlspecialchars($row["class_name"]) ?>
                         </a>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="../../perfil.php?id=<?= htmlspecialchars(Security::hide($row["id"])) ?>&editPanel" 
+                        <a href="../../perfil.php?id=<?= htmlspecialchars(Security::hide($row["id"])) ?>&editPanel"
                           class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                           <i class="fas fa-edit mr-2"></i> Editar
                         </a>
                       </td>
                     </tr>
-                  <?php
-                  }
-                } else {
-                  ?>
+                  <?php endforeach; ?>
+                <?php else: ?>
                   <tr>
                     <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                       <div class="flex flex-col items-center justify-center py-6">
@@ -242,12 +260,61 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
                       </div>
                     </td>
                   </tr>
-                <?php
-                }
-                ?>
+                <?php endif; ?>
               </tbody>
             </table>
           </div>
+
+          <?php if ($totalPages > 1): ?>
+            <div class="p-4 flex items-center justify-between">
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                Mostrando <?php echo min(($offset + 1), $totalItems); ?> a <?php echo min($offset + count($users), $totalItems); ?> de <?php echo $totalItems; ?> usuários
+              </div>
+              <nav aria-label="Paginação">
+                <ul class="inline-flex items-center space-x-1">
+                  <li>
+                    <a href="?page=<?php echo max(1, $page - 1); ?><?php echo $selectedRole ? '&role=' . urlencode($selectedRole) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 <?php echo $page <= 1 ? 'cursor-not-allowed opacity-50' : ''; ?>">
+                      <i class="fas fa-chevron-left mr-2"></i></a>
+                  </li>
+                  <?php
+                  $startPage = max(1, $page - 2);
+                  $endPage = min($totalPages, $page + 2);
+                  if ($startPage > 1): ?>
+                    <li>
+                      <a href="?page=1<?php echo $selectedRole ? '&role=' . urlencode($selectedRole) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700">1</a>
+                    </li>
+                    <?php if ($startPage > 2): ?>
+                      <li><span class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">...</span></li>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                  <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                    <li>
+                      <a href="?page=<?php echo $i; ?><?php echo $selectedRole ? '&role=' . urlencode($selectedRole) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                        class="px-3 py-2 text-sm font-medium <?php echo $i === $page ? 'text-white bg-blue-600 border-blue-600' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'; ?> border rounded-lg">
+                        <?php echo $i; ?>
+                      </a>
+                    </li>
+                  <?php endfor; ?>
+                  <?php if ($endPage < $totalPages): ?>
+                    <?php if ($endPage < $totalPages - 1): ?>
+                      <li><span class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">...</span></li>
+                    <?php endif; ?>
+                    <li>
+                      <a href="?page=<?php echo $totalPages; ?><?php echo $selectedRole ? '&role=' . urlencode($selectedRole) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"><?php echo $totalPages; ?></a>
+                    </li>
+                  <?php endif; ?>
+                  <li>
+                    <a href="?page=<?php echo min($totalPages, $page + 1); ?><?php echo $selectedRole ? '&role=' . urlencode($selectedRole) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                      class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 <?php echo $page >= $totalPages ? 'cursor-not-allowed opacity-50' : ''; ?>"><i class="fas fa-chevron-right ml-2"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
     </main>
@@ -256,10 +323,10 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
   <?php include_once "components/user/addModal.php"; ?>
   <?php include_once "components/user/bulkAddModal.php"; ?>
 
-  <script src="../../../public/assets/js/dashboard/user/addModalController.js"></script>
-  <script src="../../../public/assets/js/dashboard/user/bulkAddModalController.js"></script>
-  <script src="../../../public/assets/js/dashboard/user/searchBarController.js"></script>
-  <script src="../../../public/assets/js/dashboard/user/filterDropdown.js"></script>
+  <script src="../../../public/js/dashboard/user/addModalController.js"></script>
+  <script src="../../../public/js/dashboard/user/bulkAddModalController.js"></script>
+  <script src="../../../public/js/dashboard/user/searchBarController.js"></script>
+  <script src="../../../public/js/dashboard/user/filterDropdown.js"></script>
 </body>
 
 </html>

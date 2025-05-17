@@ -5,7 +5,7 @@ require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
 
 $editEquipmentId = isset($_GET['id']) ? Security::show($_GET['id']) : null;
 if (!empty($editEquipmentId)) {
-  $currentEquipment = $equipmentController->getInfo($editEquipmentId);
+  $currentEquipment = $equipmentModel->getInfo($editEquipmentId);
 }
 ?>
 <!DOCTYPE html>
@@ -15,9 +15,9 @@ if (!empty($editEquipmentId)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Equipamentos</title>
-  <link rel="stylesheet" href="../../../public/assets/css/output.css">
+  <link rel="stylesheet" href="../../../public/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -171,14 +171,10 @@ if (!empty($editEquipmentId)) {
               </div>
 
               <div class="max-w-7xl mx-auto px-4 py-8 overflow-x-auto">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
                   <?php
                   $type = $_GET['type'] ?? null;
                   $ui->renderEquipments($type);
                   ?>
-
-                </div>
               </div>
             </div>
           </div>
@@ -198,11 +194,13 @@ if (!empty($editEquipmentId)) {
   if (empty($editEquipmentId)) {
     include_once "components/equipment/addModal.php";
     include_once "components/equipment/bulkAddModal.php"; ?>
-    <script src="../../../public/assets/js/dashboard/equipment/addModalController.js"></script>
-    <script src="../../../public/assets/js/dashboard/equipment/bulkAddModalController.js"></script>
-    <script src="../../../public/assets/js/dashboard/equipment/searchBarController.js"></script>
-    <script src="../../../public/assets/js/dashboard/equipment/filterDropdown.js"></script>
-  <?php } ?>
+    <script src="../../../public/js/dashboard/equipment/addModalController.js"></script>
+    <script src="../../../public/js/dashboard/equipment/bulkAddModalController.js"></script>
+    <script src="../../../public/js/dashboard/equipment/searchBarController.js"></script>
+    <script src="../../../public/js/dashboard/equipment/filterDropdown.js"></script>
+  <?php } else {
+    echo '<script src="view/js/equipamento.js"></script>';
+  } ?>
 </body>
 
 </html>

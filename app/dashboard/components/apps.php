@@ -1,31 +1,37 @@
-        <div class="bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md border border-gray-200 dark:border-slate-700 transition-all duration-200 hover:-translate-y-1">
-          <div class="p-4">
-            <div class="flex items-center mb-3">
-              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-600 mr-3">
-                <i class="fas fa-calendar-alt text-white"></i>
-              </div>
-              <h3 class="font-semibold text-gray-900 dark:text-white">Agendaê</h3>
-            </div>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Agendamento e reserva de recursos e espaços</p>
-            <a href="../agendae/" class="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 text-sm font-medium flex items-center">
-              <span>Acessar</span>
-              <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-          </div>
-        </div>
+<!-- Agendaê -->
+<div class="relative bg-gradient-to-br from-green-400 via-emerald-400 to-teal-300 rounded-3xl overflow-hidden shadow-2xl hover:shadow-emerald-400/30 transition-all duration-300 hover:-translate-y-2 group flex flex-col min-h-[220px]">
+  <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+  <div class="absolute -top-6 -left-6 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+  <div class="flex items-center gap-4 z-10 p-6">
+    <div class="bg-white/30 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+      <i class="fas fa-calendar-alt text-white text-2xl"></i>
+    </div>
+    <h3 class="text-2xl font-extrabold text-white drop-shadow">Agendaê</h3>
+  </div>
+  <p class="text-emerald-50 text-base font-medium z-10 pl-6 pb-2 border-l-4 border-white/40 px-6">Agendamento e reserva de recursos e espaços</p>
+  <div class="px-6 pb-6">
+    <a href="../agendae/" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/20 hover:bg-white/40 text-white text-lg font-bold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl">
+      <span>Acessar Aplicativo</span>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+</div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md border border-gray-200 dark:border-slate-700 transition-all duration-200 hover:-translate-y-1">
-          <div class="p-4">
-            <div class="flex items-center mb-3">
-              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 mr-3">
-                <i class="fas fa-user-check text-white"></i>
-              </div>
-              <h3 class="font-semibold text-gray-900 dark:text-white">EPresence</h3>
-            </div>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Gerenciamento de presença dos alunos feito pelos líderes</p>
-            <a href="../../indev.php" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium flex items-center">
-              <span>Acessar</span>
-              <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-          </div>
-        </div>
+<!-- EPresence -->
+<div class="relative bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-400 rounded-3xl overflow-hidden shadow-2xl hover:shadow-blue-400/30 transition-all duration-300 hover:-translate-y-2 group flex flex-col min-h-[220px]">
+  <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+  <div class="absolute -top-6 -left-6 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+  <div class="flex items-center gap-4 z-10 p-6">
+    <div class="bg-white/30 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+      <i class="fas fa-user-check text-white text-2xl"></i>
+    </div>
+    <h3 class="text-2xl font-extrabold text-white drop-shadow">EPresence</h3>
+  </div>
+  <p class="text-blue-50 text-base font-medium z-10 pl-6 pb-2 border-l-4 border-white/40 px-6">Gerenciamento de presença dos alunos feito pelos líderes</p>
+  <div class="px-6 pb-6">
+    <a href="../../indev.php" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/20 hover:bg-white/40 text-white text-lg font-bold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl">
+      <span>Acessar Aplicativo</span>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+</div>

@@ -4,15 +4,37 @@ $basepath = "../../";
 require_once dirname(dirname(__DIR__)) . '/src/bootstrap.php';
 
 $viewClassId = isset($_GET['id']) ? Security::show($_GET['id']) : null;
-if (isset($viewClassId)) {
-  $viewClass = $classController->getInfo($viewClassId);
-  $currentPDT = $userController->getInfo($viewClass["pdt_id"]);
-  $currentLeader = $userController->getInfo($viewClass["leader_id"]);
-  $currentViceLeader = $userController->getInfo($viewClass["vice_leader_id"]);
+$itemsPerPage = 10;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $itemsPerPage;
+$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+$selectedGrade = isset($_GET["grade"]) ? $_GET["grade"] : null;
 
-  $students = $classController->getUsers($viewClassId, ['lider', 'vice_lider', 'aluno']);
+if (isset($viewClassId)) {
+  $viewClass = $classModel->getInfo($viewClassId);
+  if (!is_array($viewClass) || empty($viewClass)) {
+    $viewClass = null;
+  } else {
+    $currentPDT = !empty($viewClass["pdt_id"]) ? $userModel->getInfo($viewClass["pdt_id"]) : null;
+    $currentLeader = !empty($viewClass["leader_id"]) ? $userModel->getInfo($viewClass["leader_id"]) : null;
+    $currentViceLeader = !empty($viewClass["vice_leader_id"]) ? $userModel->getInfo($viewClass["vice_leader_id"]) : null;
+    $students = $classModel->getUsers($viewClassId, ['lider', 'vice_lider', 'aluno']);
+  }
+} else {
+  $filters = [];
+  if (!empty($selectedGrade)) {
+    $filters["grade"] = htmlspecialchars($selectedGrade, ENT_QUOTES, "UTF-8");
+  }
+  if ($searchTerm) {
+    $filters["searchTerm"] = $searchTerm;
+  }
+  $count = $classModel->count($filters);
+  $totalItems = $count['total'] ?? 0;
+  $totalPages = ceil($totalItems / $itemsPerPage);
+  $classes = $classModel->get($filters, $itemsPerPage, $offset);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
 
@@ -20,29 +42,20 @@ if (isset($viewClassId)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Turmas</title>
-  <link rel="stylesheet" href="../../../public/assets/css/output.css">
+  <link rel="stylesheet" href="../../../public/css/output.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" href="../../../public/assets/images/altlogo.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <div class="min-h-full">
-    <?php UI::renderNavbar(
-      $currentUser,
-      "../../",
-      "Dashboard",
-      "blue",
-      "altlogo.svg"
-    );
-    UI::renderPopup(true);
-    ?>
+    <?php UI::renderNavbar($currentUser, "../../", "Dashboard", "blue", "altlogo.svg");
+    UI::renderPopup(true); ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Dashboard
           (<?php echo Format::roleName($currentUser["role"]); ?>)</h1>
-
-
         <nav class="flex" style="margin-top: 15px;" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -63,9 +76,7 @@ if (isset($viewClassId)) {
                     class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">Turmas</span></a>
               </div>
             </li>
-
-            <?php if (isset($viewClassId)) {
-            ?>
+            <?php if (isset($viewClassId) && !empty($viewClass)) { ?>
               <li aria-current="page">
                 <div class="flex items-center">
                   <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
@@ -74,11 +85,10 @@ if (isset($viewClassId)) {
                       d="m1 9 4-4-4-4" />
                   </svg>
                   <span
-                    class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400"><?php echo $viewClass['name']; ?></span>
+                    class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400"><?php echo htmlspecialchars($viewClass['name']); ?></span>
                 </div>
               </li>
-            <?php
-            } ?>
+            <?php } ?>
           </ol>
         </nav>
       </div>
@@ -111,8 +121,6 @@ if (isset($viewClassId)) {
                       d="m1 1 4 4 4-4" />
                   </svg>
                 </button>
-
-
                 <div id="dropdownRadio"
                   class="z-50 hidden absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700 dark:divide-gray-600">
                   <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
@@ -126,59 +134,44 @@ if (isset($viewClassId)) {
                       </div>
                     </li>
                     <?php
-                    $grades = $conn
-                      ->query("SELECT DISTINCT grade FROM classes")
-                      ->fetchAll(PDO::FETCH_COLUMN);
+                    $grades = $conn->query("SELECT DISTINCT grade FROM classes")->fetchAll(PDO::FETCH_COLUMN);
                     foreach ($grades as $grade) {
                       $safeGrade = htmlspecialchars($grade, ENT_QUOTES, "UTF-8");
-                      echo '
-                  <li>
-                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                      <input id="filter-radio-' .
-                        $safeGrade .
-                        '" type="radio" name="filter-radio" value="' .
-                        $safeGrade .
-                        '"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onchange="filterClasses(this.value)">
-                      <label for="filter-radio-' .
-                        $safeGrade .
-                        '"
-                        class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">' .
-                        $safeGrade .
-                        '</label>
-                    </div>
-                  </li>';
+                      echo '<li>
+                        <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                          <input id="filter-radio-' . $safeGrade . '" type="radio" name="filter-radio" value="' . $safeGrade . '"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            onchange="filterClasses(this.value)">
+                          <label for="filter-radio-' . $safeGrade . '"
+                            class="ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">' . $safeGrade . '</label>
+                        </div>
+                      </li>';
                     }
                     ?>
                   </ul>
                 </div>
               </div>
-
               <div class="flex items-center gap-4">
                 <div class="flex gap-2">
                   <button onclick="openclassAddModal()" id="classadd-open-modal-btn"
                     class="h-10 px-3 inline-flex items-center justify-center border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="fas fa-graduation-cap"></i>
                   </button>
-
                   <button onclick="openclassBulkAddModal()" id="bulkclassadd-open-modal-btn"
                     class="h-10 px-3 inline-flex items-center justify-center border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="far fa-file-excel"></i>
                   </button>
                 </div>
-
                 <div class="relative w-72">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search w-4 h-4 text-gray-400"></i>
                   </div>
-                  <input type="text"
+                  <input type="text" id="search-classes" value="<?php echo htmlspecialchars($searchTerm); ?>"
                     class="h-10 w-full pl-10 pr-4 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="Pesquisar turmas">
+                    placeholder="Pesquisar por turma, série, PDT, líder ou vice-líder">
                 </div>
               </div>
             </div>
-
             <div class="max-w-7xl mx-auto overflow-x-auto shadow-xl rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-200 dark:scrollbar-track-gray-700">
               <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
@@ -193,127 +186,63 @@ if (isset($viewClassId)) {
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
                   <?php
-                  $selectedGrade = $_GET["grade"] ?? null;
-
-                  $sql = "SELECT id, name, grade, pdt_id, leader_id, vice_leader_id FROM classes";
-
-                  if ($selectedGrade) {
-                    $sql .= " WHERE grade = :grade";
-                  }
-
-                  $stmt = $conn->prepare($sql);
-
-                  if ($selectedGrade) {
-                    $stmt->bindParam(":grade", $selectedGrade, PDO::PARAM_STR);
-                  }
-
-                  $stmt->execute();
-
-                  if ($stmt->rowCount() > 0) {
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { ?>
+                  if (!empty($classes)) {
+                    function renderUserCell(?array $user, ?int $userId, string $expectedRole, string $profileLinkPrefix = '../../perfil.php'): string
+                    {
+                      if (!empty($userId) && !empty($user['role']) && $user['role'] === $expectedRole) {
+                        $userId = htmlspecialchars(Security::hide($user['id']), ENT_QUOTES, 'UTF-8');
+                        $name = htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8');
+                        $email = htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8');
+                        $photo = htmlspecialchars($user['profile_photo'], ENT_QUOTES, 'UTF-8');
+                        return <<<HTML
+                          <td class="px-6 py-4">
+                              <div class="flex items-center gap-3">
+                                  <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600"
+                                       src="{$photo}" alt="Foto do usuário">
+                                  <div class="flex-1 min-w-0">
+                                      <div class="font-medium text-gray-900 dark:text-white truncate">
+                                          <a href="{$profileLinkPrefix}?id={$userId}"
+                                             class="hover:text-blue-600 dark:hover:text-blue-400">
+                                              {$name}
+                                          </a>
+                                      </div>
+                                      <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                          {$email}
+                                      </div>
+                                  </div>
+                              </div>
+                          </td>
+                      HTML;
+                      }
+                      return '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
+                    }
+                    foreach ($classes as $row) { ?>
                       <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out">
                         <td class="px-6 py-4">
                           <div class="flex items-center gap-3">
                             <div class="flex-1 min-w-0">
                               <div class="font-medium text-gray-900 dark:text-white truncate">
-                                <a href="turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
-                                  <?php echo htmlspecialchars($row["name"]); ?>
+                                <a href="turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"]), ENT_QUOTES, 'UTF-8'); ?>"
+                                  class="hover:text-blue-600 dark:hover:text-blue-400">
+                                  <?php echo htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
                               </div>
                               <div class="text-sm text-gray-500 dark:text-gray-400">
-                                <?php echo htmlspecialchars($row["grade"]); ?>º Ano
+                                <?php echo htmlspecialchars($row["grade"], ENT_QUOTES, 'UTF-8'); ?>º Ano
                               </div>
                             </div>
                           </div>
                         </td>
-
                         <td class="px-6 py-4 text-gray-500 dark:text-gray-400">
-                          <?php echo htmlspecialchars($row["id"]); ?>
+                          <?php echo htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8'); ?>
                         </td>
-
-                        <?php $pdt = $userController->getInfo($row["pdt_id"]);
-                        if (isset($row['pdt_id']) && isset($pdt['role']) && $pdt['role'] == 'pdt') {
+                        <?php
+                        echo renderUserCell($row['pdt_info'] ?? null, $row['pdt_id'] ?? null, 'pdt');
+                        echo renderUserCell($row['leader_info'] ?? null, $row['leader_id'] ?? null, 'lider');
+                        echo renderUserCell($row['vice_leader_info'] ?? null, $row['vice_leader_id'] ?? null, 'vice_lider');
                         ?>
-                          <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" 
-                                src="<?php echo htmlspecialchars($pdt['profile_photo']); ?>"
-                                alt="Foto do usuário">
-                              <div class="flex-1 min-w-0">
-                                <div class="font-medium text-gray-900 dark:text-white truncate">
-                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($pdt["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
-                                    <?php echo htmlspecialchars($pdt["name"]); ?>
-                                  </a>
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                  <?php echo htmlspecialchars($pdt["email"]); ?>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        <?php } else {
-                          if (isset($row['pdt_id']) && isset($pdt['role'])) {
-                            $classController->handleUserRoleChange($row['pdt_id'], $pdt['role']);
-                          }
-                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
-                        } ?>
-
-                        <?php $leader = $userController->getInfo($row["leader_id"]);
-                        if (isset($row['leader_id']) && isset($leader['role']) && $leader['role'] == 'lider') {
-                        ?>
-                          <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" 
-                                src="<?php echo htmlspecialchars($leader['profile_photo']); ?>"
-                                alt="Foto do usuário">
-                              <div class="flex-1 min-w-0">
-                                <div class="font-medium text-gray-900 dark:text-white truncate">
-                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($leader["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
-                                    <?php echo htmlspecialchars($leader["name"]); ?>
-                                  </a>
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                  <?php echo htmlspecialchars($leader["email"]); ?>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        <?php } else {
-                          if (isset($row['leader_id']) && isset($leader['role'])) {
-                            $classController->handleUserRoleChange($row['leader_id'], $leader['role']);
-                          }
-                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
-                        } ?>
-
-                        <?php $viceLeader = $userController->getInfo($row["vice_leader_id"]);
-                        if (isset($row['vice_leader_id']) && isset($viceLeader['role']) && $viceLeader['role'] == 'vice_lider') {
-                        ?>
-                          <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                              <img class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" 
-                                src="<?php echo htmlspecialchars($viceLeader['profile_photo']); ?>"
-                                alt="Foto do usuário">
-                              <div class="flex-1 min-w-0">
-                                <div class="font-medium text-gray-900 dark:text-white truncate">
-                                  <a href="../../perfil.php?id=<?php echo htmlspecialchars(Security::hide($viceLeader["id"])); ?>" class="hover:text-blue-600 dark:hover:text-blue-400">
-                                    <?php echo htmlspecialchars($viceLeader["name"]); ?>
-                                  </a>
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                  <?php echo htmlspecialchars($viceLeader["email"]); ?>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        <?php } else {
-                          if (isset($row['vice_leader_id']) && isset($viceLeader['role'])) {
-                            $classController->handleUserRoleChange($row['vice_leader_id'], $viceLeader['role']);
-                          }
-                          echo '<td class="px-6 py-4 text-red-500 dark:text-red-400 italic">Não cadastrado</td>';
-                        } ?>
-
                         <td class="px-6 py-4">
-                          <a href="./turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"])); ?>"
+                          <a href="./turmas.php?id=<?php echo htmlspecialchars(Security::hide($row["id"]), ENT_QUOTES, 'UTF-8'); ?>"
                             class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Editar
                           </a>
@@ -327,6 +256,56 @@ if (isset($viewClassId)) {
                 </tbody>
               </table>
             </div>
+            <?php if ($totalPages > 1): ?>
+              <div class="p-4 flex items-center justify-between">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                  Mostrando <?php echo min(($offset + 1), $totalItems); ?> a <?php echo min($offset + count($classes), $totalItems); ?> de <?php echo $totalItems; ?> turmas
+                </div>
+                <nav aria-label="Paginação">
+                  <ul class="inline-flex items-center space-x-1">
+                    <li>
+                      <a href="?page=<?php echo max(1, $page - 1); ?><?php echo $selectedGrade ? '&grade=' . urlencode($selectedGrade) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 <?php echo $page <= 1 ? 'cursor-not-allowed opacity-50' : ''; ?>">
+                        <i class="fas fa-chevron-left mr-2"></i></a>
+                    </li>
+                    <?php
+                    $startPage = max(1, $page - 2);
+                    $endPage = min($totalPages, $page + 2);
+                    if ($startPage > 1): ?>
+                      <li>
+                        <a href="?page=1<?php echo $selectedGrade ? '&grade=' . urlencode($selectedGrade) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                          class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700">1</a>
+                      </li>
+                      <?php if ($startPage > 2): ?>
+                        <li><span class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">...</span></li>
+                      <?php endif; ?>
+                    <?php endif; ?>
+                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                      <li>
+                        <a href="?page=<?php echo $i; ?><?php echo $selectedGrade ? '&grade=' . urlencode($selectedGrade) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                          class="px-3 py-2 text-sm font-medium <?php echo $i === $page ? 'text-white bg-blue-600 border-blue-600' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'; ?> border rounded-lg">
+                          <?php echo $i; ?>
+                        </a>
+                      </li>
+                    <?php endfor; ?>
+                    <?php if ($endPage < $totalPages): ?>
+                      <?php if ($endPage < $totalPages - 1): ?>
+                        <li><span class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">...</span></li>
+                      <?php endif; ?>
+                      <li>
+                        <a href="?page=<?php echo $totalPages; ?><?php echo $selectedGrade ? '&grade=' . urlencode($selectedGrade) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                          class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"><?php echo $totalPages; ?></a>
+                      </li>
+                    <?php endif; ?>
+                    <li>
+                      <a href="?page=<?php echo min($totalPages, $page + 1); ?><?php echo $selectedGrade ? '&grade=' . urlencode($selectedGrade) : ''; ?><?php echo $searchTerm ? '&search=' . urlencode($searchTerm) : ''; ?>"
+                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 <?php echo $page >= $totalPages ? 'cursor-not-allowed opacity-50' : ''; ?>">
+                        <i class="fas fa-chevron-right ml-2"></i></a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            <?php endif; ?>
           </div>
         </div>
       </main>
@@ -338,15 +317,14 @@ if (isset($viewClassId)) {
     include_once "components/class/addModal.php";
     include_once "components/class/bulkAddModal.php";
     $scripts = [
-      "../../../public/assets/js/dashboard/class/addModalController.js",
-      "../../../public/assets/js/dashboard/class/bulkAddModalController.js",
-      "../../../public/assets/js/dashboard/class/searchBarController.js",
-      "../../../public/assets/js/dashboard/class/filterDropdown.js"
+      "../../../public/js/dashboard/class/addModalController.js",
+      "../../../public/js/dashboard/class/bulkAddModalController.js",
+      "../../../public/js/dashboard/class/searchBarController.js",
+      "../../../public/js/dashboard/class/filterDropdown.js"
     ];
   } else {
     $scripts = ["view/js/turma.js"];
   }
-
   foreach ($scripts as $script) {
     echo '<script src="' . htmlspecialchars($script) . '"></script>';
   }

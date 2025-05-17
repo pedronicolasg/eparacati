@@ -10,7 +10,7 @@ class Navigation
     self::outputScript("location.href='$location';");
   }
 
-  public static function alert($message, $location = null, $type = 'error', $title = 'Atenção')
+  public static function alert($title, $message, $type = 'error', $location = null)
   {
     if (!isset($_SESSION['alert'])) {
       $_SESSION['alert'] = [];

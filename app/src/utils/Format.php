@@ -46,6 +46,7 @@ class Format
   public static function tableName($table)
   {
     $tableMap = [
+      'system' => 'Sistema',
       'users' => 'Usuários',
       'classes' => 'Turmas',
       'equipments' => 'Equipamentos',
@@ -97,13 +98,15 @@ class Format
     $length = strlen($phone);
 
     if ($length === 11) {
-      return sprintf('(%s) %s-%s',
+      return sprintf(
+        '(%s) %s-%s',
         substr($phone, 0, 2),
         substr($phone, 2, 5),
         substr($phone, 7)
       );
     } elseif ($length === 10) {
-      return sprintf('(%s) %s-%s',
+      return sprintf(
+        '(%s) %s-%s',
         substr($phone, 0, 2),
         substr($phone, 2, 4),
         substr($phone, 6)
