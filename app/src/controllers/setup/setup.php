@@ -144,8 +144,6 @@ try {
   $stmt = $conn->prepare("UPDATE setupKeys SET active = 0, used_by_id = ?, used_at = NOW() WHERE id = ?");
   $stmt->execute([$userId, $keyId]);
 
-  sleep(120);
-
   $userModel->login($email, Security::passw($password));
   Navigation::alert(
     'Bem-vindo ao EP Aracati',
