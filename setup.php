@@ -35,7 +35,7 @@ try {
   <title>EP Aracati - Configuração Inicial</title>
   <link rel="shortcut icon" href="public/images/logo.svg" type="image/x-icon">
   <link rel="stylesheet" href="public/css/output.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
 
   <style>
     @keyframes gradient-bg {
@@ -60,7 +60,7 @@ try {
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-x-hidden">
-  <?php UI::renderPopup(true); ?>
+  <?php UI::renderAlerts(true); ?>
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-0 left-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl"></div>
     <div class="absolute bottom-0 right-0 w-96 h-96 bg-green-500/10 rounded-full blur-3xl"></div>
@@ -362,7 +362,7 @@ try {
     </div>
 
     <div class="w-full max-w-6xl mt-8 text-center text-gray-500 text-sm">
-      <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg">Pedro Nícolas Gomes de Souza</a>.</p>
+      <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg" class="text-green-600 dark:text-green-700">Pedro Nícolas Gomes de Souza</a>.</p>
 
     </div>
   </div>

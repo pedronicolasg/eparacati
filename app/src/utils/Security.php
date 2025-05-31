@@ -10,6 +10,27 @@ class Security
     $this->conn = $conn;
   }
 
+  public function checkInitialSetup()
+  {
+    $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE role = 'gestao'");
+    $stmt->execute();
+    $gestaoCount = $stmt->fetchColumn();
+
+    $stmt = $this->conn->prepare("SELECT COUNT(*) FROM setupKeys WHERE active = 1");
+    $stmt->execute();
+    $availableKeysCount = $stmt->fetchColumn();
+
+    if ($gestaoCount == 0 && $availableKeysCount > 0) {
+      Navigation::redirect('../setup.php');
+      exit;
+    } else if ($gestaoCount == 0 && $availableKeysCount == 0) {
+      Navigation::redirect('../../../indev.php');
+      exit;
+    } else if (isset($_SESSION['id'])) {
+      Navigation::redirect('../../index.php');
+    }
+  }
+
   public static function sanitizeInput($data, $type = 'text')
   {
     if (is_string($data)) {
@@ -64,23 +85,20 @@ class Security
     return preg_match($pattern, $password) === 1;
   }
 
-  public function generateUniqueId($digits, $tableName, $columnName = 'id'): int
+  public function generateUniqueId(int $digits): int
   {
     if ($digits <= 0) {
       throw new InvalidArgumentException('O número de dígitos deve ser maior que 0.');
     }
 
-    $min = (int) str_pad('1', $digits, '0');
     $max = (int) str_pad('9', $digits, '9');
 
-    $randomId = random_int($min, $max);
-    /*do {
-      $stmt = $this->conn->prepare("SELECT COUNT(*) FROM {$tableName} WHERE {$columnName} = :id");
-      $stmt->bindParam(':id', $randomId, PDO::PARAM_INT);
-      $stmt->execute();
+    $uniqueString = microtime(true) . '-' . random_int(1000, 9999);
+    $hash = sha1($uniqueString);
 
-      $exists = $stmt->fetchColumn() > 0;
-    } while ($exists);*/
+    $randomId = (int) substr(abs(crc32($hash)), 0, $digits);
+
+    $randomId = ($randomId % $max) + 1;
 
     return $randomId;
   }

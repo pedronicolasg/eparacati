@@ -7,7 +7,7 @@
   <title>Em Desenvolvimento - E.E.E.P. Profª Elsa Maria Porto Costa Lima</title>
   <link rel="shortcut icon" href="public/images/logo.svg" type="image/x-icon">
   <link rel="stylesheet" href="public/css/output.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">

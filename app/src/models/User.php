@@ -43,6 +43,8 @@ class UserModel
         $userInfo = $this->getInfo($_SESSION["id"]);
 
         if (empty($userInfo) || $allowedRoles !== null && !in_array($userInfo["role"], $allowedRoles)) {
+            session_unset();
+            session_destroy();
             Navigation::redirectToLogin();
             exit();
         }
@@ -60,9 +62,6 @@ class UserModel
         if ($user) {
             if ($user["password"] === $password) {
                 $_SESSION["id"] = $user["id"];
-
-                $path = "../../../index.php";
-                Navigation::redirect($path);
             } else {
                 $msg = "Senha incorreta!";
                 $path = "../../../login.php";
@@ -111,6 +110,20 @@ class UserModel
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchColumn();
+    }
+
+    public function getRoles()
+    {
+        $sql = "SHOW COLUMNS FROM users LIKE 'role'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result && preg_match("/^enum\((.*)\)$/", $result['Type'], $matches)) {
+            return str_getcsv($matches[1], ',', "'");
+        }
+
+        return [];
     }
 
     public function getInfo($identifier, $type = "id", $fields = [])
@@ -191,7 +204,7 @@ class UserModel
                 return false;
             }
 
-            $id = $security->generateUniqueId(8, "users");
+            $id = $security->generateUniqueId(8);
             $created_at = date("d-m-Y H:i:s");
             $profile_photo = $this->generateDefaultPFP($name);
 
@@ -243,20 +256,32 @@ class UserModel
             $userData = [];
             $preferenceData = [];
 
+            $roles = $this->getRoles();
+            $roleAliases = array_map(function ($role) {
+                return \Format::roleName($role);
+            }, $roles);
+            $roleAliasMap = array_combine(array_map('strtolower', $roleAliases), $roles);
+
             foreach ($rows as $index => $row) {
+                if (empty($row[0]) && empty($row[1]) && empty($row[3]) && empty($row[4]) && empty($row[5])) {
+                    continue;
+                }
                 if (empty($row[0]) || empty($row[1]) || empty($row[3])) {
                     $results['errors'][] = "Linha " . ($index + 2) . ": Campos obrigatórios faltando";
                     continue;
                 }
 
-                $id = $security->generateUniqueId(8, 'users');
+                $rawRole = empty($row[4]) ? 'outro' : strtolower(trim($row[4]));
+                $role = isset($roleAliasMap[$rawRole]) ? $roleAliasMap[$rawRole] : $rawRole;
+
+                $id = $security->generateUniqueId(8);
                 $userData[] = [
                     'id' => $id,
                     'name' => $row[0],
                     'email' => $security->sanitizeInput($row[1], 'email'),
                     'phone' => !empty($row[2]) ? $row[2] : null,
                     'password' => Security::passw($row[3]),
-                    'role' => !empty($row[4]) ? $row[4] : null,
+                    'role' => $role,
                     'class_id' => !empty($row[5]) ? $row[5] : null,
                     'profile_photo' => $this->generateDefaultPFP($row[0]),
                     'created_at' => date("d-m-Y H:i:s")
@@ -456,11 +481,9 @@ class UserModel
         }
     }
 
-    public function updateTheme($userId)
+    public function updateTheme($userId, $theme)
     {
-        $userInfo = $this->getInfo($userId, "id", ["preferences"]);
-
-        $currentTheme = $userInfo["preferences"]["theme"] ?? "dark";
+        $currentTheme = $theme ?? "dark";
         $newTheme = $currentTheme === "light" ? "dark" : "light";
 
         $stmt = $this->conn->prepare(

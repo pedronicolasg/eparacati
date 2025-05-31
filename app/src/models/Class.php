@@ -261,7 +261,7 @@ class ClassModel
                 }
             }
 
-            $id = $security->generateUniqueId(8, 'classes');
+            $id = $security->generateUniqueId(8);
             $created_at = date("d-m-Y H:i:s");
             $upgrades_in = date("d-m-Y", strtotime("next year January 1st"));
             $ends_in = ($grade == 3) ? $upgrades_in : null;
@@ -317,6 +317,9 @@ class ClassModel
 
             $emails = [];
             foreach ($rows as $index => $row) {
+                if (empty($row[0]) && empty($row[1]) && empty($row[3]) && empty($row[4])) {
+                    continue;
+                }
                 if (empty($row[0]) || empty($row[1])) {
                     $results['errors'][] = "Linha " . ($index + 2) . ": Campos obrigatórios faltando";
                     continue;
@@ -327,7 +330,7 @@ class ClassModel
                     }
                 }
             }
-            
+
             $userIds = [];
             if ($emails) {
                 $placeholders = implode(',', array_fill(0, count($emails), '?'));
@@ -350,7 +353,7 @@ class ClassModel
                     }
                 }
 
-                $id = $security->generateUniqueId(8, 'classes');
+                $id = $security->generateUniqueId(8);
                 $classData[] = [
                     'id' => $id,
                     'name' => $row[0],

@@ -33,13 +33,13 @@ if ($editPanel) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Perfil de <?php echo htmlspecialchars($user['name']); ?></title>
   <link rel="stylesheet" href="../public/css/output.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../public/images/logo.svg" type="image/x-icon">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
   <?php
   UI::renderNavbar($currentUser, './');
-  UI::renderPopup(true);
+  UI::renderAlerts(true);
   ?>
 
   <div class="container mx-auto px-4 py-12 max-w-6xl">

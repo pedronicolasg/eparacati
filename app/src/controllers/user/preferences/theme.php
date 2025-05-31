@@ -4,8 +4,8 @@ require_once "../../../bootstrap.php";
 header('Content-Type: application/json');
 
 try {
-    $userModel->updateTheme($_SESSION['id']);
-    
+    $userModel->updateTheme($_SESSION['id'], $currentUser['preferences']['theme']);
+
     echo json_encode([
         'success' => true,
         'message' => 'Tema atualizado com sucesso'

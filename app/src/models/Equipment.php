@@ -188,7 +188,7 @@ class EquipmentModel
     }
 
     $security = $this->getSecurity();
-    $id = $security->generateUniqueId(8, "equipments");
+    $id = $security->generateUniqueId(8);
     $created_at = date("d-m-Y H:i:s");
     $imageUrl = $image ? $this->addPhoto($image, $id) : null;
 
@@ -251,6 +251,9 @@ class EquipmentModel
 
       $names = [];
       foreach ($rows as $index => $row) {
+        if (empty($row[0]) && empty($row[1]) && empty($row[3])) {
+          continue;
+        }
         if (empty($row[0]) || empty($row[1])) {
           $results['errors'][] = "Linha " . ($index + 2) . ": Campos obrigatórios faltando";
           continue;
@@ -261,21 +264,32 @@ class EquipmentModel
           continue;
         }
 
-        $status = empty($row[2]) ? 'disponivel' : $row[2];
+        $statusAliases = [
+          'disponivel' => 'disponivel',
+          'disponível' => 'disponivel',
+          'indisponivel' => 'indisponivel',
+          'indisponível' => 'indisponivel'
+        ];
+        $rawStatus = empty($row[2]) ? 'disponivel' : strtolower(trim($row[2]));
+        $status = isset($statusAliases[$rawStatus]) ? $statusAliases[$rawStatus] : $rawStatus;
         if (!in_array($status, $validStatuses)) {
           $results['errors'][] = "Linha " . ($index + 2) . ": Status inválido '$status'";
           continue;
         }
 
+        $typeAliases = array_map(fn($type) => Format::typeName($type), $this->getTypes());
+        $rawStatus = empty($row[1]) ? 'outro' : strtolower(trim($row[1]));
+        $type = $typeAliases[$rawStatus] ?? $rawStatus;
+
         $security = $this->getSecurity();
-        $id = $security->generateUniqueId(8, 'equipments');
+        $id = $security->generateUniqueId(8);
         $imageUrl = !empty($row[4]) ? $this->addPhoto($row[4], $id) : null;
 
         $names[] = $row[0];
         $equipmentData[] = [
           'id' => $id,
           'name' => $row[0],
-          'type' => $row[1],
+          'type' => $type,
           'status' => $status,
           'description' => !empty($row[3]) ? $row[3] : null,
           'image' => $imageUrl,

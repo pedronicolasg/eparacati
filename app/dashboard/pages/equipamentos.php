@@ -16,7 +16,7 @@ if (!empty($editEquipmentId)) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard - Equipamentos</title>
   <link rel="stylesheet" href="../../../public/css/output.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
@@ -29,7 +29,7 @@ if (!empty($editEquipmentId)) {
       "blue",
       "altlogo.svg"
     );
-    UI::renderPopup(true);
+    UI::renderAlerts(true);
     ?>
 
     <header class="bg-white shadow-lg dark:bg-gray-900">

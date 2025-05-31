@@ -14,16 +14,16 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê</title>
-  <link rel="stylesheet" href="../../public/css/output.css">
+  <link href="../../public/css/output.css" rel="stylesheet">
   <link rel="shortcut icon" href="../../public/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 text-slate-800 dark:text-white min-h-screen">
 
   <?php
   UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg');
-  UI::renderPopup(true);
+  UI::renderAlerts(true);
   ?>
 
   <div class="container mx-auto px-4 py-6 lg:py-10">
@@ -279,7 +279,7 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
     });
   </script>
 
-  <script src="../../public/js/agendae/searchBarModel.js"></script>
+  <script src="../../public/js/agendae/searchBarController.js"></script>
   <?php $viewScript = $currentUserPreferences['scheduleAppView'] === 'grid' ? 'searchBarGridView.js' : 'searchBarListView.js'; ?>
   <script src="../../public/js/agendae/<?php echo htmlspecialchars($viewScript); ?>"></script>
 </body>

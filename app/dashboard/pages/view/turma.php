@@ -173,19 +173,29 @@
             LEFT JOIN classes c ON u.class_id = c.id
             WHERE u.class_id = :class_id
             ORDER BY CASE u.role
-                        WHEN 'lider' THEN 1
-                        WHEN 'vice_lider' THEN 2
-                        WHEN 'aluno' THEN 3
-                        ELSE 4
-                     END";
+                  WHEN 'lider' THEN 1
+                  WHEN 'vice_lider' THEN 2
+                  WHEN 'aluno' THEN 3
+                  ELSE 4
+                 END";
 
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(":class_id", $viewClassId, PDO::PARAM_INT);
 
             $stmt->execute();
 
+            $roleColors = [
+              'aluno' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+              'lider' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+              'vice_lider' => 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
+              'gremio' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+            ];
+
             if ($stmt->rowCount() > 0) {
               while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if ($row["role"] == "pdt"): continue;
+                endif;
+                $roleClass = isset($roleColors[$row["role"]]) ? $roleColors[$row["role"]] : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
             ?>
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                   <td class="px-6 py-4 whitespace-nowrap">
@@ -209,7 +219,7 @@
                     <?= htmlspecialchars($row["id"]) ?>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100">
+                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <?= $roleClass ?>">
                       <?= htmlspecialchars(Format::roleName($row["role"])) ?>
                     </span>
                   </td>

@@ -636,7 +636,7 @@
       </div>
 
       <div class="border-t border-gray-200 dark:border-gray-800 mt-10 pt-8 text-center text-gray-700 dark:text-gray-400">
-        <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg">Pedro Nícolas Gomes de Souza</a>.</p>
+        <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg" class="text-green-600 dark:text-green-700">Pedro Nícolas Gomes de Souza</a>.</p>
       </div>
     </div>
   </footer>

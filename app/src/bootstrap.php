@@ -4,7 +4,6 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-
 define('ROOT_DIR', dirname(__DIR__));
 define('SRC_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'src');
 define('VENDOR_DIR', dirname(ROOT_DIR) . DIRECTORY_SEPARATOR . 'vendor');
@@ -51,12 +50,8 @@ if (!function_exists('setRequiredRoles')) {
 $requiredRoles ??= ['aluno', 'lider', 'funcionario', 'gremio', 'professor', 'pdt', 'gestao'];
 
 if (!isset($allowUnauthenticatedAccess) || !$allowUnauthenticatedAccess) {
-    try {
-        $currentUser = $userModel->verifySession($requiredRoles);
-        $currentUserPreferences = $currentUser['preferences'] ?? UserModel::getDefaultPreferences();
-    } catch (Exception $e) {
-        session_unset();
-        session_destroy();
-    }
+    $currentUser = $userModel->verifySession($requiredRoles);
+    $currentUserPreferences = $currentUser['preferences'] ?? UserModel::getDefaultPreferences();
+
     $theme = $currentUserPreferences['theme'];
 }

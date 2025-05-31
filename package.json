@@ -1,12 +1,19 @@
 {
+  "name": "eparacati",
+  "author": "Pedro Nícolas Gomes de Souza",
+  "description": "Desenvolvimento de um site exclusivo para a EEEP Professora Elsa Maria Porto Costa Lima, criado para atender às necessidades da instituição de ensino, promovendo informações relevantes e facilitando a comunicação com alunos, professores e a comunidade.",
   "scripts": {
-    "dev": "tailwind build -i public/css/input.css -o public/css/output.css --watch",
-    "build": "tailwind build -i public/css/input.css -o public/css/output.css"
+    "dev": "tailwindcss -i public/css/input.css -o public/css/output.css --watch",
+    "build": "tailwindcss -i public/css/input.css -o public/css/output.css --minify"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17"
-  }
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.8",
+    "tailwindcss": "^4.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedronicolasg/eparacati.git"
+  },
+  "license": "CC BY-NC-ND 4.0",
+  "homepage": "https://github.com/pedronicolasg/eparacati#readme"
 }

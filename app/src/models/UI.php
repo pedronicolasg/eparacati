@@ -164,7 +164,7 @@ class UI
   <?php
   }
 
-  public static function renderPopup($alertas = null)
+  public static function renderAlerts($alertas = null)
   {
     if (!is_array($alertas)) {
       $alertas = [];
@@ -833,8 +833,7 @@ class UI
             $equipment = $booking['equipment_info'];
             $class = $booking['class_info'];
 
-            $typeColors = self::getTypeColors();
-            $typeClass = $typeColors[$equipment['type']] ?? 'bg-gray-600';
+            $typeClass = $equipment['type'] ?? 'bg-gray-600';
             $typeName = Format::typeName($equipment['type']);
 
             $baseColor = str_replace('bg-', '', $typeClass);
@@ -1019,20 +1018,6 @@ class UI
           ];
 
           return $titleMap[$action] ?? "Ação performada: " . ucfirst($action);
-        }
-
-        private static function getTypeColors()
-        {
-          return [
-            'notebook' => 'bg-purple-600',
-            'espaco' => 'bg-indigo-600',
-            'projetor' => 'bg-blue-600',
-            'extensao' => 'bg-green-600',
-            'microfone' => 'bg-orange-600',
-            'caixadesom' => 'bg-yellow-600',
-            'cabo' => 'bg-teal-600',
-            'outro' => 'bg-gray-600',
-          ];
         }
 
         private function setupPagination($currentPage, $totalPages, $type, $time)
@@ -1227,8 +1212,7 @@ HTML;
             $hoverEffect = '';
           }
 
-          $typeColors = self::getTypeColors();
-          $typeClass = $typeColors[$equipment['type']] ?? 'bg-slate-600';
+          $typeClass = $equipment['type'] ?? 'bg-slate-600';
           $imageSrc = $equipment['image'] ?: 'https://placehold.co/900x600.png?text=' . Format::typeName($equipment['type']) . '&font=roboto';
           $typeName = Format::typeName($equipment['type']);
           $description = strlen($equipment['description']) > 300 ? substr(htmlspecialchars($equipment['description']), 0, 100) . '...' : htmlspecialchars($equipment['description']);
@@ -1250,7 +1234,7 @@ HTML;
                   </div>
                   
                   <div class="absolute bottom-3 left-3 z-20">
-                      <span class="{$typeClass} text-xs font-medium px-2.5 py-1 rounded-full text-white shadow-sm backdrop-blur-sm bg-opacity-90 flex items-center gap-1">
+                      <span class="{$typeClass} text-xs font-medium px-2.5 py-1 rounded-full text-white shadow-sm backdrop-blur-sm bg-white/90 flex items-center gap-1">
                           {$typeName}
                       </span>
                   </div>
@@ -1310,8 +1294,7 @@ HTML;
             $statusText = 'Indisponível';
           }
 
-          $typeColors = self::getTypeColors();
-          $typeClass = $typeColors[$equipment['type']] ?? 'bg-slate-600';
+          $typeClass = $equipment['type'] ?? 'bg-slate-600';
           $typeName = Format::typeName($equipment['type']);
           $description = htmlspecialchars($equipment['description']);
           $fullDescription = htmlspecialchars($equipment['description']);

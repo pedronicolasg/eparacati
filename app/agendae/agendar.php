@@ -102,21 +102,14 @@ if ($equipmentId) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê | Agendar Equipamento</title>
   <link rel="shortcut icon" href="../../public/images/logo.svg" type="image/x-icon">
-  <link rel="stylesheet" href="../../public/css/output.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap');
-
-    body {
-      font-family: "Exo", sans-serif;
-    }
-  </style>
+  <link href="../../public/css/output.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-to-br from-emerald-50/80 to-teal-100/80 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen font-sans overflow-x-hidden">
   <?php
   UI::renderNavbar($currentUser, '../', '', 'green', 'logo.svg');
-  UI::renderPopup(true);
+  UI::renderAlerts(true);
   ?>
 
   <div class="fixed -top-24 -right-24 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>

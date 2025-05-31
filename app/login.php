@@ -1,24 +1,8 @@
 <?php
 $allowUnauthenticatedAccess = true;
 require_once __DIR__ . "/src/bootstrap.php";
-
-$stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE role = 'gestao'");
-$stmt->execute();
-$gestaoCount = $stmt->fetchColumn();
-
-$stmt = $conn->prepare("SELECT COUNT(*) FROM setupKeys WHERE active = 1");
-$stmt->execute();
-$availableKeysCount = $stmt->fetchColumn();
-
-if ($gestaoCount == 0 && $availableKeysCount > 0) {
-  Navigation::redirect('../setup.php');
-  exit;
-} else if ($gestaoCount == 0 && $availableKeysCount == 0) {
-  Navigation::redirect('../indev.php');
-  exit;
-} else if (isset($_SESSION['id'])) {
-  Navigation::redirect('index.php');
-}
+$security = new Security($conn);
+$security->checkInitialSetup();
 ?>
 
 <!DOCTYPE html>
@@ -30,11 +14,11 @@ if ($gestaoCount == 0 && $availableKeysCount > 0) {
   <title>EP Aracati | Login</title>
   <link rel="shortcut icon" href="../public/images/logo.svg" type="image/x-icon">
   <link href="../public/css/output.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-  <?php UI::renderPopup(true); ?>
+  <?php UI::renderAlerts(true); ?>
 
   <div class="absolute top-6 left-6 z-20">
     <a href="../" class="flex items-center space-x-2 text-gray-700 dark:text-gray-200 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-300">
@@ -60,7 +44,7 @@ if ($gestaoCount == 0 && $availableKeysCount > 0) {
       <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Acesse sua conta com suas credenciais</p>
     </div>
 
-    <div class="bg-white bg-opacity-80 dark:bg-white dark:bg-opacity-5 backdrop-blur-lg border border-gray-200 dark:border-white dark:border-opacity-10 rounded-2xl p-8 shadow-xl">
+    <div class="bg-white/80 backdrop-blur-lg border border-gray-200 dark:bg-white/10 dark:border-white/10 rounded-2xl p-8 shadow-xl">
       <form class="space-y-6" action="src/controllers/user/login.php" method="POST">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
@@ -69,7 +53,7 @@ if ($gestaoCount == 0 && $availableKeysCount > 0) {
               <i class="fas fa-envelope text-gray-500 dark:text-gray-400"></i>
             </div>
             <input id="email" name="email" type="email" required
-              class="w-full pl-10 pr-4 py-3 bg-white bg-opacity-50 dark:bg-white dark:bg-opacity-10 border border-gray-300 dark:border-white dark:border-opacity-20 rounded-lg 
+              class="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg 
               text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 dark:focus:ring-green-400 focus:border-transparent 
               transition-all duration-200"
               placeholder="seu@email.com">
@@ -83,7 +67,7 @@ if ($gestaoCount == 0 && $availableKeysCount > 0) {
               <i class="fas fa-lock text-gray-500 dark:text-gray-400"></i>
             </div>
             <input id="password" name="password" type="password" required
-              class="w-full pl-10 pr-12 py-3 bg-white bg-opacity-50 dark:bg-white dark:bg-opacity-10 border border-gray-300 dark:border-white dark:border-opacity-20 rounded-lg 
+              class="w-full pl-10 pr-12 py-3 bg-white/50 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg 
               text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 dark:focus:ring-green-400 focus:border-transparent 
               transition-all duration-200"
               placeholder="••••••••">
@@ -107,7 +91,7 @@ if ($gestaoCount == 0 && $availableKeysCount > 0) {
     </div>
 
     <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-      <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg">Pedro Nícolas Gomes de Souza</a>.</p>
+      <p>&copy; 2025 E.E.E.P. Aracati. Desenvolvido por <a href="https://github.com/pedronicolasg" class="text-green-600 dark:text-green-700">Pedro Nícolas Gomes de Souza</a>.</p>
     </div>
   </div>
 

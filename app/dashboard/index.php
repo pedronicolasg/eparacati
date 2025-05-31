@@ -10,14 +10,14 @@ require_once dirname(__DIR__) . '/src/bootstrap.php';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EP Aracati | Dashboard</title>
-  <link rel="stylesheet" href="../../public/css/output.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="../../public/css/output.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../../public/images/altlogo.svg" type="image/x-icon">
 </head>
 
 <body class="bg-gradient-to-br from-slate-50 to-slate-200 dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
   <?php UI::renderNavbar($currentUser, '../', 'Dashboard', 'blue', 'altlogo.svg');
-  UI::renderPopup(true); ?>
+  UI::renderAlerts(true); ?>
   <main class="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8 relative z-10">
     <div class="absolute top-0 left-0 w-full h-72 bg-gradient-to-tr from-blue-700/30 via-purple-700/20 to-pink-600/10 dark:from-blue-900/40 dark:via-purple-900/30 dark:to-pink-900/20 -z-10 rounded-b-3xl blur-sm"></div>
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

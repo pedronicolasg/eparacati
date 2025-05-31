@@ -10,13 +10,13 @@ require_once __DIR__ . "/src/bootstrap.php";
     <title>EP Aracati</title>
     <link rel="stylesheet" href="../public/css/output.css">
     <link rel="shortcut icon" href="../public/images/logo.svg" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     <?php
     UI::renderNavbar($currentUser, "./", "Home", "green");
-    UI::renderPopup(true);
+    UI::renderAlerts(true);
     ?>
 
     <main class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">

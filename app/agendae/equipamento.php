@@ -22,9 +22,9 @@ if (!empty($currentEquipmentId)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê | <?= htmlspecialchars($currentEquipment['name']) ?></title>
-  <link rel="stylesheet" href="../../public/css/output.css">
+  <link href="../../public/css/output.css" rel="stylesheet">
   <link rel="shortcut icon" href="../../public/images/logo.svg" type="image/x-icon">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -58,7 +58,7 @@ if (!empty($currentEquipmentId)) {
 
   <?php
   UI::renderNavbar($currentUser, '../', '', 'teal', 'logo.svg');
-  UI::renderPopup(true);
+  UI::renderAlerts(true);
   ?>
 
   <main class="container mx-auto px-4 py-12 sm:py-16 lg:py-20">

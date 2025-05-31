@@ -50,6 +50,21 @@ try {
     "'{$user['name']}' logou em sua conta",
     Security::getIp()
   );
+
+  if (!Security::isStrongPassword($password)) {
+    $_SESSION['alert'][] = [
+      'titulo' => 'Senha Fraca',
+      'mensagem' => 'Sua senha é considerada fraca. Recomendamos que você a altere para uma senha mais forte.',
+      'tipo' => 'warning'
+    ];
+  }
+
+  Navigation::alert(
+    'Login realizado com sucesso!',
+    'Seja bem-vindo de volta, ' . htmlspecialchars($user['name']) . '!',
+    'success',
+    '../../../index.php'
+  );
 } catch (Exception $e) {
   Navigation::alert(
     'Erro de Login',

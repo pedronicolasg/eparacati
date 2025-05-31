@@ -32,7 +32,7 @@ class FileUploader
 
       $image = $this->manager->read($file['tmp_name']);
 
-      $image->scaleDown($maxWidth, $maxHeight, true);
+      $image->scaleDown($maxWidth, $maxHeight);
 
       $fileName = $specificId ? $specificId . '.webp' : uniqid('', true) . '.webp';
       $fullPath = rtrim($uploadPath, '/') . '/' . $fileName;
