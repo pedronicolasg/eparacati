@@ -46,7 +46,7 @@ try {
     $user['id'],
     'login',
     'users',
-    $id,
+    $user['id'],
     "'{$user['name']}' logou em sua conta",
     Security::getIp()
   );
@@ -63,7 +63,7 @@ try {
     'Login realizado com sucesso!',
     'Seja bem-vindo de volta, ' . htmlspecialchars($user['name']) . '!',
     'success',
-    '../../../index.php'
+    ($user['role'] === 'gestao' ? '../../../dashboard/' : '../../../agendae/')
   );
 } catch (Exception $e) {
   Navigation::alert(

@@ -10,27 +10,6 @@ class Security
     $this->conn = $conn;
   }
 
-  public function checkInitialSetup()
-  {
-    $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE role = 'gestao'");
-    $stmt->execute();
-    $gestaoCount = $stmt->fetchColumn();
-
-    $stmt = $this->conn->prepare("SELECT COUNT(*) FROM setupKeys WHERE active = 1");
-    $stmt->execute();
-    $availableKeysCount = $stmt->fetchColumn();
-
-    if ($gestaoCount == 0 && $availableKeysCount > 0) {
-      Navigation::redirect('../setup.php');
-      exit;
-    } else if ($gestaoCount == 0 && $availableKeysCount == 0) {
-      Navigation::redirect('../../../indev.php');
-      exit;
-    } else if (isset($_SESSION['id'])) {
-      Navigation::redirect('../../index.php');
-    }
-  }
-
   public static function sanitizeInput($data, $type = 'text')
   {
     if (is_string($data)) {

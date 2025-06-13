@@ -2,7 +2,24 @@
 $allowUnauthenticatedAccess = true;
 require_once __DIR__ . "/src/bootstrap.php";
 $security = new Security($conn);
-$security->checkInitialSetup();
+
+$stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE role = 'gestao'");
+$stmt->execute();
+$gestaoCount = $stmt->fetchColumn();
+
+$stmt = $conn->prepare("SELECT COUNT(*) FROM setupKeys WHERE active = 1");
+$stmt->execute();
+$availableKeysCount = $stmt->fetchColumn();
+
+if ($gestaoCount == 0 && $availableKeysCount > 0) {
+  Navigation::redirect('../setup.php');
+  exit;
+} else if ($gestaoCount == 0 && $availableKeysCount == 0) {
+  Navigation::redirect('../indev.php');
+  exit;
+} else if (isset($_SESSION['id'])) {
+  Navigation::redirect('index.php');
+}
 ?>
 
 <!DOCTYPE html>

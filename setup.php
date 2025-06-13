@@ -217,7 +217,7 @@ try {
                   <input type="tel"
                     name="phone"
                     class="w-full bg-slate-900/80 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all duration-300"
-                    placeholder="(xx) xxxxx-xxxx" />
+                    placeholder="(00) 00000-0000" maxlength="15" onkeyup="handlePhoneNumber(event)" onblur="formatPhoneNumber(event)" />
                 </div>
               </div>
             </div>
@@ -375,6 +375,38 @@ try {
   </div>
 
   <script src="public/js/setup.js"></script>
+  <script>
+    function handlePhoneNumber(event) {
+      let input = event.target;
+      input.value = input.value.replace(/\D/g, '');
+    }
+
+    function formatPhoneNumber(event) {
+      let input = event.target;
+      let value = input.value.replace(/\D/g, '');
+
+      if (value.length > 11) {
+        value = value.substring(0, 11);
+      }
+
+      let formattedValue = '';
+      if (value.length > 0) {
+        if (value.length <= 2) {
+          formattedValue = '(' + value;
+        } else {
+          formattedValue = '(' + value.substring(0, 2) + ')';
+          if (value.length > 2) {
+            formattedValue += ' ' + value.substring(2, 7);
+            if (value.length > 7) {
+              formattedValue += '-' + value.substring(7);
+            }
+          }
+        }
+      }
+
+      input.value = formattedValue;
+    }
+  </script>
 </body>
 
 </html>

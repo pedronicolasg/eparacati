@@ -75,12 +75,6 @@ $time = isset($_GET['time']) ? (int) $_GET['time'] : null;
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <?php $ui->renderBookings('../../', $currentUser['id'], true); ?>
             </div>
-            <div class="mt-6 text-center">
-              <button onclick="window.location.href='./agendar.php'" class="bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-800/50 text-emerald-700 dark:text-emerald-400 font-medium py-2.5 px-5 rounded-lg flex items-center mx-auto transition-all duration-300">
-                <i class="fas fa-plus mr-2"></i>
-                Novo Agendamento
-              </button>
-            </div>
           <?php } ?>
         </div>
       </div>

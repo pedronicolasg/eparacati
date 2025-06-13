@@ -74,7 +74,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                 <i class="fas fa-id-badge text-purple-600 dark:text-purple-400"></i>
                             </div>
-                            <select type="role" id="role" name="role" onchange="toggleClassSelector()"
+                            <select required type="role" id="role" name="role" onchange="toggleClassSelector()"
                                 class="bg-white dark:bg-slate-800/50 border border-gray-300 dark:border-slate-700 text-gray-800 dark:text-white text-sm rounded-xl w-full pl-10 p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 appearance-none">
                                 <option value="" select>Selecione</option>
                                 <option value="aluno">Aluno</option>
@@ -100,7 +100,7 @@
                                 $classes = $classModel->get();
 
                                 foreach ($classes as $class): ?>
-                                    <option value="<?php echo $class['id']; ?>"> <?php echo $class['name']; ?> </option>
+                                    <option value="<?= $class['id']; ?>"><?= $class['name']; ?> (<?= $class['grade']?>ª Série)</option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">

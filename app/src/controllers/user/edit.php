@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
   function editUser($id, $data)
   {
-    global $userModel, $self, $currentUser, $logger;
+    global $userModel, $self, $currentUser, $logger, $classModel;
 
     $bioValue = null;
     if (isset($data['bio'])) {
@@ -37,30 +37,38 @@ try {
       'name' => 'Nome',
       'email' => 'Email',
       'role' => 'Cargo',
+      'phone' => 'Número',
       'class_id' => 'Classe',
       'bio' => 'Biografia'
     ];
 
     foreach ($data as $field => $newValue) {
-      $oldValue = $oldUserInfo[$field];
+      $oldValue = $oldUserInfo[$field] ?? null;
       if ($field === 'profile_photo') {
         if (!empty($newValue['tmp_name'])) {
           $changes[] = $oldValue === null ? "Foto de Perfil adicionada" : "Foto de Perfil alterada";
         }
       } elseif ($field === 'class_id') {
-        global $classModel;
-        $oldClassInfo = $classModel->getInfo($oldValue, 'id', ['name', 'id']);
-        $newClassInfo = $classModel->getInfo($newValue, 'id', ['name', 'id']);
+        if ($newValue !== null && $newValue !== $oldValue) {
+          $oldClassInfo = $oldValue ? $classModel->getInfo($oldValue, 'id', ['name', 'id']) : null;
+          $newClassInfo = $classModel->getInfo($newValue, 'id', ['name', 'id']);
 
-        if (!empty($oldClassInfo)) {
-          $changes[] = "Turma alterada: " . $oldClassInfo['name'] . " (ID " . $oldClassInfo . ") > " . $newClassInfo['name'] . " (ID " . $newClassInfo['id'] . ")";
-        } else {
-          $changes[] = "Adicionado a turma: " . $newClassInfo['name'] . " (ID " . $newClassInfo['id'] . ")";
+          if ($newClassInfo && isset($newClassInfo['name'], $newClassInfo['id'])) {
+            if ($oldClassInfo && isset($oldClassInfo['name'], $oldClassInfo['id'])) {
+              $changes[] = "Turma alterada: {$oldClassInfo['name']} (ID {$oldClassInfo['id']}) > {$newClassInfo['name']} (ID {$newClassInfo['id']})";
+            } else {
+              $changes[] = "Adicionado a turma: {$newClassInfo['name']} (ID {$newClassInfo['id']})";
+            }
+          } else {
+            $changes[] = "";
+          }
         }
       } elseif ($field === 'password') {
-        $changes[] = "Senha alterada";
+        if ($newValue !== null) {
+          $changes[] = "Senha alterada";
+        }
       } else {
-        if ($oldValue !== $newValue) {
+        if ($oldValue !== $newValue && $newValue !== null) {
           $changes[] = "{$fieldNames[$field]}: $oldValue > $newValue";
         }
       }
@@ -121,13 +129,18 @@ try {
     if ($profile_photo && !empty($profile_photo['tmp_name'])) {
       $data['profile_photo'] = $profile_photo;
     }
-    $data['bio'] = $bio;
-    $data['password'] = isset($_POST['password']) && !empty($_POST['password']) ? Security::passw($_POST['password']) : null;
+
+    $data = [
+      'bio' => $bio,
+      'phone' => $_POST['phone'],
+      'password' => isset($_POST['password']) && !empty($_POST['password']) ? Security::passw($_POST['password']) : null
+    ];
 
     editUser($id, $data);
   } elseif ($currentUser['role'] == 'gestao') {
     $name = $_POST['name'];
     $email = $_POST['email'];
+    $phone = $_POST['phone'];
     $password = isset($_POST['password']) && !empty($_POST['password']) ? Security::passw($_POST['password']) : null;
     $role = $_POST['role'];
     $class_id = $_POST['class'];
@@ -137,7 +150,8 @@ try {
     $data = [
       'name' => $name,
       'email' => $email,
-      'role' => $role
+      'role' => $role,
+      'phone' => $phone
     ];
 
     if ($password !== null) {

@@ -142,9 +142,6 @@ if ($currentSchedule) {
                     alt="User Profile"
                     class="h-full w-full object-cover">
                 </div>
-                <div class="absolute -bottom-2 -right-2 h-6 w-6 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center">
-                  <i class="fas fa-check text-white text-xs"></i>
-                </div>
               </div>
 
               <div class="space-y-2">
@@ -167,7 +164,7 @@ if ($currentSchedule) {
       <div class="space-y-8">
 
         <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden">
-          <div class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 p-6">
+          <div class="bg-gradient-to-r from-orange-500 via-red-500 to-red-400 p-6">
             <div class="flex items-center gap-3">
               <div class="p-3 bg-white/20 rounded-xl">
                 <i class="fas fa-calendar-alt text-white text-xl"></i>

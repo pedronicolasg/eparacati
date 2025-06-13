@@ -99,7 +99,7 @@ class EquipmentModel
       $params[':limit'] = (int)$filters['limit'];
       $params[':offset'] = (int)$filters['offset'];
     }
-
+    $sql .= ' ORDER BY name ASC';
     $stmt = $this->conn->prepare($sql);
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -205,7 +205,7 @@ if ($equipmentId) {
                   <option value="">Selecione uma turma</option>
                   <?php foreach ($classes as $class): ?>
                     <option value="<?php echo htmlspecialchars($class['id']); ?>">
-                      <?php echo htmlspecialchars($class['name']); ?>
+                      <?= htmlspecialchars($class['name']); ?> (<?= htmlspecialchars($class['grade'])?>ª Série)
                     </option>
                   <?php endforeach; ?>
                 </select>

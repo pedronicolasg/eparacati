@@ -33,7 +33,8 @@ $stmt->execute();
 $totalItems = $stmt->fetchColumn();
 $totalPages = ceil($totalItems / $itemsPerPage);
 
-$sql .= " ORDER BY u.name LIMIT :limit OFFSET :offset";
+$sql .= " ORDER BY u.name ASC LIMIT :limit OFFSET :offset";
+
 $stmt = $conn->prepare($sql);
 foreach ($params as $key => $value) {
   $stmt->bindValue($key, $value);
@@ -201,14 +202,14 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
                               <span class="flex items-center">
-                                <i class="fas fa-envelope w-4 h-4 mr-1.5 text-gray-400 dark:text-gray-500"></i>
+                                <i class="fas fa-envelope w-4 h-4 mr-1.5 text-red-400 dark:text-red-500"></i>
                                 <?= htmlspecialchars($row["email"]) ?>
                               </span>
                             </div>
                             <?php if (!empty($row["phone"])): ?>
                               <div class="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2 mt-1">
                                 <span class="flex items-center">
-                                  <i class="fas fa-phone w-4 h-4 mr-1.5 text-gray-400 dark:text-gray-500"></i>
+                                  <i class="fas fa-phone w-4 h-4 mr-1.5 text-blue-400 dark:text-blue-500"></i>
                                   <?= Format::phoneNumber($row["phone"]) ?>
                                 </span>
                               </div>
@@ -320,8 +321,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </main>
   </div>
 
-  <?php include_once "components/user/addModal.php"; ?>
-  <?php include_once "components/user/bulkAddModal.php"; ?>
+
+  <?php
+  include_once "components/user/addModal.php";
+  include_once "components/user/bulkAddModal.php";
+  ?>
 
   <script src="../../../public/js/dashboard/user/addModalController.js"></script>
   <script src="../../../public/js/dashboard/user/bulkAddModalController.js"></script>

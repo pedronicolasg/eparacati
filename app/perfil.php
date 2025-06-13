@@ -28,6 +28,7 @@ if ($editPanel) {
 
 <!DOCTYPE html>
 <html lang="pt-BR" class="<?php echo htmlspecialchars($theme); ?>">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +37,7 @@ if ($editPanel) {
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
   <link rel="shortcut icon" href="../public/images/logo.svg" type="image/x-icon">
 </head>
+
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
   <?php
   UI::renderNavbar($currentUser, './');
@@ -64,7 +66,7 @@ if ($editPanel) {
         </div>
       </div>
     </div>
-    
+
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-1">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-6 transition-all duration-300 hover:shadow-xl">
@@ -183,5 +185,38 @@ if ($editPanel) {
   </div>
 
   <?php UI::renderFooter('./'); ?>
+  <script>
+    function handlePhoneNumber(event) {
+      let input = event.target;
+      input.value = input.value.replace(/\D/g, '');
+    }
+
+    function formatPhoneNumber(event) {
+      let input = event.target;
+      let value = input.value.replace(/\D/g, '');
+
+      if (value.length > 11) {
+        value = value.substring(0, 11);
+      }
+
+      let formattedValue = '';
+      if (value.length > 0) {
+        if (value.length <= 2) {
+          formattedValue = '(' + value;
+        } else {
+          formattedValue = '(' + value.substring(0, 2) + ')';
+          if (value.length > 2) {
+            formattedValue += ' ' + value.substring(2, 7);
+            if (value.length > 7) {
+              formattedValue += '-' + value.substring(7);
+            }
+          }
+        }
+      }
+
+      input.value = formattedValue;
+    }
+  </script>
 </body>
+
 </html>

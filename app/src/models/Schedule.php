@@ -360,8 +360,8 @@ class ScheduleModel
       }
 
       if (!empty($timeConditions)) {
-        $sql = "DELETE FROM bookings 
-                              WHERE date = :currentDate 
+        $sql = "DELETE FROM bookings
+                              WHERE date = :currentDate
                               AND (" . implode(" OR ", $timeConditions) . ")";
 
         $stmt = $this->conn->prepare($sql);

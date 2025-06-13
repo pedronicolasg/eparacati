@@ -110,6 +110,8 @@ class ClassModel
             if (!empty($conditions)) {
                 $sql .= ' WHERE ' . implode(' AND ', $conditions);
             }
+            
+            $sql .= ' ORDER BY c.name ASC, c.grade ASC';
 
             if ($limit !== null) {
                 $sql .= ' LIMIT :limit';

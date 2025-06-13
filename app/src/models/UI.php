@@ -444,6 +444,12 @@ class UI
             <input type="password" id="password" name="password" value=""
               class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
           </div>
+          <div>
+            <label for="phone" class="block text-gray-700 dark:text-gray-300">Telefone</label>
+            <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($user["phone"] ?? ''); ?>"
+              class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" placeholder="(00) 00000-0000" maxlength="15"
+              onkeyup="handlePhoneNumber(event)" onblur="formatPhoneNumber(event)" />
+          </div>
           <?php if ($isAdmin): ?>
             <div>
               <label for="name" class="block text-gray-700 dark:text-gray-300">Nome</label>
@@ -455,7 +461,6 @@ class UI
               <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user["email"]); ?>"
                 class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
             </div>
-
             <div>
               <label for="role" class="block text-gray-700 dark:text-gray-300">Cargo</label>
               <select id="role" name="role"
@@ -488,10 +493,43 @@ class UI
                 <?php foreach ($classes as $class): ?>
                   <option value="<?php echo $class['id']; ?>"
                     <?php echo $user["class_id"] === $class['id'] ? "selected" : ""; ?>>
-                    <?php echo $class['name']; ?></option>
+                    <?php echo $class['name']; ?> (<?= $class['grade'] ?>ª Série)</option>
                 <?php endforeach; ?>
               </select>
             </div>
+          <?php else: ?>
+            <div>
+              <label for="email" class="block text-gray-700 dark:text-gray-300">Email</label>
+              <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user["email"]); ?>"
+                class="w-full px-3 py-2 rounded-md border bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 cursor-not-allowed"
+                readonly disabled />
+              <input type="hidden" name="email" value="<?php echo htmlspecialchars($user["email"]); ?>" />
+            </div>
+            <div>
+              <label for="role" class="block text-gray-700 dark:text-gray-300">Cargo</label>
+              <input type="text" id="role" name="role" value="<?php echo Format::roleName($user["role"], true); ?>"
+                class="w-full px-3 py-2 rounded-md border bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 cursor-not-allowed"
+                readonly disabled />
+              <input type="hidden" name="role" value="<?php echo htmlspecialchars($user["role"]); ?>" />
+            </div>
+            <?php if ($user["role"] === "aluno"): ?>
+              <div id="class-container">
+                <label for="class" class="block text-gray-700 dark:text-gray-300">Turma</label>
+                <select id="class" name="class"
+                  class="w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                  <?php
+                  global $classModel;
+                  $classes = $classModel->get();
+                  ?>
+                  <option value="" <?php echo empty($user["class_id"]) ? "selected" : ""; ?>>Selecionar</option>
+                  <?php foreach ($classes as $class): ?>
+                    <option value="<?php echo $class['id']; ?>"
+                      <?php echo $user["class_id"] === $class['id'] ? "selected" : ""; ?>>
+                      <?php echo $class['name']; ?> (<?= $class['grade'] ?>ª Série)</option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            <?php endif; ?>
           <?php endif; ?>
         </div>
         <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
@@ -523,19 +561,17 @@ class UI
     <?php
   }
 
-
-
   // Funções de renderização dinâmicas
   public function renderEquipments($type = null)
   {
     $equipmentModel = $this->getEquipmentModel();
 
-    $statuses = ['disponivel', 'agendado', 'indisponivel'];
+    $statuses = ['disponivel', 'indisponivel'];
     $hasEquipments = false;
 
 
     foreach ($statuses as $status) {
-      $filters = ['status' => $status];
+      $filters = [];
       if ($type) {
         $filters['type'] = $type;
       }
@@ -549,7 +585,6 @@ class UI
           foreach ($equipments as $row) {
             $statusInfo = [
               'disponivel' => ['color' => 'green', 'text' => 'Disponível', 'icon' => 'check-circle'],
-              'agendado' => ['color' => 'yellow', 'text' => 'Agendado', 'icon' => 'clock'],
               'indisponivel' => ['color' => 'red', 'text' => 'Indisponível', 'icon' => 'times-circle']
             ][$row['status']];
           ?>
@@ -623,76 +658,87 @@ class UI
         public function formatLogChangesToHtml($logData)
         {
           if (!isset($logData['message'])) {
-            return "Erro: Dados de log inválidos ou incompletos.";
+            return '<div class="text-red-500 dark:text-red-400">Erro: Dados de log inválidos ou incompletos.</div>';
           }
 
           $message = $logData['message'];
-          $changesText = "";
+          $changesText = '';
 
           if (strpos($message, "Mudanças: \n") !== false) {
             $changesText = explode("Mudanças: \n", $message)[1];
           } else {
-            return "";
+            return '';
           }
 
-          $fieldPattern = '/^(.+?):\s+(.+?)\s+>\s+/m';
-          preg_match_all($fieldPattern, $changesText, $matches, PREG_OFFSET_CAPTURE);
+          $changeLines = array_filter(array_map('trim', explode("\n", $changesText)));
+          $htmlOutput = '';
 
-          $htmlOutput = "";
-          $totalMatches = count($matches[0]);
+          $formatMap = [
+            'Status' => fn($v) => Format::statusName($v),
+            'Cargo' => fn($v) => Format::roleName($v),
+            'Tipo' => fn($v) => Format::typeName($v),
+            'Descrição' => fn($v) => nl2br(htmlspecialchars($v)),
+            'Biografia' => fn($v) => nl2br(htmlspecialchars($v)),
+          ];
 
-          for ($i = 0; $i < $totalMatches; $i++) {
-            $fieldMatch = $matches[0][$i];
-            $fieldName = trim($matches[1][$i][0]);
-            $startPos = $fieldMatch[1];
-
-            $endPos = ($i < $totalMatches - 1) ? $matches[0][$i + 1][1] : strlen($changesText);
-
-            $fieldContent = substr($changesText, $startPos, $endPos - $startPos);
-
-            if (preg_match('/^(.+?):\s+(.+?)\s+>\s+(.+)/s', $fieldContent, $valueMatches)) {
-              $oldValue = trim($valueMatches[2]);
-              $newValue = trim($valueMatches[3]);
-
-              $formattedOldValue = $oldValue;
-              $formattedNewValue = $newValue;
-
-              if (strcasecmp($fieldName, "Status") === 0) {
-                $formattedOldValue = Format::statusName($oldValue);
-                $formattedNewValue = Format::statusName($newValue);
-              } else if (strcasecmp($fieldName, "Cargo") === 0) {
-                $formattedOldValue = Format::roleName($oldValue);
-                $formattedNewValue = Format::roleName($newValue);
-              } else if (strcasecmp($fieldName, "Tipo") === 0) {
-                $formattedOldValue = Format::typeName($oldValue);
-                $formattedNewValue = Format::typeName($newValue);
-              }
-
-              if (strcasecmp($fieldName, "Descrição") === 0 || strcasecmp($fieldName, "Biografia") === 0) {
-                $formattedOldValue = nl2br(htmlspecialchars($formattedOldValue));
-                $formattedNewValue = nl2br(htmlspecialchars($formattedNewValue));
-              } else {
-                $formattedOldValue = htmlspecialchars($formattedOldValue);
-                $formattedNewValue = htmlspecialchars($formattedNewValue);
-              }
-
+          foreach ($changeLines as $line) {
+            if (strpos($line, 'Foto de Perfil') === 0 || strpos($line, 'Senha alterada') === 0) {
+              $fieldName = strpos($line, 'Foto de Perfil') === 0 ? 'Foto de Perfil' : 'Senha';
               $htmlOutput .= '
-  <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-md mb-4">
-      <div class="flex justify-between items-center mb-2">
-          <span class="font-medium text-gray-700 dark:text-gray-300">' . htmlspecialchars($fieldName) . '</span>
-          <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded-full">Alterado</span>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="p-3 bg-red-50 dark:bg-red-900/30 rounded border border-red-100 dark:border-red-900">
-              <span class="block text-xs text-red-500 dark:text-red-400 mb-1">Antes</span>
-              <span class="text-gray-800 dark:text-gray-200">' . $formattedOldValue . '</span>
-          </div>
-          <div class="p-3 bg-green-50 dark:bg-green-900/30 rounded border border-green-100 dark:border-green-900">
-              <span class="block text-xs text-green-500 dark:text-green-400 mb-1">Depois</span>
-              <span class="text-gray-800 dark:text-gray-200">' . $formattedNewValue . '</span>
-          </div>
-      </div>
-  </div>';
+            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-md mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium text-gray-700 dark:text-gray-300">' . htmlspecialchars($fieldName) . '</span>
+                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded-full">Alterado</span>
+                </div>
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-100 dark:border-blue-900">
+                    <span class="text-gray-800 dark:text-gray-200">' . htmlspecialchars($line) . '</span>
+                </div>
+            </div>';
+            } elseif (strpos($line, 'Adicionado a turma') === 0 || strpos($line, 'Turma alterada') === 0) {
+              $label = strpos($line, 'Adicionado a turma') === 0 ? 'Adicionado a turma' : 'Turma alterada';
+              $classInfo = preg_match('/(.+?):\s+(.+)/', $line, $matches) ? trim($matches[2]) : $line;
+              $htmlOutput .= '
+            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-md mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium text-gray-700 dark:text-gray-300">Turma</span>
+                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded-full">' . htmlspecialchars($label) . '</span>
+                </div>
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-100 dark:border-blue-900">
+                    <span class="text-gray-800 dark:text-gray-200">' . htmlspecialchars($classInfo) . '</span>
+                </div>
+            </div>';
+            } else {
+              if (preg_match('/^(.+?):\s+(.+?)\s+>\s+(.+)/s', $line, $matches)) {
+                $fieldName = trim($matches[1]);
+                $oldValue = trim($matches[2]);
+                $newValue = trim($matches[3]);
+
+                $fieldKey = ucfirst(strtolower($fieldName));
+                $formattedOldValue = isset($formatMap[$fieldKey]) && is_callable($formatMap[$fieldKey])
+                  ? call_user_func($formatMap[$fieldKey], $oldValue)
+                  : htmlspecialchars($oldValue);
+                $formattedNewValue = isset($formatMap[$fieldKey]) && is_callable($formatMap[$fieldKey])
+                  ? call_user_func($formatMap[$fieldKey], $newValue)
+                  : htmlspecialchars($newValue);
+
+                $htmlOutput .= '
+                <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-md mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">' . htmlspecialchars($fieldName) . '</span>
+                        <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded-full">Alterado</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="p-3 bg-red-50 dark:bg-red-900/30 rounded border border-red-100 dark:border-red-900">
+                            <span class="block text-xs text-red-500 dark:text-red-400 mb-1">Antes</span>
+                            <span class="text-gray-800 dark:text-gray-200">' . $formattedOldValue . '</span>
+                        </div>
+                        <div class="p-3 bg-green-50 dark:bg-green-900/30 rounded border border-green-100 dark:border-green-900">
+                            <span class="block text-xs text-green-500 dark:text-green-400 mb-1">Depois</span>
+                            <span class="text-gray-800 dark:text-gray-200">' . $formattedNewValue . '</span>
+                        </div>
+                    </div>
+                </div>';
+              }
             }
           }
 
