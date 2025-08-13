@@ -188,7 +188,7 @@ class EquipmentModel
     }
 
     $security = $this->getSecurity();
-    $id = $security->generateUniqueId(8);
+    $id = $security->generateId();
     $created_at = date("d-m-Y H:i:s");
     $imageUrl = $image ? $this->addPhoto($image, $id) : null;
 
@@ -282,7 +282,7 @@ class EquipmentModel
         $type = $typeAliases[$rawStatus] ?? $rawStatus;
 
         $security = $this->getSecurity();
-        $id = $security->generateUniqueId(8);
+        $id = $security->generateId();
         $imageUrl = !empty($row[4]) ? $this->addPhoto($row[4], $id) : null;
 
         $names[] = $row[0];

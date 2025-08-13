@@ -2,6 +2,7 @@
     "require": {
         "phpoffice/phpspreadsheet": "^3.7",
         "intervention/image": "^3.11",
-        "mpdf/mpdf": "*"
+        "mpdf/mpdf": "*",
+        "godruoyi/php-snowflake": "^3.2"
     }
 }

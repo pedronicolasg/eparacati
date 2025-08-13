@@ -263,7 +263,7 @@ class ClassModel
                 }
             }
 
-            $id = $security->generateUniqueId(8);
+            $id = $security->generateId();
             $created_at = date("d-m-Y H:i:s");
             $upgrades_in = date("d-m-Y", strtotime("next year January 1st"));
             $ends_in = ($grade == 3) ? $upgrades_in : null;
@@ -355,7 +355,7 @@ class ClassModel
                     }
                 }
 
-                $id = $security->generateUniqueId(8);
+                $id = $security->generateId();
                 $classData[] = [
                     'id' => $id,
                     'name' => $row[0],

@@ -204,7 +204,7 @@ class UserModel
                 return false;
             }
 
-            $id = $security->generateUniqueId(8);
+            $id = $security->generateId();
             $created_at = date("d-m-Y H:i:s");
             $profile_photo = $this->generateDefaultPFP($name);
 
@@ -274,7 +274,7 @@ class UserModel
                 $rawRole = empty($row[4]) ? 'outro' : strtolower(trim($row[4]));
                 $role = isset($roleAliasMap[$rawRole]) ? $roleAliasMap[$rawRole] : $rawRole;
 
-                $id = $security->generateUniqueId(8);
+                $id = $security->generateId();
                 $userData[] = [
                     'id' => $id,
                     'name' => $row[0],

@@ -1,13 +1,18 @@
 <?php
 include_once 'Navigation.php';
 
+use Godruoyi\Snowflake\Snowflake;
+
 class Security
 {
 
   private $conn;
+  private $snowflake;
+
   public function __construct($conn)
   {
     $this->conn = $conn;
+    $this->snowflake = new Snowflake();
   }
 
   public static function sanitizeInput($data, $type = 'text')
@@ -64,22 +69,8 @@ class Security
     return preg_match($pattern, $password) === 1;
   }
 
-  public function generateUniqueId(int $digits): int
-  {
-    if ($digits <= 0) {
-      throw new InvalidArgumentException('O número de dígitos deve ser maior que 0.');
-    }
-
-    $max = (int) str_pad('9', $digits, '9');
-
-    $uniqueString = microtime(true) . '-' . random_int(1000, 9999);
-    $hash = sha1($uniqueString);
-
-    $randomId = (int) substr(abs(crc32($hash)), 0, $digits);
-
-    $randomId = ($randomId % $max) + 1;
-
-    return $randomId;
+  public function generateId(): int {
+    return (int) $this->snowflake->id();
   }
 
   private static function getSecretKey()

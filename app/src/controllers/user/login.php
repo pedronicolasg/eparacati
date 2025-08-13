@@ -51,7 +51,7 @@ try {
     Security::getIp()
   );
 
-  if (!Security::isStrongPassword($password)) {
+  if (!Security::isStrongPassword($_POST['password'])) {
     $_SESSION['alert'][] = [
       'titulo' => 'Senha Fraca',
       'mensagem' => 'Sua senha é considerada fraca. Recomendamos que você a altere para uma senha mais forte.',

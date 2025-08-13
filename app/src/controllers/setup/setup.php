@@ -59,7 +59,7 @@ try {
     exit;
   }
 
-  if (!Security::isStrongPassword($password)) {
+  if (!Security::isStrongPassword($_POST["password"])) {
     Navigation::alert(
       'Senha Fraca',
       'A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
