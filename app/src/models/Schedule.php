@@ -411,12 +411,6 @@ class ScheduleModel
         'fontDir' => array_merge($fontDirs, [
           dirname(dirname(dirname(__DIR__))) . '/public/fonts',
         ]),
-        'fontdata' => $fontData + [
-          'exo' => [
-            'R' => 'Exo-Regular.ttf',
-            'B' => 'Exo-Bold.ttf',
-          ],
-        ],
         'default_font' => 'exo'
       ]);
 

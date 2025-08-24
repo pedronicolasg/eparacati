@@ -11,6 +11,7 @@ DBSchema.sql
 documentation/
 
 # Uploads
+public/assets/
 public/images/profile_photos/
 public/images/equipment_photos/
 

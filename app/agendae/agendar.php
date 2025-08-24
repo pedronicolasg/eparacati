@@ -101,9 +101,9 @@ if ($equipmentId) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê | Agendar Equipamento</title>
-  <link rel="shortcut icon" href="../../public/images/logo.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../../public/images/agendae/logo.png" type="image/x-icon">
   <link href="../../public/css/output.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <link href="../../public/assets/fontawesome/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-to-br from-emerald-50/80 to-teal-100/80 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white min-h-screen font-sans overflow-x-hidden">

@@ -35,7 +35,7 @@ try {
   <title>EP Aracati - Configuração Inicial</title>
   <link rel="shortcut icon" href="public/images/logo.svg" type="image/x-icon">
   <link rel="stylesheet" href="public/css/output.css" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
+  <link href="public/assets/fontawesome/css/all.min.css" rel="stylesheet" />
 
   <style>
     @keyframes gradient-bg {

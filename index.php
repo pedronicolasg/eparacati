@@ -7,8 +7,8 @@
   <title>E.E.E.P. Profª Elsa Maria Porto Costa Lima</title>
   <link rel="shortcut icon" href="public/images/logo.svg" type="image/x-icon">
   <link href="public/css/output.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
+  <link href="public/assets/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="public/assets/fontawesome/css/all.min.css" rel="stylesheet" />
 
 </head>
 
@@ -561,7 +561,7 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="public/assets/swiper/swiper-bundle.min.js"></script>
   <script src="public/js/landingpage.js"></script>
   </script>
 </body>

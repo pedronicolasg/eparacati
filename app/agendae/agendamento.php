@@ -24,8 +24,8 @@ if ($currentSchedule) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendaê | Agendamento <?= htmlspecialchars($currentSchedule['id']) ?></title>
   <link href="../../public/css/output.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-  <link rel="shortcut icon" href="../../public/images/logo.svg" type="image/x-icon">
+  <link href="../../public/assets/fontawesome/css/all.min.css" rel="stylesheet">
+  <link rel="shortcut icon" href="../../public/images/agendae/logo.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {

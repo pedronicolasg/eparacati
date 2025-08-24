@@ -4,10 +4,12 @@
   "description": "Desenvolvimento de um site exclusivo para a EEEP Professora Elsa Maria Porto Costa Lima, criado para atender às necessidades da instituição de ensino, promovendo informações relevantes e facilitando a comunicação com alunos, professores e a comunidade.",
   "scripts": {
     "dev": "tailwindcss -i public/css/input.css -o public/css/output.css --watch",
-    "build": "tailwindcss -i public/css/input.css -o public/css/output.css --minify"
+    "build": "tailwindcss -i public/css/input.css -o public/css/output.css --minify && npx copyfiles --flat node_modules/swiper/swiper-bundle.min.* public/assets/swiper && npx copyfiles --flat node_modules/@fortawesome/fontawesome-free/css/** public/assets/fontawesome/css && npx copyfiles --flat node_modules/@fortawesome/fontawesome-free/webfonts/** public/assets/fontawesome/webfonts"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "@tailwindcss/cli": "^4.1.8",
+    "swiper": "^11.2.10",
     "tailwindcss": "^4.1.8"
   },
   "repository": {
@@ -15,5 +17,8 @@
     "url": "git+https://github.com/pedronicolasg/eparacati.git"
   },
   "license": "CC BY-NC-ND 4.0",
-  "homepage": "https://github.com/pedronicolasg/eparacati#readme"
+  "homepage": "https://github.com/pedronicolasg/eparacati#readme",
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  }
 }

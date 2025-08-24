@@ -31,7 +31,7 @@ if ($gestaoCount == 0 && $availableKeysCount > 0) {
   <title>EP Aracati | Login</title>
   <link rel="shortcut icon" href="../public/images/logo.svg" type="image/x-icon">
   <link href="../public/css/output.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
+  <link href="../public/assets/fontawesome/css/all.min.css" rel="stylesheet" />
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
